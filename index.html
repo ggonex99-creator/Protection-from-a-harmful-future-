@@ -3,9 +3,60 @@
 <head>
   <title>Privacy Guard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; background: #111; color: #eee; }
+    h1 { font-size: 28px; }
+    #result { margin-top: 20px; text-align: right; direction: rtl; }
+    .warn { color: #ff5555; font-weight: bold; margin: 8px 0; }
+    .safe { color: #55ff88; font-weight: bold; margin: 8px 0; }
+    input[type=file] { margin-top: 20px; }
+    img { max-width: 100%; margin-top: 15px; border-radius: 10px; }
+  </style>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding: 40px;">
+<body>
   <h1>🛡️ Privacy Guard</h1>
-  <p>Coming soon...</p>
+  <p>اختار صورة نفحصلك وياها المعلومات الحساسة</p>
+  <input type="file" id="imgInput" accept="image/*">
+  <img id="preview" style="display:none;">
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('imgInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const preview = document.getElementById('preview');
+      const result = document.getElementById('result');
+      result.innerHTML = '';
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+
+      EXIF.getData(file, function() {
+        const lat = EXIF.getTag(this, "GPSLatitude");
+        const lon = EXIF.getTag(this, "GPSLongitude");
+        const make = EXIF.getTag(this, "Make");
+        const model = EXIF.getTag(this, "Model");
+        const date = EXIF.getTag(this, "DateTimeOriginal");
+
+        let html = '';
+        if (lat && lon) {
+          html += `<div class="warn">⚠️ الصورة فيها موقع GPS! لا تنشرها إلا لو متأكد.</div>`;
+        } else {
+          html += `<div class="safe">✅ ما فيه بيانات موقع GPS بالصورة.</div>`;
+        }
+        if (make || model) {
+          html += `<div class="warn">⚠️ نوع الجهاز موجود بالصورة: ${make || ''} ${model || ''}</div>`;
+        }
+        if (date) {
+          html += `<div class="warn">⚠️ وقت وتاريخ التقاط الصورة موجود: ${date}</div>`;
+        }
+        if (!lat && !make && !date) {
+          html += `<div class="safe">✅ الصورة نظيفة من أهم البيانات الحساسة.</div>`;
+        }
+        result.innerHTML = html;
+      });
+    });
+  </script>
 </body>
 </html>
