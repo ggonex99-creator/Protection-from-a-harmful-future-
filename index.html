@@ -5,20 +5,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; background: #111; color: #eee; }
-    h1 { font-size: 28px; }
-    #result { margin-top: 20px; text-align: right; direction: rtl; }
-    .warn { color: #ff5555; font-weight: bold; margin: 8px 0; }
-    .safe { color: #55ff88; font-weight: bold; margin: 8px 0; }
-    input[type=file] { margin-top: 20px; }
-    img { max-width: 100%; margin-top: 15px; border-radius: 10px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "SF Pro Display", "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 50% 0%, #1a1f3a 0%, #0a0c1a 60%);
+      color: #eee;
+      min-height: 100vh;
+      padding: 30px 20px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .logo {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 30px rgba(99,102,241,0.4);
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff, #a5b4fc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 6px;
+    }
+    .subtitle { color: #9ca3af; font-size: 14px; margin-bottom: 30px; text-align: center; direction: rtl; }
+
+    .upload-box {
+      width: 100%; max-width: 340px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px dashed rgba(165,180,252,0.4);
+      border-radius: 20px;
+      padding: 36px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .upload-box:active { transform: scale(0.98); background: rgba(255,255,255,0.07); }
+    .upload-icon { font-size: 36px; margin-bottom: 10px; }
+    .upload-text { color: #d1d5db; font-size: 15px; direction: rtl; }
+    #imgInput { display:none; }
+
+    #preview {
+      max-width: 100%; margin-top: 20px;
+      border-radius: 16px;
+      display: none;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+
+    #result { width: 100%; max-width: 340px; margin-top: 20px; direction: rtl; }
+    .card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      animation: slideIn 0.4s ease;
+    }
+    @keyframes slideIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:translateY(0);} }
+    .warn { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+    .safe { background: rgba(52,211,153,0.12); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.25); }
+
+    .badge {
+      position: fixed; top: 20px; left: 20px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      font-size: 11px; font-weight: 700;
+      padding: 5px 12px; border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
-  <h1>🛡️ Privacy Guard</h1>
-  <p>اختار صورة نفحصلك وياها المعلومات الحساسة</p>
+  <div class="badge">PRO</div>
+  <div class="logo">🛡️</div>
+  <h1>Privacy Guard</h1>
+  <p class="subtitle">افحص صورك قبل النشر واكتشف المعلومات الحساسة المخفية بيها</p>
+
+  <label class="upload-box" for="imgInput">
+    <div class="upload-icon">📷</div>
+    <div class="upload-text">اضغط هنا لاختيار صورة</div>
+  </label>
   <input type="file" id="imgInput" accept="image/*">
-  <img id="preview" style="display:none;">
+  <img id="preview">
   <div id="result"></div>
 
   <script>
@@ -41,18 +116,18 @@
 
         let html = '';
         if (lat && lon) {
-          html += `<div class="warn">⚠️ الصورة فيها موقع GPS! لا تنشرها إلا لو متأكد.</div>`;
+          html += `<div class="card warn">⚠️ الصورة فيها موقع GPS دقيق</div>`;
         } else {
-          html += `<div class="safe">✅ ما فيه بيانات موقع GPS بالصورة.</div>`;
+          html += `<div class="card safe">✅ ما فيه بيانات موقع بالصورة</div>`;
         }
         if (make || model) {
-          html += `<div class="warn">⚠️ نوع الجهاز موجود بالصورة: ${make || ''} ${model || ''}</div>`;
+          html += `<div class="card warn">⚠️ نوع الجهاز مكشوف: ${make || ''} ${model || ''}</div>`;
         }
         if (date) {
-          html += `<div class="warn">⚠️ وقت وتاريخ التقاط الصورة موجود: ${date}</div>`;
+          html += `<div class="card warn">⚠️ تاريخ ووقت التقاط الصورة مكشوف</div>`;
         }
         if (!lat && !make && !date) {
-          html += `<div class="safe">✅ الصورة نظيفة من أهم البيانات الحساسة.</div>`;
+          html += `<div class="card safe">✅ الصورة نظيفة تماماً من البيانات الحساسة</div>`;
         }
         result.innerHTML = html;
       });
