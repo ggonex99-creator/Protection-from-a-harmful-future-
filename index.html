@@ -1,137 +1,209 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-  <title>Privacy Guard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, "SF Pro Display", "Segoe UI", sans-serif;
-      background: radial-gradient(circle at 50% 0%, #1a1f3a 0%, #0a0c1a 60%);
-      color: #eee;
-      min-height: 100vh;
-      padding: 30px 20px 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .logo {
-      width: 72px; height: 72px;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      border-radius: 20px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 34px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 30px rgba(99,102,241,0.4);
-    }
-    h1 {
-      font-size: 26px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #fff, #a5b4fc);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 6px;
-    }
-    .subtitle { color: #9ca3af; font-size: 14px; margin-bottom: 30px; text-align: center; direction: rtl; }
-
-    .upload-box {
-      width: 100%; max-width: 340px;
-      background: rgba(255,255,255,0.04);
-      border: 1.5px dashed rgba(165,180,252,0.4);
-      border-radius: 20px;
-      padding: 36px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-    .upload-box:active { transform: scale(0.98); background: rgba(255,255,255,0.07); }
-    .upload-icon { font-size: 36px; margin-bottom: 10px; }
-    .upload-text { color: #d1d5db; font-size: 15px; direction: rtl; }
-    #imgInput { display:none; }
-
-    #preview {
-      max-width: 100%; margin-top: 20px;
-      border-radius: 16px;
-      display: none;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    }
-
-    #result { width: 100%; max-width: 340px; margin-top: 20px; direction: rtl; }
-    .card {
-      display: flex; align-items: center; gap: 10px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      margin-bottom: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      animation: slideIn 0.4s ease;
-    }
-    @keyframes slideIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:translateY(0);} }
-    .warn { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
-    .safe { background: rgba(52,211,153,0.12); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.25); }
-
-    .badge {
-      position: fixed; top: 20px; left: 20px;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      font-size: 11px; font-weight: 700;
-      padding: 5px 12px; border-radius: 20px;
-      letter-spacing: 0.5px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Privacy Guard Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, "SF Pro Display", "Segoe UI", sans-serif;
+    background: #05060f;
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(99,102,241,0.25), transparent 40%),
+      radial-gradient(circle at 85% 10%, rgba(168,85,247,0.2), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(56,189,248,0.12), transparent 50%);
+    color: #eee;
+    min-height: 100vh;
+    padding-bottom: 90px;
+    overflow-x: hidden;
+  }
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding: 18px 20px 8px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .logo { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #a855f7); display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow: 0 6px 20px rgba(99,102,241,0.45); }
+  .brand-name { font-weight: 800; font-size: 17px; letter-spacing: 0.2px; }
+  .pro-badge { background: linear-gradient(135deg, #6366f1, #a855f7); font-size: 10px; font-weight: 800; letter-spacing: 0.6px; padding: 4px 10px; border-radius: 20px; }
+  .hero { padding: 10px 20px 4px; text-align: center; }
+  .hero h1 { font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #fff, #c7d2fe); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 6px; }
+  .hero p { color: #9ca3af; font-size: 13.5px; line-height: 1.6; }
+  .score-wrap { display:flex; justify-content:center; margin: 22px 0 8px; }
+  .ring { position: relative; width: 168px; height: 168px; }
+  .ring svg { transform: rotate(-90deg); width:100%; height:100%; }
+  .ring circle { fill:none; stroke-width: 10; }
+  .ring .bg { stroke: rgba(255,255,255,0.06); }
+  .ring .fg { stroke: url(#grad); stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .ring-label { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .ring-label .num { font-size: 40px; font-weight: 800; }
+  .ring-label .txt { font-size: 11px; color:#9ca3af; margin-top:2px; }
+  .card-panel { max-width: 400px; margin: 18px auto 0; padding: 0 20px; }
+  .upload-box { background: rgba(255,255,255,0.045); border: 1.5px dashed rgba(165,180,252,0.35); border-radius: 22px; padding: 30px 20px; text-align: center; transition: all .25s ease; position: relative; overflow: hidden; }
+  .upload-box:active { transform: scale(0.98); background: rgba(255,255,255,0.08); }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; }
+  .upload-text { color: #d1d5db; font-size: 14.5px; font-weight: 600; }
+  .upload-sub { color: #6b7280; font-size: 12px; margin-top: 4px; }
+  #imgInput { display:none; }
+  .preview-wrap { position: relative; margin-top: 18px; border-radius: 18px; overflow: hidden; display:none; box-shadow: 0 14px 40px rgba(0,0,0,0.55); }
+  #preview { width: 100%; display:block; }
+  .scanline { position: absolute; left:0; right:0; height: 3px; background: linear-gradient(90deg, transparent, #a5b4fc, transparent); box-shadow: 0 0 16px 4px rgba(165,180,252,0.7); top: 0; display:none; }
+  @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+  .scanning .scanline { display:block; animation: scan 1.4s linear infinite; }
+  .scan-overlay { position:absolute; inset:0; background: rgba(5,6,15,0.35); display:none; align-items:flex-end; justify-content:center; padding-bottom:14px; font-size: 12px; color:#c7d2fe; font-weight:700; letter-spacing:.5px; }
+  .scanning .scan-overlay { display:flex; }
+  #result { margin-top: 16px; }
+  .finding { display:flex; align-items:flex-start; gap:10px; padding: 13px 15px; border-radius: 14px; margin-bottom: 9px; font-size: 13.5px; font-weight: 600; line-height:1.4; animation: slideIn .4s ease; }
+  @keyframes slideIn { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  .warn { background: rgba(239,68,68,0.10); color:#fca5a5; border:1px solid rgba(239,68,68,0.22); }
+  .safe { background: rgba(52,211,153,0.10); color:#6ee7b7; border:1px solid rgba(52,211,153,0.22); }
+  .section-title { font-size: 15px; font-weight: 800; margin: 26px 0 12px; padding: 0 4px; display:flex; align-items:center; gap:8px; }
+  .toggle-card { background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.07); border-radius: 18px; padding: 16px 18px; display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px; }
+  .toggle-info .t { font-size: 14px; font-weight: 700; margin-bottom:3px; }
+  .toggle-info .s { font-size: 12px; color:#9ca3af; }
+  .switch { position: relative; width: 46px; height: 27px; flex-shrink:0; }
+  .switch input { opacity:0; width:0; height:0; }
+  .slider { position:absolute; inset:0; background: rgba(255,255,255,0.15); border-radius: 20px; transition:.3s; cursor:pointer; }
+  .slider:before { content:""; position:absolute; width:21px; height:21px; left:3px; top:3px; background:white; border-radius:50%; transition:.3s; }
+  input:checked + .slider { background: linear-gradient(135deg,#6366f1,#a855f7); }
+  input:checked + .slider:before { transform: translateX(19px); }
+  .panic-btn { width:100%; padding: 16px; border-radius:18px; border:none; background: linear-gradient(135deg, #ef4444, #b91c1c); color:white; font-weight:800; font-size:14.5px; box-shadow: 0 10px 30px rgba(239,68,68,0.35); display:flex; align-items:center; justify-content:center; gap:8px; }
+  .panic-btn:active { transform: scale(0.98); }
+  .report-card { background: rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.07); border-radius:18px; padding:18px; }
+  .report-row { display:flex; align-items:center; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .report-row:last-child { border-bottom:none; }
+  .report-row .lbl { font-size:13px; color:#d1d5db; display:flex; align-items:center; gap:8px; }
+  .report-row .val { font-size:16px; font-weight:800; }
+  .val.red { color:#fca5a5; } .val.green { color:#6ee7b7; }
+  .bottomnav { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: rgba(20,22,38,0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; display:flex; padding: 8px; box-shadow: 0 14px 40px rgba(0,0,0,0.5); }
+  .navbtn { flex:1; text-align:center; padding: 9px 0; border-radius:16px; font-size: 11px; font-weight:700; color:#6b7280; display:flex; flex-direction:column; align-items:center; gap:3px; transition: all .2s ease; }
+  .navbtn.active { color:white; background: linear-gradient(135deg, rgba(99,102,241,0.35), rgba(168,85,247,0.35)); }
+  .navbtn .ic { font-size: 18px; }
+  .tabpage { display:none; }
+  .tabpage.active { display:block; }
+  .disclaimer { max-width:400px; margin: 18px auto 0; padding: 0 20px; font-size:11px; color:#6b7280; text-align:center; line-height:1.6; }
+</style>
 </head>
 <body>
-  <div class="badge">PRO</div>
-  <div class="logo">🛡️</div>
-  <h1>Privacy Guard</h1>
-  <p class="subtitle">افحص صورك قبل النشر واكتشف المعلومات الحساسة المخفية بيها</p>
+  <div class="topbar">
+    <div class="brand"><div class="logo">🛡️</div><div class="brand-name">Privacy Guard</div></div>
+    <div class="pro-badge">PRO</div>
+  </div>
 
-  <label class="upload-box" for="imgInput">
-    <div class="upload-icon">📷</div>
-    <div class="upload-text">اضغط هنا لاختيار صورة</div>
-  </label>
-  <input type="file" id="imgInput" accept="image/*">
-  <img id="preview">
-  <div id="result"></div>
+  <div class="tabpage active" id="tab-scan">
+    <div class="hero">
+      <h1>افحص صورك قبل النشر</h1>
+      <p>نكشف بيانات الموقع، الجهاز، والوجوه المخفية بصورك — كل الفحص يصير داخل هاتفك فقط.</p>
+    </div>
+    <div class="score-wrap">
+      <div class="ring">
+        <svg viewBox="0 0 120 120">
+          <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs>
+          <circle class="bg" cx="60" cy="60" r="52"></circle>
+          <circle class="fg" id="scoreCircle" cx="60" cy="60" r="52" stroke-dasharray="327" stroke-dashoffset="327"></circle>
+        </svg>
+        <div class="ring-label"><div class="num" id="scoreNum">--</div><div class="txt">Privacy Score</div></div>
+      </div>
+    </div>
+    <div class="card-panel">
+      <label class="upload-box" for="imgInput" id="uploadBox">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">اضغط لاختيار صورة</div>
+        <div class="upload-sub">JPG أو PNG — الفحص يصير فوراً</div>
+      </label>
+      <input type="file" id="imgInput" accept="image/*">
+      <div class="preview-wrap" id="previewWrap">
+        <img id="preview">
+        <div class="scanline"></div>
+        <div class="scan-overlay">جاري التحليل...</div>
+      </div>
+      <div id="result"></div>
+    </div>
+  </div>
 
-  <script>
-    document.getElementById('imgInput').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+  <div class="tabpage" id="tab-report">
+    <div class="hero"><h1>تقريرك الأسبوعي</h1><p>ملخص أسبوعي لكل شي حمّاك منه Privacy Guard</p></div>
+    <div class="card-panel" style="max-width:400px;">
+      <div class="report-card">
+        <div class="report-row"><span class="lbl">📍 صور فيها موقعك</span><span class="val red">12</span></div>
+        <div class="report-row"><span class="lbl">🙂 صور فيها وجه واضح</span><span class="val red">7</span></div>
+        <div class="report-row"><span class="lbl">🧹 صور تم تنظيفها</span><span class="val green">19</span></div>
+        <div class="report-row"><span class="lbl">🛡️ متوسط Privacy Score</span><span class="val green">86</span></div>
+      </div>
+      <p class="disclaimer" style="margin-top:14px;">* بيانات تجريبية للعرض — تفعل فعلياً بعد ربط فحص المعرض بالكامل</p>
+    </div>
+  </div>
 
-      const preview = document.getElementById('preview');
-      const result = document.getElementById('result');
-      result.innerHTML = '';
-      preview.src = URL.createObjectURL(file);
-      preview.style.display = 'block';
+  <div class="tabpage" id="tab-settings">
+    <div class="hero"><h1>الحماية الاستباقية</h1><p>تحكم بمستوى الحماية اللي يناسبك</p></div>
+    <div class="card-panel" style="max-width:400px;">
+      <div class="toggle-card">
+        <div class="toggle-info"><div class="t">👻 Ghost Mode</div><div class="s">يحذف بيانات الموقع من أي صورة جديدة تلتقطها تلقائياً</div></div>
+        <label class="switch"><input type="checkbox" id="ghostToggle"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-card">
+        <div class="toggle-info"><div class="t">🔎 كشف الوجوه</div><div class="s">ينبهك إذا فيه وجه واضح بالصورة قبل النشر</div></div>
+        <label class="switch"><input type="checkbox" id="faceToggle" checked><span class="slider"></span></label>
+      </div>
+      <div class="section-title">🧹 التنظيف الفوري</div>
+      <button class="panic-btn" id="panicBtn">🚨 Panic Clean — نظف كل الصور الآن</button>
+      <p class="disclaimer">* Ghost Mode و Panic Clean الكاملة يحتاجون تطبيق من المتجر بصلاحيات كاملة على المعرض — هذي نسخة تجريبية من التجربة والشكل</p>
+    </div>
+  </div>
 
+  <div class="bottomnav">
+    <div class="navbtn active" data-tab="scan"><span class="ic">🔍</span>فحص</div>
+    <div class="navbtn" data-tab="report"><span class="ic">📊</span>تقرير</div>
+    <div class="navbtn" data-tab="settings"><span class="ic">⚙️</span>إعدادات</div>
+  </div>
+
+<script>
+  document.querySelectorAll('.navbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.navbtn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tabpage').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+  document.getElementById('panicBtn').addEventListener('click', () => {
+    alert('هذي ميزة تجريبية بالعرض. النسخة الكاملة تحتاج صلاحية وصول للمعرض من تطبيق حقيقي بالمتجر.');
+  });
+  const circle = document.getElementById('scoreCircle');
+  const CIRC = 2 * Math.PI * 52;
+  function setScore(score) {
+    document.getElementById('scoreNum').textContent = score;
+    circle.style.strokeDashoffset = CIRC - (score/100) * CIRC;
+  }
+  const input = document.getElementById('imgInput');
+  const previewWrap = document.getElementById('previewWrap');
+  const preview = document.getElementById('preview');
+  const result = document.getElementById('result');
+  input.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    result.innerHTML = '';
+    preview.src = URL.createObjectURL(file);
+    previewWrap.style.display = 'block';
+    previewWrap.classList.add('scanning');
+    setScore(0);
+    setTimeout(() => {
       EXIF.getData(file, function() {
         const lat = EXIF.getTag(this, "GPSLatitude");
-        const lon = EXIF.getTag(this, "GPSLongitude");
         const make = EXIF.getTag(this, "Make");
         const model = EXIF.getTag(this, "Model");
         const date = EXIF.getTag(this, "DateTimeOriginal");
-
-        let html = '';
-        if (lat && lon) {
-          html += `<div class="card warn">⚠️ الصورة فيها موقع GPS دقيق</div>`;
-        } else {
-          html += `<div class="card safe">✅ ما فيه بيانات موقع بالصورة</div>`;
-        }
-        if (make || model) {
-          html += `<div class="card warn">⚠️ نوع الجهاز مكشوف: ${make || ''} ${model || ''}</div>`;
-        }
-        if (date) {
-          html += `<div class="card warn">⚠️ تاريخ ووقت التقاط الصورة مكشوف</div>`;
-        }
-        if (!lat && !make && !date) {
-          html += `<div class="card safe">✅ الصورة نظيفة تماماً من البيانات الحساسة</div>`;
-        }
+        let score = 100; let html = '';
+        if (lat) { score -= 45; html += `<div class="finding warn">⚠️ الصورة فيها موقع GPS دقيق</div>`; }
+        else { html += `<div class="finding safe">✅ ما فيه بيانات موقع بالصورة</div>`; }
+        if (make || model) { score -= 20; html += `<div class="finding warn">⚠️ نوع الجهاز مكشوف: ${make||''} ${model||''}</div>`; }
+        if (date) { score -= 10; html += `<div class="finding warn">⚠️ تاريخ ووقت الالتقاط مكشوف</div>`; }
+        if (score === 100) { html += `<div class="finding safe">✅ الصورة نظيفة تماماً من البيانات الحساسة</div>`; }
         result.innerHTML = html;
+        previewWrap.classList.remove('scanning');
+        setScore(Math.max(score, 10));
       });
-    });
-  </script>
+    }, 1400);
+  });
+</script>
 </body>
 </html>
