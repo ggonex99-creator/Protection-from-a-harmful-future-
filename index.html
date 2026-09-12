@@ -702,4 +702,598 @@ document.addEventListener('DOMContentLoaded', function () {
   function applyLang(lang) {
     currentLang = lang;
     const t = translations[lang];
-    document.querySelectorAl
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key]) el.textContent = t[key];
+    });
+    const html = document.getElementById('htmlRoot');
+    const body = document.getElementById('bodyEl');
+    if (lang === 'ar') {
+      html.setAttribute('dir', 'rtl'); html.setAttribute('lang','ar');
+      body.setAttribute('dir','rtl'); body.classList.remove('lang-zh');
+    } else if (lang === 'zh') {
+      html.setAttribute('dir', 'ltr'); html.setAttribute('lang','zh');
+      body.setAttribute('dir','ltr'); body.classList.add('lang-zh');
+    } else {
+      html.setAttribute('dir', 'ltr'); html.setAttribute('lang','en');
+      body.setAttribute('dir','ltr'); body.classList.remove('lang-zh');
+    }
+    document.querySelectorAll('.lang-opt').forEach(o => o.classList.toggle('active', o.dataset.lang === lang));
+    document.getElementById('uploadText').textContent = (membership.tier !== 'free') ? t.uploadTextBatch : t.uploadText;
+    renderAll();
+  }
+
+  document.querySelectorAll('.lang-opt').forEach(opt => {
+    opt.addEventListener('click', () => applyLang(opt.dataset.lang));
+  });
+
+  // ---------- Theme colors ----------
+  document.querySelectorAll('.swatch').forEach(sw => {
+    sw.addEventListener('click', () => {
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      sw.classList.add('active');
+      document.documentElement.style.setProperty('--accent-1', sw.dataset.c1);
+      document.documentElement.style.setProperty('--accent-2', sw.dataset.c2);
+      document.documentElement.style.setProperty('--accent-3', sw.dataset.c3);
+      document.documentElement.style.setProperty('--accent-1-rgb', sw.dataset.r1);
+      document.documentElement.style.setProperty('--accent-2-rgb', sw.dataset.r2);
+      document.documentElement.style.setProperty('--accent-3-rgb', sw.dataset.r3);
+      document.documentElement.style.setProperty('--accent-glow', 'rgba(' + sw.dataset.r1 + ', 0.28)');
+    });
+  });
+
+  // ---------- Upload triggers ----------
+  const uploadBoxEl = document.getElementById('uploadBox');
+  // Relying on native <label>/<input> click delegation was inconsistent in
+  // sandboxed/embedded webviews (in-app browsers, artifact previews) - taps
+  // would sometimes not reach the hidden input at all. Opening the input
+  // explicitly, synchronously, inside the real user gesture is the pattern
+  // that works reliably everywhere.
+  let pickerOpening = false;
+  function openPicker() {
+    if (pickerOpening) return;
+    pickerOpening = true;
+    input.value = '';
+    input.click();
+    setTimeout(() => { pickerOpening = false; }, 400);
+  }
+  uploadBoxEl.addEventListener('click', openPicker);
+  uploadBoxEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPicker(); }
+  });
+
+  ['dragenter','dragover'].forEach(evt => {
+    uploadBoxEl.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); uploadBoxEl.classList.add('dragover'); });
+  });
+  ['dragleave','drop'].forEach(evt => {
+    uploadBoxEl.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); uploadBoxEl.classList.remove('dragover'); });
+  });
+  uploadBoxEl.addEventListener('drop', (e) => {
+    const files = Array.from(e.dataTransfer.files || []).filter(f => f.type.startsWith('image/'));
+    if (!files.length) return;
+    if (files.length > 1 && membership.tier !== 'free') {
+      batchFiles = files;
+      batchStrip.innerHTML = files.map(f => '<img class="batch-thumb" src="' + URL.createObjectURL(f) + '">').join('');
+      analyzeSingleFile(files[0]);
+    } else {
+      analyzeSingleFile(files[0]);
+    }
+  });
+
+  let exportQuality = 'max';
+  document.querySelectorAll('.quality-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.quality-opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      exportQuality = opt.dataset.q;
+    });
+  });
+
+  // ---------- Membership modal ----------
+  const upgradeModal = document.getElementById('upgradeModal');
+  function openUpgradeModal(tier) {
+    pendingUpgradeTier = tier || 'pro';
+    renderModal();
+    upgradeModal.classList.add('open');
+  }
+  function closeUpgradeModal() { upgradeModal.classList.remove('open'); }
+  document.getElementById('closeModal').addEventListener('click', closeUpgradeModal);
+  upgradeModal.addEventListener('click', (e) => { if (e.target === upgradeModal) closeUpgradeModal(); });
+  document.getElementById('upgradeBtnPro').addEventListener('click', () => openUpgradeModal('pro'));
+  document.getElementById('upgradeBtnUltra').addEventListener('click', () => openUpgradeModal('ultra'));
+  document.getElementById('unlockFromReport').addEventListener('click', () => openUpgradeModal('pro'));
+
+  function renderModal() {
+    const t = translations[currentLang];
+    const tier = pendingUpgradeTier;
+    document.getElementById('modalTitle').textContent = tier === 'ultra' ? t.modalTitleUltraT : t.modalTitleProT;
+    document.getElementById('modalSub').textContent = tier === 'ultra' ? t.modalSubUltraT : t.modalSubProT;
+    const billingRow = document.getElementById('billingRow');
+    const cycles = ['weekly','monthly','yearly'];
+    const labels = { weekly: t.weekly, monthly: t.monthly, yearly: t.yearly };
+    billingRow.innerHTML = cycles.map(c => {
+      const price = PRICES[tier][c];
+      const active = membership.billing === c ? 'active' : '';
+      return '<div class="billing-opt ' + active + '" data-cycle="' + c + '"><div class="p1">' + labels[c] + '</div><div class="p2">$' + price.toFixed(2) + '</div></div>';
+    }).join('');
+    billingRow.querySelectorAll('.billing-opt').forEach(el => {
+      el.addEventListener('click', () => {
+        membership.billing = el.dataset.cycle;
+        renderModal();
+      });
+    });
+    const featsList = tier === 'ultra'
+      ? ['ultraF0','proF1','proF2','proF3','proF4','proF5','ultraF1','ultraF2','ultraF3']
+      : ['proF1','proF2','proF3','proF4','proF5'];
+    document.getElementById('modalFeats').innerHTML = featsList.map(k =>
+      '<li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span>' + t[k] + '</span></li>'
+    ).join('');
+  }
+
+  document.getElementById('demoUnlockBtn').addEventListener('click', () => {
+    membership.tier = pendingUpgradeTier;
+    saveMembership();
+    closeUpgradeModal();
+    renderAll();
+  });
+
+  function renderAll() {
+    const t = translations[currentLang];
+    const tierBadge = document.getElementById('tierBadge');
+    const freeBadge = document.getElementById('freeBadge');
+    const proPriceTag = document.getElementById('proPriceTag');
+    const ultraPriceTag = document.getElementById('ultraPriceTag');
+    const ghostLock = document.getElementById('ghostLock');
+    const ghostSwitchWrap = document.getElementById('ghostSwitchWrap');
+    const ghostCard = document.getElementById('ghostCard');
+    const panicLock = document.getElementById('panicLock');
+    const panicBtnEl = document.getElementById('panicBtn');
+    const reportOverlay = document.getElementById('reportOverlay');
+
+    tierBadge.textContent = membership.tier === 'ultra' ? t.ultraActive : (membership.tier === 'pro' ? t.proActive : 'FREE');
+    proPriceTag.innerHTML = '$' + PRICES.pro.monthly.toFixed(2) + '<span>' + t.perMonth + '</span>';
+    ultraPriceTag.innerHTML = '$' + PRICES.ultra.monthly.toFixed(2) + '<span>' + t.perMonth + '</span>';
+    freeBadge.textContent = membership.tier === 'free' ? t.currentPlan : '';
+
+    const hasPro = membership.tier === 'pro' || membership.tier === 'ultra';
+    const hasUltra = membership.tier === 'ultra';
+
+    ghostLock.style.display = hasPro ? 'none' : '';
+    ghostSwitchWrap.style.display = hasPro ? '' : 'none';
+    ghostCard.classList.toggle('locked', !hasPro);
+
+    panicLock.style.display = hasUltra ? 'none' : '';
+    panicBtnEl.classList.toggle('locked', !hasUltra);
+
+    reportOverlay.style.display = hasPro ? 'none' : '';
+    document.getElementById('reportWrap').classList.toggle('locked', !hasPro);
+
+    document.getElementById('uploadText').textContent = hasPro ? t.uploadTextBatch : t.uploadText;
+
+    renderQuota();
+    renderStats();
+  }
+
+  function renderQuota() {
+    const t = translations[currentLang];
+    const pill = document.getElementById('quotaPill');
+    const hasPro = membership.tier !== 'free';
+    if (hasPro) {
+      pill.innerHTML = '⚡ ' + t.quotaUnlimited;
+    } else {
+      const remaining = Math.max(0, 3 - usage.count);
+      pill.innerHTML = remaining > 0 ? t.quotaFree.replace('{n}', remaining) : t.quotaOver;
+    }
+  }
+
+  function renderStats() {
+    document.getElementById('statLoc').textContent = stats.loc;
+    document.getElementById('statDevice').textContent = stats.device;
+    document.getElementById('statCleaned').textContent = stats.cleaned;
+    const avg = stats.scores.length ? Math.round(stats.scores.reduce((a,b)=>a+b,0)/stats.scores.length) : null;
+    document.getElementById('statAvg').textContent = avg === null ? '--' : avg;
+  }
+
+  document.getElementById('ghostCard').addEventListener('click', () => {
+    if (membership.tier === 'free') openUpgradeModal('pro');
+  });
+  document.getElementById('panicBtn').addEventListener('click', (e) => {
+    if (membership.tier !== 'ultra') { e.stopImmediatePropagation(); openUpgradeModal('ultra'); }
+    else { document.getElementById('panicInput').click(); }
+  });
+
+  // ---------- Tabs ----------
+  document.querySelectorAll('.navbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.navbtn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tabpage').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---------- Score ring ----------
+  const circle = document.getElementById('scoreCircle');
+  const CIRC = 2 * Math.PI * 52;
+  function setScore(score) {
+    document.getElementById('scoreNum').textContent = score;
+    circle.style.strokeDashoffset = CIRC - (score/100) * CIRC;
+  }
+
+  // ---------- Real EXIF-strip clean (canvas re-encode, format-aware for real quality) ----------
+  // ---------- Minimal dependency-free ZIP writer (STORED, no compression) ----------
+  // Used for "download all as one file" in Panic Clean. No external library -
+  // same offline-reliability reasoning as the EXIF parser above.
+  const CRC_TABLE = (() => {
+    const table = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      table[n] = c >>> 0;
+    }
+    return table;
+  })();
+  function crc32(bytes) {
+    let crc = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) crc = CRC_TABLE[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+  }
+  function dosDateTime() {
+    const d = new Date();
+    const time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+    const date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+    return { time, date };
+  }
+  async function createZipBlob(entries) { // entries: [{ name, blob }]
+    const { time, date } = dosDateTime();
+    const localParts = [];
+    const centralParts = [];
+    let offset = 0;
+    for (const entry of entries) {
+      const nameBytes = new TextEncoder().encode(entry.name);
+      const data = new Uint8Array(await entry.blob.arrayBuffer());
+      const crc = crc32(data);
+      const local = new DataView(new ArrayBuffer(30));
+      local.setUint32(0, 0x04034b50, true);
+      local.setUint16(4, 20, true);
+      local.setUint16(6, 0, true);
+      local.setUint16(8, 0, true); // no compression (STORED)
+      local.setUint16(10, time, true);
+      local.setUint16(12, date, true);
+      local.setUint32(14, crc, true);
+      local.setUint32(18, data.length, true);
+      local.setUint32(22, data.length, true);
+      local.setUint16(26, nameBytes.length, true);
+      local.setUint16(28, 0, true);
+      localParts.push(new Uint8Array(local.buffer), nameBytes, data);
+
+      const central = new DataView(new ArrayBuffer(46));
+      central.setUint32(0, 0x02014b50, true);
+      central.setUint16(4, 20, true);
+      central.setUint16(6, 20, true);
+      central.setUint16(8, 0, true);
+      central.setUint16(10, 0, true);
+      central.setUint16(12, time, true);
+      central.setUint16(14, date, true);
+      central.setUint32(16, crc, true);
+      central.setUint32(20, data.length, true);
+      central.setUint32(24, data.length, true);
+      central.setUint16(28, nameBytes.length, true);
+      central.setUint16(30, 0, true);
+      central.setUint16(32, 0, true);
+      central.setUint16(34, 0, true);
+      central.setUint16(36, 0, true);
+      central.setUint32(38, 0, true);
+      central.setUint32(42, offset, true);
+      centralParts.push(new Uint8Array(central.buffer), nameBytes);
+
+      offset += local.byteLength + nameBytes.length + data.length;
+    }
+    const centralStart = offset;
+    let centralSize = 0;
+    for (let i = 0; i < centralParts.length; i += 2) centralSize += centralParts[i].length + centralParts[i+1].length;
+    const end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true);
+    end.setUint16(4, 0, true);
+    end.setUint16(6, 0, true);
+    end.setUint16(8, entries.length, true);
+    end.setUint16(10, entries.length, true);
+    end.setUint32(12, centralSize, true);
+    end.setUint32(16, centralStart, true);
+    end.setUint16(20, 0, true);
+    return new Blob([...localParts, ...centralParts, new Uint8Array(end.buffer)], { type: 'application/zip' });
+  }
+  async function getCleanedBlob(file) {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = url; });
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    canvas.getContext('2d').drawImage(img, 0, 0);
+    const isPng = file.type === 'image/png';
+    const wantsMax = (membership.tier !== 'free') && exportQuality === 'max';
+    const mime = isPng ? 'image/png' : 'image/jpeg';
+    const quality = isPng ? undefined : (wantsMax ? 1.0 : (membership.tier === 'free' ? 0.85 : 0.95));
+    URL.revokeObjectURL(url);
+    return new Promise((resolve) => canvas.toBlob(resolve, mime, quality));
+  }
+  async function zipAndDownloadAll(files) {
+    const entries = [];
+    for (const f of files) {
+      const blob = await getCleanedBlob(f);
+      entries.push({ name: 'clean_' + f.name.replace(/\.[^.]+$/, '') + (f.type === 'image/png' ? '.png' : '.jpg'), blob });
+    }
+    const zipBlob = await createZipBlob(entries);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(zipBlob);
+    a.download = 'privacy_guard_cleaned_' + Date.now() + '.zip';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    stats.cleaned += files.length;
+    saveStats();
+    renderStats();
+  }
+
+  function cleanAndDownload(file) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        const isPng = file.type === 'image/png';
+        const wantsMax = (membership.tier !== 'free') && exportQuality === 'max';
+        // PNG re-export is lossless by nature (no quality parameter needed).
+        // For JPEG, the free tier keeps a modest quality; Pro/Ultra "max" uses the
+        // highest quality the browser's encoder supports (still standard JPEG,
+        // since JPEG itself is a lossy format — there's no "lossless JPEG").
+        const mime = isPng ? 'image/png' : 'image/jpeg';
+        const quality = isPng ? undefined : (wantsMax ? 1.0 : (membership.tier === 'free' ? 0.85 : 0.95));
+        const ext = isPng ? '.png' : '.jpg';
+
+        canvas.toBlob(function(blob) {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'clean_' + file.name.replace(/\.[^.]+$/, '') + ext;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          stats.cleaned += 1;
+          saveStats();
+          renderStats();
+          resolve();
+        }, mime, quality);
+      };
+      img.src = url;
+    });
+  }
+
+  // ---------- Self-contained EXIF reader (no external library, no network) ----------
+  // Reads just the fields this app needs directly from the JPEG's APP1/Exif
+  // segment: GPS presence, camera make/model, original date, embedded thumbnail.
+  // Replacing the old CDN-loaded exif-js dependency means scanning can never
+  // hang or silently fail just because a third-party script didn't load.
+  function readExifData(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      let tags = {};
+      try { tags = parseExifBuffer(e.target.result); }
+      catch (err) { tags = {}; } // corrupt/unsupported file -> treat as "no metadata found", never hang
+      callback(tags);
+    };
+    reader.onerror = function() { callback({}); };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function parseExifBuffer(buffer) {
+    const view = new DataView(buffer);
+    if (view.byteLength < 4 || view.getUint16(0) !== 0xFFD8) return {}; // not a JPEG
+    let offset = 2;
+    while (offset + 4 <= view.byteLength) {
+      const marker = view.getUint16(offset);
+      if ((marker & 0xFF00) !== 0xFF00) break;
+      if (marker === 0xFFE1) return parseApp1(view, offset + 4);
+      if (marker === 0xFFDA) break; // start of scan data - no more metadata segments follow
+      const segLength = view.getUint16(offset + 2);
+      if (segLength < 2) break;
+      offset += 2 + segLength;
+    }
+    return {};
+  }
+
+  function parseApp1(view, segStart) {
+    if (segStart + 10 > view.byteLength) return {};
+    if (view.getUint32(segStart) !== 0x45786966) return {}; // "Exif"
+    const tiffStart = segStart + 6;
+    const byteOrder = view.getUint16(tiffStart);
+    const little = byteOrder === 0x4949; // 'II' = little-endian, 'MM' = big-endian
+    const g16 = (o) => view.getUint16(o, little);
+    const g32 = (o) => view.getUint32(o, little);
+
+    function readIFD(ifdOffset) {
+      const abs = tiffStart + ifdOffset;
+      if (abs + 2 > view.byteLength) return { entries: {}, next: 0, abs };
+      const count = g16(abs);
+      const entries = {};
+      for (let i = 0; i < count; i++) {
+        const eo = abs + 2 + i * 12;
+        if (eo + 12 > view.byteLength) break;
+        entries[g16(eo)] = { type: g16(eo + 2), count: g32(eo + 4), valOff: eo + 8 };
+      }
+      const nextPos = abs + 2 + count * 12;
+      const next = (nextPos + 4 <= view.byteLength) ? g32(nextPos) : 0;
+      return { entries, next };
+    }
+
+    function getString(entry) {
+      const size = entry.count;
+      const dataStart = size <= 4 ? entry.valOff : tiffStart + g32(entry.valOff);
+      if (dataStart + size > view.byteLength) return '';
+      let str = '';
+      for (let i = 0; i < size - 1; i++) str += String.fromCharCode(view.getUint8(dataStart + i));
+      return str;
+    }
+
+    const firstIFDOffset = g32(tiffStart + 4);
+    const ifd0 = readIFD(firstIFDOffset);
+    const result = {};
+
+    if (ifd0.entries[0x010F]) result.make = getString(ifd0.entries[0x010F]);
+    if (ifd0.entries[0x0110]) result.model = getString(ifd0.entries[0x0110]);
+
+    if (ifd0.entries[0x8769]) { // Exif SubIFD pointer
+      const exifIFD = readIFD(g32(ifd0.entries[0x8769].valOff));
+      if (exifIFD.entries[0x9003]) result.dateTimeOriginal = getString(exifIFD.entries[0x9003]);
+    }
+    if (ifd0.entries[0x8825]) { // GPS IFD pointer
+      const gpsIFD = readIFD(g32(ifd0.entries[0x8825].valOff));
+      if (gpsIFD.entries[0x0002]) result.hasGPS = true; // GPSLatitude tag present
+    }
+    if (ifd0.next) { // IFD1 = thumbnail directory
+      const ifd1 = readIFD(ifd0.next);
+      if (ifd1.entries[0x0201]) result.hasThumbnail = true; // JPEGInterchangeFormat present
+    }
+    return result;
+  }
+
+  // ---------- Image analysis ----------
+  const input = document.getElementById('fileInput');
+  const panicInput = document.getElementById('panicInput');
+  const previewWrap = document.getElementById('previewWrap');
+  const preview = document.getElementById('preview');
+  const result = document.getElementById('result');
+  const batchStrip = document.getElementById('batchStrip');
+
+  function findingHTML(cls, iconSvg, text) {
+    return '<div class="finding ' + cls + '"><span class="ic">' + iconSvg + '</span>' + text + '</div>';
+  }
+  const ICONS = {
+    pin: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></svg>',
+    check: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg>',
+    device: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+    img: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-4 4-3-3-5 5"/></svg>',
+    dl: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 19h16"/></svg>'
+  };
+
+  function canScanToday() {
+    if (membership.tier !== 'free') return true;
+    return usage.count < 3;
+  }
+
+  function analyzeSingleFile(file, onDone) {
+    if (!canScanToday()) { renderQuota(); return; }
+    lastScanFile = file;
+    result.innerHTML = '';
+    preview.src = URL.createObjectURL(file);
+    previewWrap.style.display = 'block';
+    previewWrap.classList.add('scanning');
+    setScore(0);
+
+    setTimeout(() => {
+      let settled = false;
+      const finish = (tags) => {
+        if (settled) return;
+        settled = true;
+        const lat = tags.hasGPS;
+        const make = tags.make;
+        const model = tags.model;
+        const date = tags.dateTimeOriginal;
+        const thumb = tags.hasThumbnail;
+        const t = translations[currentLang];
+
+        let score = 100;
+        let html = '';
+
+        if (lat) { score -= 40; stats.loc += 1; html += findingHTML('warn', ICONS.pin, t.findGps); }
+        else { html += findingHTML('safe', ICONS.check, t.findClean); }
+
+        if (make || model) { score -= 20; stats.device += 1; html += findingHTML('warn', ICONS.device, t.findDevice + ': ' + (make||'') + ' ' + (model||'')); }
+        if (date) { score -= 10; html += findingHTML('warn', ICONS.clock, t.findDate); }
+        if (thumb) { score -= 10; html += findingHTML('warn', ICONS.img, t.findThumb); }
+        if (score === 100) { html += findingHTML('safe', ICONS.check, t.findAllClean); }
+
+        score = Math.max(score, 10);
+        stats.scores.push(score);
+        if (stats.scores.length > 200) stats.scores = stats.scores.slice(-200);
+
+        html += '<button class="clean-btn" id="cleanNowBtn"><span>' + ICONS.dl + '</span><span>' + t.cleanBtnText + '</span></button>';
+
+        result.innerHTML = html;
+        previewWrap.classList.remove('scanning');
+        setScore(score);
+
+        if (membership.tier === 'free') { usage.count += 1; saveUsage(); }
+        saveStats();
+        renderQuota();
+        renderStats();
+
+        document.getElementById('cleanNowBtn').addEventListener('click', () => cleanAndDownload(file));
+
+        // Ghost Mode: auto clean immediately for pro/ultra users who enabled it
+        const ghostOn = document.getElementById('ghostToggle').checked;
+        if (ghostOn && membership.tier !== 'free') { cleanAndDownload(file); }
+
+        if (typeof onDone === 'function') onDone();
+      };
+
+      // Safety net: never let the UI hang mid-scan, even on a corrupt file or an
+      // unexpected read failure - fall back to "no metadata found" after 4s.
+      const safetyTimer = setTimeout(() => finish({}), 4000);
+      readExifData(file, (tags) => { clearTimeout(safetyTimer); finish(tags); });
+    }, 900);
+  }
+
+  input.addEventListener('change', function(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    if (files.length > 1 && membership.tier !== 'free') {
+      batchFiles = files;
+      batchStrip.innerHTML = files.map(f => '<img class="batch-thumb" src="' + URL.createObjectURL(f) + '">').join('');
+      analyzeSingleFile(files[0]);
+    } else {
+      analyzeSingleFile(files[0]);
+    }
+  });
+
+  panicInput.addEventListener('change', async function(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const panicBtnEl = document.getElementById('panicBtn');
+    const originalHTML = panicBtnEl.innerHTML;
+    const t = translations[currentLang];
+    panicBtnEl.innerHTML = '<span>' + (t.zippingLabel || '...') + '</span>';
+    panicBtnEl.style.pointerEvents = 'none';
+    try {
+      await zipAndDownloadAll(files);
+    } finally {
+      panicBtnEl.innerHTML = originalHTML;
+      panicBtnEl.style.pointerEvents = '';
+    }
+  });
+
+  // ---------- init ----------
+  loadState().then(() => {
+    applyLang('ar');
+    if (!hasStorage()) {
+      const note = document.createElement('p');
+      note.className = 'disclaimer';
+      note.style.marginTop = '10px';
+      note.textContent = currentLang === 'ar'
+        ? '* التخزين الدائم غير متاح في هذه البيئة — الحد اليومي والاشتراك يشتغلون بذاكرة هذه الجلسة فقط ويرجعون افتراضيين إذا أعدت فتح الصفحة من جديد.'
+        : '* Persistent storage isn\'t available in this environment — daily limit and plan status only last for this page session.';
+      document.querySelector('#tab-scan .card-panel').appendChild(note);
+    }
+  });
+});
+</script>
+
+</body>
+</html>
