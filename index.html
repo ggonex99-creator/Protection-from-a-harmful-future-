@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <title>Privacy Guard Pro</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0f0d">
+<link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Cairo:wght@400;600;700;800;900&family=Noto+Sans+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -20,6 +23,13 @@
     --ink-dim: #8b9a93;
     --line: rgba(255,255,255,0.08);
     --surface: rgba(255,255,255,0.035);
+  }
+  body[data-mode="light"] {
+    --bg: #f3f6f4;
+    --ink: #10201a;
+    --ink-dim: #5b6b64;
+    --line: rgba(10,20,16,0.1);
+    --surface: rgba(10,20,16,0.035);
   }
   * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
   html { height: 100%; }
@@ -53,7 +63,7 @@
   .hero h1 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 9px; letter-spacing: -0.2px; line-height: 1.4; }
   .hero p { color: var(--ink-dim); font-size: 13.5px; line-height: 1.8; max-width: 330px; margin: 0 auto; }
 
-  .quota-pill { display:flex; align-items:center; justify-content:center; gap: 8px; margin: 14px auto 0; width:fit-content; padding: 7px 14px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); font-family:'IBM Plex Mono',monospace; font-size: 11.5px; color: var(--ink-dim); }
+  .quota-pill { display:flex; align-items:center; justify-content:center; gap: 8px; margin: 14px auto 0; max-width:92%; width:fit-content; padding: 7px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); font-family:'IBM Plex Mono',monospace; font-size: 11.5px; color: var(--ink-dim); text-align:center; line-height:1.7; white-space:normal; }
   .quota-pill b { color: var(--accent-1); font-weight:600; }
 
   .score-wrap { display:flex; justify-content:center; margin: 22px 0 6px; }
@@ -208,9 +218,11 @@
   .modal-close { position:absolute; top: 20px; inset-inline-end: 20px; width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; }
   .modal-close svg { width: 15px; height: 15px; color: var(--ink-dim); }
   .demo-note { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #5b6660; text-align:center; margin-top: 14px; line-height: 1.7; }
+  .breach-banner { display:none; align-items:center; gap:10px; background: rgba(255,180,84,0.14); border:1px solid rgba(255,180,84,0.35); color:#ffcb87; padding:12px 16px; margin: 12px 22px 0; border-radius:10px; font-size:12.5px; font-weight:600; line-height:1.5; }
+  .breach-banner button { margin-inline-start:auto; background:transparent; border:none; color:inherit; font-size:18px; line-height:1; flex-shrink:0; }
 
   .tool-card { background: var(--surface); border:1px solid var(--line); border-radius:12px; padding: 16px 18px; margin-bottom: 14px; }
-  .tool-card .t { font-size:14.5px; font-weight:700; margin-bottom:5px; display:flex; align-items:center; gap:9px; }
+  .tool-card .t { font-size:14.5px; font-weight:700; margin-bottom:5px; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
   .tool-card .t svg { width:16px; height:16px; color: var(--accent-1); }
   .tool-card .s { font-size:12px; color: var(--ink-dim); line-height:1.7; margin-bottom:12px; }
   .field-row { display:flex; gap:8px; }
@@ -234,6 +246,40 @@
   .chk-row label { font-size:12.5px; line-height:1.6; color:#d1d5db; }
   .chk-row.done label { color: var(--ink-dim); text-decoration: line-through; }
   .tool-card .t .lock-badge { margin-inline-start: auto; }
+
+  .chat-fab { position: fixed; bottom: 92px; inset-inline-end: 18px; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-1), #2a9d6f); box-shadow: 0 6px 18px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index: 60; }
+  .chat-fab svg { width:24px; height:24px; color:#06110c; }
+  .chat-panel { position: fixed; inset: 0; background: rgba(4,7,6,0.72); backdrop-filter: blur(3px); z-index: 220; display:none; align-items:flex-end; justify-content:center; }
+  .chat-panel.open { display:flex; }
+  .chat-sheet { width:100%; max-width: 480px; height: 78vh; background: var(--bg); border-radius: 20px 20px 0 0; border:1px solid var(--line); display:flex; flex-direction:column; overflow:hidden; }
+  .chat-head { display:flex; align-items:center; justify-content:space-between; padding: 14px 16px; border-bottom:1px solid var(--line); }
+  .chat-head .ttl { font-weight:700; font-size:14.5px; }
+  .chat-close { width:30px; height:30px; border-radius:8px; background: rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; color: var(--ink-dim); }
+  .chat-body { flex:1; overflow-y:auto; padding: 14px 16px; display:flex; flex-direction:column; gap:10px; }
+  .chat-msg { max-width: 82%; padding: 10px 13px; border-radius: 14px; font-size: 13px; line-height:1.7; }
+  .chat-msg.user { align-self:flex-end; background: rgba(var(--accent-1-rgb),0.18); border:1px solid rgba(var(--accent-1-rgb),0.35); }
+  .chat-msg.bot { align-self:flex-start; background: var(--surface); border:1px solid var(--line); }
+  .chat-msg.bot.err { border-color: rgba(255,120,120,0.4); color:#ffb3b3; }
+  .chat-input-row { display:flex; gap:8px; padding: 12px 14px; border-top:1px solid var(--line); }
+  .chat-input-row textarea { flex:1; max-height:80px; background: rgba(255,255,255,0.04); border:1px solid var(--line); border-radius:10px; padding:10px 12px; color:var(--ink); font-family:inherit; font-size:13px; resize:none; }
+  .chat-send { width:42px; border-radius:10px; background: var(--accent-1); color:#06110c; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .chat-send svg { width:18px; height:18px; }
+
+  .mode-toggle { display:flex; gap:8px; margin-top:12px; }
+  .mode-opt { flex:1; padding:10px; border-radius:10px; border:1px solid var(--line); background: var(--surface); text-align:center; font-size:12.5px; color: var(--ink-dim); display:flex; align-items:center; justify-content:center; gap:6px; }
+  .mode-opt.active { color: var(--accent-1); border-color: rgba(var(--accent-1-rgb),0.5); background: rgba(var(--accent-1-rgb),0.1); font-weight:700; }
+  .mode-opt svg { width:14px; height:14px; }
+
+  .streak-row { display:flex; align-items:center; justify-content:center; gap:8px; margin: 14px auto 0; padding: 9px 18px; border-radius:16px; background: linear-gradient(135deg, rgba(255,140,50,0.14), rgba(255,180,84,0.08)); border:1px solid rgba(255,160,60,0.3); width:fit-content; font-size:12.5px; font-weight:700; color:#ffb454; }
+  .badge-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .badge-chip { display:flex; align-items:center; gap:6px; padding:7px 12px; border-radius:20px; background: var(--surface); border:1px solid var(--line); font-size:11.5px; color: var(--ink-dim); }
+  .badge-chip.earned { color: var(--accent-1); border-color: rgba(var(--accent-1-rgb),0.4); background: rgba(var(--accent-1-rgb),0.08); }
+
+  .typing-dots { display:inline-flex; gap:4px; align-items:center; padding: 4px 2px; }
+  .typing-dots span { width:6px; height:6px; border-radius:50%; background: var(--ink-dim); animation: typingBounce 1.2s infinite ease-in-out; }
+  .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); opacity:0.5; } 30% { transform: translateY(-4px); opacity:1; } }
 </style>
 </head>
 <body id="bodyEl">
@@ -246,6 +292,8 @@
     <div class="pro-badge" id="tierBadge">FREE</div>
   </div>
 
+  <div class="breach-banner" id="breachBanner"><span id="breachBannerText"></span><button id="breachBannerClose">×</button></div>
+
   <div class="tabpage active" id="tab-scan">
     <div class="hero">
       <h1 data-i18n="scanTitle">افحص صورك قبل النشر</h1>
@@ -253,6 +301,7 @@
     </div>
 
     <div class="quota-pill" id="quotaPill"></div>
+    <div class="quota-pill" id="deepScanBadge" style="margin-top:8px; cursor:pointer;"></div>
 
     <div class="score-wrap">
       <div class="ring">
@@ -300,6 +349,7 @@
     <div class="card-panel">
       <div class="report-locked-wrap locked" id="reportWrap">
         <div class="report-card">
+          <div class="report-row"><span class="lbl"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/></svg><span data-i18n="overallScore">نتيجتك الإجمالية</span></span><span class="val green" id="statOverall">--</span></div>
           <div class="report-row"><span class="lbl"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></svg><span data-i18n="r1">صور فيها موقعك</span></span><span class="val red" id="statLoc">0</span></div>
           <div class="report-row"><span class="lbl"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg><span data-i18n="r2b">صور كشفت جهازك</span></span><span class="val red" id="statDevice">0</span></div>
           <div class="report-row"><span class="lbl"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4l16 16M9 9a3 3 0 0 0 4.24 4.24M6 6C4 7.5 3 9.5 3 12c0 0 3 7 9 7 1.6 0 3-.4 4.2-1.1M17.9 17.9C19.8 16.4 21 12 21 12s-1.5-3.5-4.5-5.5"/></svg><span data-i18n="r3">صور تم تنظيفها</span></span><span class="val green" id="statCleaned">0</span></div>
@@ -311,6 +361,14 @@
           <button id="unlockFromReport" data-i18n="upgradeBtn">الترقية</button>
         </div>
       </div>
+    </div>
+    <div class="card-panel" style="margin-top:-8px;">
+      <div class="tips-card" id="nextStepCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg><span data-i18n="nextStepLabel">خطوتك الجاية</span></div>
+        <div class="s" id="nextStepText"></div>
+      </div>
+      <div class="streak-row" id="streakRow"></div>
+      <div class="badge-row" id="badgeRow"></div>
     </div>
     <p class="disclaimer" data-i18n="reportNote">* الأرقام تتراكم من عمليات الفحص والتنظيف التي تسويها فعليًا داخل هذا التطبيق</p>
   </div>
@@ -377,6 +435,11 @@
         <div class="swatch" data-c1="#60a5fa" data-c2="#94a3b8" data-c3="#e2e8f0" data-r1="96,165,250" data-r2="148,163,184" data-r3="226,232,240" style="background: linear-gradient(135deg,#60a5fa,#e2e8f0)"></div>
         <div class="swatch" data-c1="#fb923c" data-c2="#dc2626" data-c3="#facc15" data-r1="251,146,60" data-r2="220,38,38" data-r3="250,204,21" style="background: linear-gradient(135deg,#fb923c,#dc2626)"></div>
         <div class="swatch" data-c1="#4ade80" data-c2="#166534" data-c3="#d9f99d" data-r1="74,222,128" data-r2="22,101,52" data-r3="217,249,157" style="background: linear-gradient(135deg,#4ade80,#166534)"></div>
+      </div>
+
+      <div class="mode-toggle" id="modeToggle">
+        <div class="mode-opt active" data-mode="dark"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg><span data-i18n="modeDark">داكن</span></div>
+        <div class="mode-opt" data-mode="light"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span data-i18n="modeLight">فاتح</span></div>
       </div>
 
       <div class="section-title" data-i18n="language">اللغة</div>
@@ -448,6 +511,27 @@
     </div>
     <div class="card-panel">
 
+      <div class="tool-card" id="linkScanCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg><span data-i18n="linkScanTitle">فاحص الروابط المشبوهة</span></div>
+        <div class="s" data-i18n="linkScanSub">يفحص شكل الرابط بحثًا عن أنماط شائعة بروابط التصيّد: رابط IP مباشر بدل دومين، اختصار روابط يخفي الوجهة، أو دومين يحاكي اسم موقع مشهور بحروف مشابهة. هذا مؤشر تقريبي بناءً على شكل الرابط فقط، مو فحص فيروسات حقيقي ولا بديل عن الحذر.</div>
+        <div class="field-row">
+          <input type="text" class="field-input" id="linkInput" data-i18n-ph="linkPlaceholder" placeholder="الصق الرابط هنا...">
+        </div>
+        <button class="tool-btn" id="linkScanBtn" data-i18n="linkScanBtn">افحص الرابط</button>
+        <div class="tool-result" id="linkScanResult"></div>
+      </div>
+
+      <div class="tool-card" id="aiDetectCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M8 15c1.2 1 2.6 1.5 4 1.5s2.8-.5 4-1.5"/></svg><span data-i18n="aiDetectTitle">كاشف محتوى الذكاء الاصطناعي</span><span class="lock-badge" id="aiDetectLock"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+        <div class="s" data-i18n="aiDetectSub">يفحص بصمات حقيقية بالبيانات الوصفية للصور (أسماء برامج مثل Midjourney وDALL-E وStable Diffusion)، ويفحص النص بحثًا عن أنماط كتابة شائعة بالمحتوى المولّد آليًا. مؤشر تقريبي وليس دليل قطعي 100%.</div>
+        <input type="file" id="aiImgInput" accept="image/*" style="display:none">
+        <button class="tool-btn" id="aiImgBtn" data-i18n="aiImgBtn">افحص صورة</button>
+        <div class="tool-result" id="aiImgResult"></div>
+        <textarea class="field-textarea" id="aiTextInput" style="margin-top:12px" data-i18n-ph="aiTextPlaceholder" placeholder="الصق نص هنا للفحص..."></textarea>
+        <button class="tool-btn" id="aiTextBtn" data-i18n="aiTextBtn">افحص نص</button>
+        <div class="tool-result" id="aiTextResult"></div>
+      </div>
+
       <div class="tool-card" id="ocrCard">
         <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg><span data-i18n="ocrTitle">فاحص المحتوى الظاهر بالصورة</span><span class="lock-badge" id="ocrLock"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
         <div class="s" data-i18n="ocrSub">أغلب التسريبات مو من بيانات EXIF المخفية، أغلبها من نص مكتوب داخل الصورة نفسها: سكرين شوت فيه إيميل، لوحة فيها رقم، ورقة عليها بيانات. هذي الأداة تقرأ النص داخل آخر صورة فحصتها وتفحصه بحثًا عن معلومات حساسة — القراءة تصير محليًا بجهازك.</div>
@@ -509,6 +593,24 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <div class="chat-fab" id="chatFab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 5.9 2 10.7c0 2.7 1.4 5.1 3.7 6.7-.1.9-.6 2.4-1.7 3.9 0 0 2.5-.2 4.9-1.9 1 .3 2 .4 3.1.4 5.5 0 10-3.9 10-8.7S17.5 2 12 2z"/></svg>
+  </div>
+
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-sheet">
+      <div class="chat-head">
+        <span class="ttl" data-i18n="chatTitle">المساعد الذكي</span>
+        <div class="chat-close" id="chatCloseBtn">✕</div>
+      </div>
+      <div class="chat-body" id="chatBody"></div>
+      <div class="chat-input-row">
+        <textarea id="chatInput" rows="1" data-i18n-ph="chatPlaceholder" placeholder="اكتب مشكلتك أو سؤالك هنا..."></textarea>
+        <button class="chat-send" id="chatSendBtn"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+      </div>
     </div>
   </div>
 
@@ -657,7 +759,47 @@ document.addEventListener('DOMContentLoaded', function () {
       pdfFoundPath: "مسار ملف داخلي من جهاز أو سيرفر الشركة مكشوف بالبيانات",
       pdfFoundDates: "تاريخ الإنشاء والتعديل الحقيقي مكشوف",
       pdfClean: "ما لقينا بيانات وصفية حساسة واضحة بهذا الملف",
-      lockedFeature: "هذي ميزة مدفوعة — اضغط للترقية"
+      lockedFeature: "هذي ميزة مدفوعة — اضغط للترقية",
+      aiDetectTitle: "كاشف محتوى الذكاء الاصطناعي",
+      aiDetectSub: "يفحص بصمات حقيقية بالبيانات الوصفية للصور (أسماء برامج مثل Midjourney وDALL-E وStable Diffusion)، ويفحص النص بحثًا عن أنماط كتابة شائعة بالمحتوى المولّد آليًا. مؤشر تقريبي وليس دليل قطعي 100%.",
+      aiImgBtn: "افحص صورة",
+      aiTextPlaceholder: "الصق نص هنا للفحص...",
+      aiTextBtn: "افحص نص",
+      aiImgFound: "لقينا بصمة توضح إن الصورة مصنوعة أو معدّلة بأداة ذكاء اصطناعي",
+      aiImgClean: "ما لقينا أي بصمة وصفية توضح إنها من الذكاء الاصطناعي (هذا مو دليل قاطع إنها حقيقية — البرامج التي تحذف البيانات الوصفية تفوّت هذا الفحص)",
+      aiTextFound: "النص فيه أنماط كتابة شائعة بالمحتوى المولّد آليًا — احتمال إنه مكتوب أو معاد صياغته بالذكاء الاصطناعي",
+      aiTextClean: "ما لقينا أنماط واضحة تدل على إنه نص مولّد آليًا",
+      overallScore: "نتيجتك الإجمالية",
+      nextStepLabel: "خطوتك الجاية",
+      nextStepPw: "افتح تبويب «أدوات» وتحقق إذا كلمة سرك مسربة",
+      nextStepChecklist: "كمّل قائمة التشيك بتبويب «أدوات» قبل ما تنشر",
+      nextStepPhoto: "افحص صورك من تبويب «فحص» وشوف إذا فيها بيانات موقع",
+      nextStepAllGood: "كل شي زين! استمر تفحص قبل كل نشر",
+      deepScanOn: "⚡ الفحص الشامل مفعّل — EXIF + النص الظاهر بالصورة + بصمة الذكاء الاصطناعي بفحصة وحدة",
+      deepScanOff: "🔒 رقّي لـ Pro لتفعيل الفحص الشامل: فحص النص الظاهر بالصورة وبصمة الذكاء الاصطناعي تلقائيًا مع كل صورة",
+      deepScanRunning: "جاري تشغيل الفحص الشامل (نص ظاهر + بصمة ذكاء اصطناعي)...",
+      deepScanOcrFound: "نص ظاهر بالصورة نفسها:",
+      deepScanAiFound: "بصمة ذكاء اصطناعي بالصورة:",
+      linkScanTitle: "فاحص الروابط المشبوهة",
+      linkScanSub: "يفحص شكل الرابط بحثًا عن أنماط شائعة بروابط التصيّد: رابط IP مباشر بدل دومين، اختصار روابط يخفي الوجهة، أو دومين يحاكي اسم موقع مشهور بحروف مشابهة. هذا مؤشر تقريبي بناءً على شكل الرابط فقط، مو فحص فيروسات حقيقي ولا بديل عن الحذر.",
+      linkPlaceholder: "الصق الرابط هنا...",
+      linkScanBtn: "افحص الرابط",
+      linkInvalid: "هذا مو رابط صحيح",
+      linkFoundIp: "الرابط يستخدم عنوان IP مباشر بدل اسم دومين — شي غير طبيعي بالمواقع الرسمية",
+      linkFoundShortener: "الرابط مختصر (يخفي الوجهة الحقيقية) — تأكد وين بيوديك قبل ما تفتحه",
+      linkFoundHomograph: "اسم الدومين يشبه موقع مشهور بس بحروف أو رموز مختلفة — احتمال تصيّد (Phishing)",
+      linkFoundSuspicious: "الرابط فيه كلمات أو رموز شائعة بروابط التصيّد (تسجيل دخول وهمي، رموز غريبة زايدة)",
+      linkClean: "ما لقينا أنماط تصيّد واضحة بشكل الرابط — بس هذا مو ضمان إنه آمن 100%، افحص المصدر دايمًا",
+      modeDark: "داكن", modeLight: "فاتح",
+      streakLabel: "سلسلة أيام الحماية",
+      streakDay: "يوم", streakDays: "أيام",
+      badgeFirstScan: "🔍 أول فحص", badgeCleaned10: "🧹 10 صور نظيفة", badgePwChecked: "🔑 فحصت كلمة السر",
+      badgeChecklist: "✅ قائمة كاملة", badgeSubscriber: "⭐ مشترك", badgeStreak7: "🔥 أسبوع كامل",
+      chatTitle: "المساعد الذكي",
+      chatPlaceholder: "اكتب مشكلتك أو سؤالك هنا...",
+      chatWelcome: "هلا! أنا مساعدك الذكي بتطبيق Privacy Guard. اسألني عن أي ميزة بالتطبيق أو أي مشكلة تواجهك وأحاول أساعدك.",
+      chatNotConfigured: "المحادثة الذكية ما انربطت بسيرفر بعد — لازم صاحب التطبيق يضيف رابط الخادم (backend) الخاص فيه بالكود قبل ما تشتغل هذي الميزة.",
+      chatError: "صار خطأ بالاتصال بالمساعد — جرب مرة ثانية بعد شوي"
     },
     en: {
       scanTitle: "Scan your photos before posting",
@@ -768,7 +910,47 @@ document.addEventListener('DOMContentLoaded', function () {
       pdfFoundPath: "An internal device/server file path is exposed in the metadata",
       pdfFoundDates: "The real creation/modification dates are exposed",
       pdfClean: "No obvious sensitive metadata found in this file",
-      lockedFeature: "This is a paid feature — tap to upgrade"
+      lockedFeature: "This is a paid feature — tap to upgrade",
+      aiDetectTitle: "AI Content Detector",
+      aiDetectSub: "Checks images for real generator fingerprints in metadata (names like Midjourney, DALL-E, Stable Diffusion), and scans text for writing patterns common in AI-generated content. An approximate signal, not definitive proof.",
+      aiImgBtn: "Scan an image",
+      aiTextPlaceholder: "Paste text here to scan...",
+      aiTextBtn: "Scan text",
+      aiImgFound: "Found a fingerprint indicating this image was made or edited with an AI tool",
+      aiImgClean: "No metadata fingerprint of AI generation found (not proof it's real — tools that strip metadata will pass this check)",
+      aiTextFound: "This text shows writing patterns common in AI-generated content — it may be AI-written or AI-paraphrased",
+      aiTextClean: "No clear patterns suggesting AI-generated text were found",
+      overallScore: "Your Overall Score",
+      nextStepLabel: "Your Next Step",
+      nextStepPw: "Open the Tools tab and check if your password has been leaked",
+      nextStepChecklist: "Finish the checklist in the Tools tab before you post",
+      nextStepPhoto: "Scan your photos in the Scan tab and check for location data",
+      nextStepAllGood: "Everything looks good! Keep scanning before every post",
+      deepScanOn: "⚡ Deep Scan active — EXIF + visible text + AI fingerprint in one pass",
+      deepScanOff: "🔒 Upgrade to Pro to enable Deep Scan: automatically check visible text and AI fingerprints with every photo",
+      deepScanRunning: "Running Deep Scan (visible text + AI fingerprint)...",
+      deepScanOcrFound: "Text visible in the photo itself:",
+      deepScanAiFound: "AI fingerprint in the photo:",
+      linkScanTitle: "Suspicious Link Scanner",
+      linkScanSub: "Checks the shape of a link for common phishing patterns: a raw IP address instead of a domain, a shortener hiding the real destination, or a domain that mimics a known site with lookalike characters. This is an approximate signal based on the link's shape only — not a real virus scan and not a substitute for caution.",
+      linkPlaceholder: "Paste the link here...",
+      linkScanBtn: "Scan link",
+      linkInvalid: "That doesn't look like a valid link",
+      linkFoundIp: "The link uses a raw IP address instead of a domain name — unusual for official sites",
+      linkFoundShortener: "This is a shortened link (hides the real destination) — verify where it leads before opening it",
+      linkFoundHomograph: "The domain looks like a known site but with different characters — possible phishing",
+      linkFoundSuspicious: "The link contains words or patterns common in phishing links (fake login, unusual extra characters)",
+      linkClean: "No obvious phishing patterns found in the link's shape — but that's no 100% guarantee, always check the source",
+      modeDark: "Dark", modeLight: "Light",
+      streakLabel: "Protection streak",
+      streakDay: "day", streakDays: "days",
+      badgeFirstScan: "🔍 First scan", badgeCleaned10: "🧹 10 photos cleaned", badgePwChecked: "🔑 Password checked",
+      badgeChecklist: "✅ Full checklist", badgeSubscriber: "⭐ Subscriber", badgeStreak7: "🔥 Full week",
+      chatTitle: "AI Assistant",
+      chatPlaceholder: "Type your question or issue here...",
+      chatWelcome: "Hi! I'm your Privacy Guard assistant. Ask me about any feature in the app or a problem you're facing.",
+      chatNotConfigured: "The AI chat isn't connected to a server yet — the app owner needs to add their backend URL in the code before this feature works.",
+      chatError: "There was a connection error — please try again in a moment"
     },
     zh: {
       scanTitle: "发布前扫描您的照片",
@@ -879,14 +1061,54 @@ document.addEventListener('DOMContentLoaded', function () {
       pdfFoundPath: "元数据中暴露了内部设备/服务器文件路径",
       pdfFoundDates: "元数据中暴露了真实的创建/修改日期",
       pdfClean: "未在此文件中发现明显的敏感元数据",
-      lockedFeature: "这是付费功能——点击升级"
+      lockedFeature: "这是付费功能——点击升级",
+      aiDetectTitle: "AI内容检测器",
+      aiDetectSub: "检测图片元数据中真实的生成工具指纹（如 Midjourney、DALL-E、Stable Diffusion），并扫描文本中常见于AI生成内容的写作模式。这只是近似信号，并非确凿证据。",
+      aiImgBtn: "扫描图片",
+      aiTextPlaceholder: "在此粘贴文字进行检测...",
+      aiTextBtn: "扫描文字",
+      aiImgFound: "发现指纹显示该图片由AI工具生成或编辑",
+      aiImgClean: "未发现AI生成的元数据指纹（这不能证明它是真实的——去除元数据的工具会绕过此检测）",
+      aiTextFound: "此文本存在AI生成内容常见的写作模式——可能由AI撰写或改写",
+      aiTextClean: "未发现明显的AI生成文本模式",
+      overallScore: "你的综合得分",
+      nextStepLabel: "你的下一步",
+      nextStepPw: "打开“工具”标签页，检查你的密码是否已泄露",
+      nextStepChecklist: "发布前，先完成“工具”标签页里的检查清单",
+      nextStepPhoto: "在“扫描”标签页检测你的照片是否含有位置数据",
+      nextStepAllGood: "一切正常！继续保持每次发布前都扫描的习惯",
+      deepScanOn: "⚡ 深度扫描已启用 — 一次完成EXIF＋可见文字＋AI指纹检测",
+      deepScanOff: "🔒 升级到 Pro 以启用深度扫描：每张照片自动检测可见文字与AI指纹",
+      deepScanRunning: "正在运行深度扫描（可见文字＋AI指纹）...",
+      deepScanOcrFound: "照片中可见的文字：",
+      deepScanAiFound: "照片中的AI指纹：",
+      linkScanTitle: "可疑链接扫描",
+      linkScanSub: "检测链接形态中常见的钓鱼特征：使用IP地址代替域名、使用短链接隐藏真实目的地、或域名模仿知名网站使用相似字符。这只是基于链接外观的近似信号，并非真正的病毒扫描，也不能替代警惕。",
+      linkPlaceholder: "在此粘贴链接...",
+      linkScanBtn: "扫描链接",
+      linkInvalid: "这不是一个有效的链接",
+      linkFoundIp: "该链接使用IP地址而非域名——正规网站中较为罕见",
+      linkFoundShortener: "这是一个短链接（隐藏了真实目的地）——打开前请先确认它指向哪里",
+      linkFoundHomograph: "该域名与知名网站相似但字符不同——可能是钓鱼网站",
+      linkFoundSuspicious: "链接中含有钓鱼链接常见的词语或异常字符",
+      linkClean: "未在链接外观中发现明显的钓鱼特征——但这不能100%保证安全，请始终核实来源",
+      modeDark: "深色", modeLight: "浅色",
+      streakLabel: "连续防护天数",
+      streakDay: "天", streakDays: "天",
+      badgeFirstScan: "🔍 首次扫描", badgeCleaned10: "🧹 已清理10张照片", badgePwChecked: "🔑 已检查密码",
+      badgeChecklist: "✅ 清单已完成", badgeSubscriber: "⭐ 订阅用户", badgeStreak7: "🔥 连续一周",
+      chatTitle: "智能助手",
+      chatPlaceholder: "在此输入你的问题或遇到的问题...",
+      chatWelcome: "你好！我是 Privacy Guard 的智能助手。可以问我应用里的任何功能或你遇到的问题。",
+      chatNotConfigured: "智能对话尚未连接到服务器——应用所有者需要先在代码中添加自己的后端地址，此功能才能使用。",
+      chatError: "连接助手时出错——请稍后重试"
     }
   };
 
   let currentLang = 'ar';
   let membership = { tier: 'free', billing: 'monthly' }; // free | pro | ultra
   let usage = { date: '', count: 0 };
-  let stats = { loc: 0, device: 0, cleaned: 0, scores: [] };
+  let stats = { loc: 0, device: 0, cleaned: 0, scores: [], chkDone: 0, pwSafe: null };
   let pendingUpgradeTier = 'pro';
   let lastScanFile = null;
   let batchFiles = [];
@@ -901,23 +1123,42 @@ document.addEventListener('DOMContentLoaded', function () {
     return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
   }
 
-  // ---------- persistent storage (window.storage, no localStorage) ----------
-  // window.storage is only backed by a real store when this page runs as a
-  // live Claude artifact. If it's missing or unavailable (e.g. the file was
-  // downloaded and opened directly, or embedded elsewhere), everything below
-  // falls back to plain in-memory state for the current page session instead
-  // of throwing an error at the user.
-  function hasStorage() {
+  // ---------- persistent storage ----------
+  // Prefer window.storage when running inside a Claude artifact preview;
+  // otherwise (real hosting on GitHub/Cloudflare Pages, or opened as a
+  // plain file) fall back to localStorage so settings/subscription/stats
+  // actually persist across visits instead of resetting every reload.
+  const LS_PREFIX = 'pg_';
+  function hasArtifactStorage() {
     return typeof window !== 'undefined' && !!window.storage && typeof window.storage.get === 'function';
   }
+  function hasLocalStorage() {
+    try { const k = '__pg_test__'; localStorage.setItem(k, '1'); localStorage.removeItem(k); return true; }
+    catch (e) { return false; }
+  }
   async function storageGet(key) {
-    if (!hasStorage()) return null;
-    try { return await window.storage.get(key); } catch (e) { return null; }
+    if (hasArtifactStorage()) {
+      try { const r = await window.storage.get(key); if (r) return r; } catch (e) {}
+    }
+    if (hasLocalStorage()) {
+      const v = localStorage.getItem(LS_PREFIX + key);
+      return v === null ? null : { value: v };
+    }
+    return null;
   }
   async function storageSet(key, value) {
-    if (!hasStorage()) return null;
-    try { return await window.storage.set(key, value); } catch (e) { return null; }
+    if (hasArtifactStorage()) {
+      try { const r = await window.storage.set(key, value); if (r) return r; } catch (e) {}
+    }
+    if (hasLocalStorage()) {
+      try { localStorage.setItem(LS_PREFIX + key, value); return { key, value }; } catch (e) { return null; }
+    }
+    return null;
   }
+
+  function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+
+  let streak = { count: 0, lastDate: null };
 
   async function loadState() {
     const m = await storageGet('membership');
@@ -926,11 +1167,48 @@ document.addEventListener('DOMContentLoaded', function () {
     if (u && u.value) { try { usage = JSON.parse(u.value); } catch(e){} }
     const s = await storageGet('stats');
     if (s && s.value) { try { stats = JSON.parse(s.value); } catch(e){} }
+    const st = await storageGet('streak');
+    if (st && st.value) { try { streak = JSON.parse(st.value); } catch(e){} }
+    const th = await storageGet('theme');
+    if (th && th.value) {
+      try {
+        const c = JSON.parse(th.value);
+        applyThemeColors(c);
+        document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('active', s.dataset.c1 === c.c1));
+      } catch (e) {}
+    }
+    const md = await storageGet('mode');
+    if (md && md.value) { applyMode(md.value); }
     if (usage.date !== todayStr()) { usage = { date: todayStr(), count: 0 }; saveUsage(); }
   }
   async function saveMembership() { await storageSet('membership', JSON.stringify(membership)); }
   async function saveUsage() { await storageSet('usage', JSON.stringify(usage)); }
   async function saveStats() { await storageSet('stats', JSON.stringify(stats)); }
+  async function saveStreak() { await storageSet('streak', JSON.stringify(streak)); }
+
+  function updateStreak() {
+    const today = todayStr();
+    if (streak.lastDate === today) return;
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    const yesterday = y.toISOString().slice(0,10);
+    streak.count = (streak.lastDate === yesterday) ? streak.count + 1 : 1;
+    streak.lastDate = today;
+    saveStreak();
+  }
+
+  function applyThemeColors(c) {
+    document.documentElement.style.setProperty('--accent-1', c.c1);
+    document.documentElement.style.setProperty('--accent-2', c.c2);
+    document.documentElement.style.setProperty('--accent-3', c.c3);
+    document.documentElement.style.setProperty('--accent-1-rgb', c.r1);
+    document.documentElement.style.setProperty('--accent-2-rgb', c.r2);
+    document.documentElement.style.setProperty('--accent-3-rgb', c.r3);
+    document.documentElement.style.setProperty('--accent-glow', 'rgba(' + c.r1 + ', 0.28)');
+  }
+  function applyMode(mode) {
+    document.getElementById('bodyEl').setAttribute('data-mode', mode);
+    document.querySelectorAll('.mode-opt').forEach(o => o.classList.toggle('active', o.dataset.mode === mode));
+  }
 
   function applyLang(lang) {
     currentLang = lang;
@@ -969,13 +1247,19 @@ document.addEventListener('DOMContentLoaded', function () {
     sw.addEventListener('click', () => {
       document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
       sw.classList.add('active');
-      document.documentElement.style.setProperty('--accent-1', sw.dataset.c1);
-      document.documentElement.style.setProperty('--accent-2', sw.dataset.c2);
-      document.documentElement.style.setProperty('--accent-3', sw.dataset.c3);
-      document.documentElement.style.setProperty('--accent-1-rgb', sw.dataset.r1);
-      document.documentElement.style.setProperty('--accent-2-rgb', sw.dataset.r2);
-      document.documentElement.style.setProperty('--accent-3-rgb', sw.dataset.r3);
-      document.documentElement.style.setProperty('--accent-glow', 'rgba(' + sw.dataset.r1 + ', 0.28)');
+      const c = { c1: sw.dataset.c1, c2: sw.dataset.c2, c3: sw.dataset.c3, r1: sw.dataset.r1, r2: sw.dataset.r2, r3: sw.dataset.r3 };
+      applyThemeColors(c);
+      storageSet('theme', JSON.stringify(c));
+      vibrate(15);
+    });
+  });
+
+  // ---------- Light/Dark mode ----------
+  document.querySelectorAll('.mode-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      applyMode(opt.dataset.mode);
+      storageSet('mode', opt.dataset.mode);
+      vibrate(15);
     });
   });
 
@@ -1109,6 +1393,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('ocrCard').classList.toggle('locked', !hasPro);
     document.getElementById('pdfAuditLock').style.display = hasUltra ? 'none' : '';
     document.getElementById('pdfAuditCard').classList.toggle('locked', !hasUltra);
+    document.getElementById('aiDetectLock').style.display = hasPro ? 'none' : '';
+    document.getElementById('aiDetectCard').classList.toggle('locked', !hasPro);
+
+    const deepBadge = document.getElementById('deepScanBadge');
+    deepBadge.innerHTML = hasPro ? t.deepScanOn : t.deepScanOff;
 
     document.getElementById('uploadText').textContent = hasPro ? t.uploadTextBatch : t.uploadText;
 
@@ -1129,14 +1418,52 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function renderStats() {
+    const t = translations[currentLang];
     document.getElementById('statLoc').textContent = stats.loc;
     document.getElementById('statDevice').textContent = stats.device;
     document.getElementById('statCleaned').textContent = stats.cleaned;
     const avg = stats.scores.length ? Math.round(stats.scores.reduce((a,b)=>a+b,0)/stats.scores.length) : null;
     document.getElementById('statAvg').textContent = avg === null ? '--' : avg;
+
+    const photoPart = avg === null ? 100 : avg;
+    const chkPart = (stats.chkDone / 5) * 100;
+    const pwPart = stats.pwSafe === false ? 0 : 100;
+    const overall = Math.round(photoPart * 0.5 + chkPart * 0.25 + pwPart * 0.25);
+    document.getElementById('statOverall').textContent = overall;
+
+    let nextStep = t.nextStepAllGood;
+    if (stats.pwSafe === false) nextStep = t.nextStepPw;
+    else if (stats.chkDone < 5) nextStep = t.nextStepChecklist;
+    else if (avg !== null && avg < 70) nextStep = t.nextStepPhoto;
+    else if (stats.pwSafe === null) nextStep = t.nextStepPw;
+    document.getElementById('nextStepText').textContent = nextStep;
+
+    document.querySelectorAll('#checklistWrap input[type=checkbox]').forEach((cb, i) => {
+      cb.checked = i < stats.chkDone;
+      cb.closest('.chk-row').classList.toggle('done', cb.checked);
+    });
+
+    const streakRow = document.getElementById('streakRow');
+    const dayWord = streak.count === 1 ? t.streakDay : t.streakDays;
+    streakRow.innerHTML = '🔥 ' + t.streakLabel + ': <b style="color:#ffb454">' + streak.count + '</b> ' + dayWord;
+
+    const badges = [
+      { key: 'firstScan', earned: stats.scores.length >= 1, label: t.badgeFirstScan },
+      { key: 'cleaned10', earned: stats.cleaned >= 10, label: t.badgeCleaned10 },
+      { key: 'pwChecked', earned: stats.pwSafe !== null, label: t.badgePwChecked },
+      { key: 'checklist', earned: stats.chkDone >= 5, label: t.badgeChecklist },
+      { key: 'subscriber', earned: membership.tier !== 'free', label: t.badgeSubscriber },
+      { key: 'streak7', earned: streak.count >= 7, label: t.badgeStreak7 }
+    ];
+    document.getElementById('badgeRow').innerHTML = badges.map(b =>
+      '<span class="badge-chip' + (b.earned ? ' earned' : '') + '">' + b.label + '</span>'
+    ).join('');
   }
 
   document.getElementById('ghostCard').addEventListener('click', () => {
+    if (membership.tier === 'free') openUpgradeModal('pro');
+  });
+  document.getElementById('deepScanBadge').addEventListener('click', () => {
     if (membership.tier === 'free') openUpgradeModal('pro');
   });
   document.getElementById('panicBtn').addEventListener('click', (e) => {
@@ -1310,6 +1637,7 @@ document.addEventListener('DOMContentLoaded', function () {
           stats.cleaned += 1;
           saveStats();
           renderStats();
+          vibrate(30);
           resolve();
         }, mime, quality);
       };
@@ -1476,15 +1804,19 @@ document.addEventListener('DOMContentLoaded', function () {
         setScore(score);
 
         if (membership.tier === 'free') { usage.count += 1; saveUsage(); }
+        updateStreak();
         saveStats();
         renderQuota();
         renderStats();
+        vibrate(20);
 
         document.getElementById('cleanNowBtn').addEventListener('click', () => cleanAndDownload(file));
 
         // Ghost Mode: auto clean immediately for pro/ultra users who enabled it
         const ghostOn = document.getElementById('ghostToggle').checked;
         if (ghostOn && membership.tier !== 'free') { cleanAndDownload(file); }
+
+        if (membership.tier !== 'free') { runDeepScanExtras(file); }
 
         if (typeof onDone === 'function') onDone();
       };
@@ -1518,9 +1850,13 @@ document.addEventListener('DOMContentLoaded', function () {
       if (hit) {
         const count = hit.split(':')[1].trim();
         pwResult.innerHTML = findingHTML('warn', ICONS.pin, t.pwBreached.replace('{n}', count));
+        stats.pwSafe = false;
       } else {
         pwResult.innerHTML = findingHTML('safe', ICONS.check, t.pwSafe);
+        stats.pwSafe = true;
       }
+      saveStats();
+      renderStats();
     } catch (err) {
       pwResult.innerHTML = findingHTML('warn', ICONS.pin, t.pwError);
     }
@@ -1551,6 +1887,92 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   // generate one on load so the field isn't empty
   pwGenOutput.value = generatePassword(16);
+
+  // ---------- Tool: suspicious link scanner ----------
+  const KNOWN_BRANDS = ['google','facebook','instagram','whatsapp','paypal','apple','microsoft','amazon','netflix','bank','binance','tiktok'];
+  const SHORTENERS = ['bit.ly','tinyurl.com','t.co','goo.gl','ow.ly','is.gd','buff.ly','cutt.ly','rebrand.ly','shorte.st'];
+  function scanLink(raw) {
+    const t = translations[currentLang];
+    let url;
+    try { url = new URL(raw.trim().match(/^https?:\/\//) ? raw.trim() : 'http://' + raw.trim()); }
+    catch (e) { return findingHTML('warn', ICONS.pin, t.linkInvalid); }
+    const host = url.hostname.toLowerCase();
+    let html = '';
+    if (/^(\d{1,3}\.){3}\d{1,3}$/.test(host)) html += findingHTML('warn', ICONS.pin, t.linkFoundIp);
+    if (SHORTENERS.some(s => host === s || host.endsWith('.' + s))) html += findingHTML('warn', ICONS.pin, t.linkFoundShortener);
+    const hostNoDashes = host.replace(/[-0]/g, m => m === '0' ? 'o' : '');
+    for (const brand of KNOWN_BRANDS) {
+      if (host.includes(brand)) continue;
+      if (hostNoDashes.includes(brand) || levenshteinClose(host.split('.')[0], brand)) { html += findingHTML('warn', ICONS.pin, t.linkFoundHomograph); break; }
+    }
+    if (/login|verify|secure|account|update/.test(host) && !KNOWN_BRANDS.some(b => host.includes(b))) html += findingHTML('warn', ICONS.pin, t.linkFoundSuspicious);
+    return html || findingHTML('safe', ICONS.check, t.linkClean);
+  }
+  function levenshteinClose(a, b) {
+    if (!a || Math.abs(a.length - b.length) > 2) return false;
+    const dp = Array.from({length: a.length+1}, (_, i) => [i, ...Array(b.length).fill(0)]);
+    for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]);
+    }
+    return dp[a.length][b.length] > 0 && dp[a.length][b.length] <= 2;
+  }
+  document.getElementById('linkScanBtn').addEventListener('click', () => {
+    const val = document.getElementById('linkInput').value;
+    document.getElementById('linkScanResult').innerHTML = val ? scanLink(val) : '';
+  });
+
+  // ---------- Tool: AI-generated content detector (Pro/Ultra) ----------
+  const AI_SOFTWARE_SIGNS = ['midjourney','dall-e','dalle','stable diffusion','dreamstudio','firefly','adobe firefly','nightcafe','leonardo.ai','runway','pika labs','sora','stability ai','novelai','playground ai'];
+  function findAiImageFingerprint(bytes) {
+    let raw = '';
+    for (let i = 0; i < bytes.length; i++) raw += String.fromCharCode(bytes[i]);
+    const lower = raw.toLowerCase();
+    for (const sign of AI_SOFTWARE_SIGNS) { if (lower.includes(sign)) return sign; }
+    if (lower.includes('parameters') && lower.includes('steps:') && lower.includes('sampler')) return 'Stable Diffusion generation parameters';
+    if (lower.includes('c2pa') || lower.includes('jumbf')) return 'C2PA content-credentials marker';
+    return null;
+  }
+  document.getElementById('aiImgBtn').addEventListener('click', () => {
+    if (membership.tier === 'free') { openUpgradeModal('pro'); return; }
+    document.getElementById('aiImgInput').click();
+  });
+  document.getElementById('aiImgInput').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const t = translations[currentLang];
+    const res = document.getElementById('aiImgResult');
+    const reader = new FileReader();
+    reader.onload = () => {
+      const sign = findAiImageFingerprint(new Uint8Array(reader.result));
+      res.innerHTML = sign
+        ? findingHTML('warn', ICONS.pin, t.aiImgFound + ' (' + sign + ')')
+        : findingHTML('safe', ICONS.check, t.aiImgClean);
+    };
+    reader.readAsArrayBuffer(file);
+  });
+  const AI_TEXT_PHRASES = ['in conclusion','furthermore','it is important to note','it\'s important to note','delve into','tapestry','in today\'s world','as an ai language model','on the other hand','overall, it is clear','in summary','let\'s dive in'];
+  function scanTextForAiPatterns(text) {
+    const t = translations[currentLang];
+    const lower = text.toLowerCase();
+    const hits = AI_TEXT_PHRASES.filter(p => lower.includes(p)).length;
+    const sentences = text.split(/[.!?]\s+/).filter(s => s.trim().length > 0);
+    let uniform = false;
+    if (sentences.length >= 5) {
+      const lens = sentences.map(s => s.trim().split(/\s+/).length);
+      const avg = lens.reduce((a,b)=>a+b,0) / lens.length;
+      const variance = lens.reduce((a,b)=>a+(b-avg)*(b-avg),0) / lens.length;
+      uniform = variance < 4 && avg > 8;
+    }
+    return (hits >= 2 || (hits >= 1 && uniform))
+      ? findingHTML('warn', ICONS.pin, t.aiTextFound)
+      : findingHTML('safe', ICONS.check, t.aiTextClean);
+  }
+  document.getElementById('aiTextBtn').addEventListener('click', () => {
+    if (membership.tier === 'free') { openUpgradeModal('pro'); return; }
+    const val = document.getElementById('aiTextInput').value;
+    document.getElementById('aiTextResult').innerHTML = scanTextForAiPatterns(val);
+  });
 
   // ---------- Tool: text/caption leak scanner ----------
   function scanTextForLeaks(val) {
@@ -1634,8 +2056,36 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('#checklistWrap input[type=checkbox]').forEach(cb => {
     cb.addEventListener('change', () => {
       cb.closest('.chk-row').classList.toggle('done', cb.checked);
+      stats.chkDone = document.querySelectorAll('#checklistWrap input[type=checkbox]:checked').length;
+      saveStats();
+      renderStats();
+      vibrate(stats.chkDone === 5 ? [30,50,30] : 12);
     });
   });
+
+  async function runDeepScanExtras(file) {
+    const t = translations[currentLang];
+    const holder = document.createElement('div');
+    holder.id = 'deepScanExtra';
+    holder.innerHTML = findingHTML('warn', ICONS.clock, t.deepScanRunning);
+    result.appendChild(holder);
+    let html = '';
+    try {
+      const buf = new Uint8Array(await file.arrayBuffer());
+      const aiSign = findAiImageFingerprint(buf);
+      if (aiSign) html += findingHTML('warn', ICONS.pin, t.deepScanAiFound + ' ' + aiSign);
+    } catch (e) {}
+    try {
+      await loadTesseract();
+      const { data } = await Tesseract.recognize(file, 'eng');
+      const text = (data && data.text || '').trim();
+      if (text) {
+        const leaks = scanTextForLeaks(text);
+        if (!leaks.includes('safe')) html += findingHTML('warn', ICONS.img, t.deepScanOcrFound) + leaks;
+      }
+    } catch (e) {}
+    holder.innerHTML = html;
+  }
 
   input.addEventListener('change', function(e) {
     const files = Array.from(e.target.files || []);
@@ -1654,7 +2104,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!files.length) return;
     const panicBtnEl = document.getElementById('panicBtn');
     const originalHTML = panicBtnEl.innerHTML;
-  const t = translations[currentLang];
+    const t = translations[currentLang];
     panicBtnEl.innerHTML = '<span>' + (t.zippingLabel || '...') + '</span>';
     panicBtnEl.style.pointerEvents = 'none';
     try {
@@ -1665,9 +2115,112 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // ---------- Share Target: pick up a photo shared from any other app ----------
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+  async function pickUpSharedFiles() {
+    if (!location.search.includes('shared=1') || !('caches' in window)) return;
+    try {
+      const cache = await caches.open('pg-shared-photos');
+      const metaResp = await cache.match('meta');
+      if (!metaResp) return;
+      const meta = await metaResp.json();
+      const files = [];
+      for (let i = 0; i < meta.length; i++) {
+        const fResp = await cache.match('file-' + i);
+        if (!fResp) continue;
+        const blob = await fResp.blob();
+        files.push(new File([blob], meta[i].name || ('shared_' + i + '.jpg'), { type: meta[i].type || blob.type }));
+        await cache.delete('file-' + i);
+      }
+      await cache.delete('meta');
+      history.replaceState({}, '', location.pathname);
+      if (files.length) {
+        document.querySelector('.navbtn[data-tab="scan"]').click();
+        if (files.length > 1 && membership.tier !== 'free') {
+          batchFiles = files;
+          batchStrip.innerHTML = files.map(f => '<img class="batch-thumb" src="' + URL.createObjectURL(f) + '">').join('');
+        }
+        analyzeSingleFile(files[0]);
+      }
+    } catch (err) { /* no shared files waiting - normal case */ }
+  }
+
+  // ---------- AI Assistant chat ----------
+  // IMPORTANT: leave this empty until you set up your own backend.
+  // Never put an Anthropic API key directly in this file - anyone viewing
+  // the page source (or your public GitHub repo) could steal and use it.
+  // This should be the URL of a small server you control that receives
+  // {message, history}, calls the Claude API using a key stored safely on
+  // YOUR server, and returns {reply: "..."}.
+  const AI_CHAT_ENDPOINT = 'https://plain-credit-aichat.javierescuelabs.workers.dev'; // مثال: 'https://your-backend.example.com/chat'
+
+  const chatFab = document.getElementById('chatFab');
+  const chatPanel = document.getElementById('chatPanel');
+  const chatBody = document.getElementById('chatBody');
+  const chatInput = document.getElementById('chatInput');
+  let chatHistory = [];
+  let chatWelcomed = false;
+
+  function addChatMsg(role, text) {
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + (role === 'user' ? 'user' : 'bot');
+    div.textContent = text;
+    chatBody.appendChild(div);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  chatFab.addEventListener('click', () => {
+    document.getElementById('upgradeModal').classList.remove('open');
+    chatPanel.classList.add('open');
+    if (!chatWelcomed) { addChatMsg('bot', translations[currentLang].chatWelcome); chatWelcomed = true; }
+  });
+  document.getElementById('chatCloseBtn').addEventListener('click', () => chatPanel.classList.remove('open'));
+  chatPanel.addEventListener('click', (e) => { if (e.target === chatPanel) chatPanel.classList.remove('open'); });
+
+  async function sendChatMessage() {
+    const t = translations[currentLang];
+    const msg = chatInput.value.trim();
+    if (!msg) return;
+    addChatMsg('user', msg);
+    chatInput.value = '';
+    vibrate(10);
+
+    if (!AI_CHAT_ENDPOINT) { addChatMsg('bot', t.chatNotConfigured); return; }
+
+    const typingEl = document.createElement('div');
+    typingEl.className = 'chat-msg bot';
+    typingEl.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span>';
+    chatBody.appendChild(typingEl);
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    chatHistory.push({ role: 'user', content: msg });
+    try {
+      const resp = await fetch(AI_CHAT_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, history: chatHistory })
+      });
+      const data = await resp.json();
+      const reply = data && data.reply ? data.reply : t.chatError;
+      typingEl.remove();
+      addChatMsg('bot', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+    } catch (err) {
+      typingEl.remove();
+      addChatMsg('bot', t.chatError);
+    }
+  }
+  document.getElementById('chatSendBtn').addEventListener('click', sendChatMessage);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
+  });
+
   // ---------- init ----------
   loadState().then(() => {
     applyLang('ar');
+    pickUpSharedFiles();
     if (!hasStorage()) {
       const note = document.createElement('p');
       note.className = 'disclaimer';
