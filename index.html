@@ -227,6 +227,15 @@
   .modal-close { position:absolute; top: 20px; inset-inline-end: 20px; width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; }
   .modal-close svg { width: 15px; height: 15px; color: var(--ink-dim); }
   .demo-note { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #5b6660; text-align:center; margin-top: 14px; line-height: 1.7; }
+  .code-row { display:flex; gap:8px; margin-top: 14px; }
+  .code-row input { flex:1; background: rgba(255,255,255,0.04); border:1px solid var(--line); border-radius:10px; padding:12px 13px; color:var(--ink); font-family:'IBM Plex Mono',monospace; font-size:13.5px; letter-spacing:1px; text-transform:uppercase; }
+  .code-row input:focus { outline:none; border-color: rgba(var(--accent-1-rgb),0.6); }
+  .activate-btn { width:100%; margin-top:10px; padding: 13px; border-radius: 10px; border: 1px solid rgba(var(--accent-1-rgb),0.5); background: rgba(var(--accent-1-rgb), 0.12); color: var(--accent-1); font-weight: 700; font-size: 13.5px; font-family: inherit; }
+  .activate-btn:active { transform: scale(0.98); }
+  .activate-btn:disabled { opacity: 0.6; }
+  .activate-status { font-size: 12px; text-align:center; margin-top: 10px; line-height:1.6; min-height: 16px; }
+  .activate-status.err { color: #ff9a8a; }
+  .activate-status.ok { color: var(--accent-1); }
   .breach-banner { display:none; align-items:center; gap:10px; background: rgba(255,180,84,0.14); border:1px solid rgba(255,180,84,0.35); color:#ffcb87; padding:12px 16px; margin: 12px 22px 0; border-radius:10px; font-size:12.5px; font-weight:600; line-height:1.5; }
   .breach-banner button { margin-inline-start:auto; background:transparent; border:none; color:inherit; font-size:18px; line-height:1; flex-shrink:0; }
 
@@ -697,8 +706,12 @@
       <div class="modal-sub" id="modalSub">فحص وتنظيف غير محدود، وتقرير أسبوعي حقيقي.</div>
       <div class="billing-row" id="billingRow"></div>
       <ul class="plan-feats" id="modalFeats" style="margin-bottom:8px;"></ul>
-      <button class="upgrade-btn" id="demoUnlockBtn" data-i18n="demoUnlockBtn">تفعيل (تجريبي)</button>
-      <p class="demo-note" data-i18n="demoNote">هذا تفعيل تجريبي لاختبار التصميم والتخزين. ربط الدفع الحقيقي (Stripe) يصير بخطوة قادمة.</p>
+      <div class="code-row">
+        <input type="text" id="activationCodeInput" data-i18n-ph="activatePlaceholder" placeholder="PG-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters">
+      </div>
+      <button class="activate-btn" id="activateBtn" data-i18n="activateBtn">تفعيل الاشتراك</button>
+      <p class="activate-status" id="activateStatus"></p>
+      <p class="demo-note" data-i18n="activateNote">دفعت وما وصلك كود؟ تواصل معنا وراح نرسلك كود التفعيل خلال دقائق.</p>
     </div>
   </div>
 
@@ -759,8 +772,16 @@ document.addEventListener('DOMContentLoaded', function () {
       modalSubProT: "فحص وتنظيف غير محدود، وتقرير أسبوعي حقيقي.",
       modalTitleUltraT: "الترقية إلى Ultra",
       modalSubUltraT: "كل شي بالـ Pro + تنظيف دفعات كاملة بأولوية.",
-      demoUnlockBtn: "تفعيل (تجريبي)",
-      demoNote: "هذا تفعيل تجريبي لاختبار التصميم والتخزين. ربط الدفع الحقيقي (Stripe) يصير بخطوة قادمة.",
+      activateBtn: "تفعيل الاشتراك",
+      activatePlaceholder: "اكتب كود التفعيل هنا",
+      activateNote: "دفعت وما وصلك كود؟ تواصل معنا وراح نرسلك كود التفعيل خلال دقائق.",
+      activateChecking: "جاري التحقق من الكود...",
+      activateSuccess: "تم التفعيل بنجاح! ✅",
+      activateInvalid: "هذا الكود غير صحيح، تأكد منه وحاول مرة ثانية",
+      activateInUse: "هذا الكود مستخدم من جهاز ثاني — تواصل معنا لإعادة الربط",
+      activateExpired: "هذا الكود منتهي الصلاحية",
+      activateEmpty: "اكتب الكود أول",
+      activateError: "صار خطأ، تأكد من الاتصال بالنت وحاول مرة ثانية",
       reportLockedMsg: "التقرير الأسبوعي متاح لمشتركي Pro و Ultra",
       cleanBtnText: "تنظيف وتنزيل نسخة آمنة",
       batchLockedForFree: "اختيار عدة صور دفعة وحدة ميزة Pro و Ultra",
@@ -976,8 +997,16 @@ document.addEventListener('DOMContentLoaded', function () {
       modalSubProT: "Unlimited scan & clean, plus a real weekly report.",
       modalTitleUltraT: "Upgrade to Ultra",
       modalSubUltraT: "Everything in Pro + priority batch cleaning.",
-      demoUnlockBtn: "Activate (demo)",
-      demoNote: "This is a demo activation to test design and storage. Real payment (Stripe) connects in a later step.",
+      activateBtn: "Activate subscription",
+      activatePlaceholder: "Enter your activation code",
+      activateNote: "Paid but didn't get a code? Contact us and we'll send your activation code within minutes.",
+      activateChecking: "Checking your code...",
+      activateSuccess: "Activated successfully! ✅",
+      activateInvalid: "That code isn't valid — double-check it and try again",
+      activateInUse: "This code is already used on another device — contact us to re-link it",
+      activateExpired: "This code has expired",
+      activateEmpty: "Enter a code first",
+      activateError: "Something went wrong — check your connection and try again",
       reportLockedMsg: "Weekly reports are for Pro & Ultra members",
       cleanBtnText: "Clean & download safe copy",
       batchLockedForFree: "Picking several photos at once is a Pro/Ultra feature",
@@ -1193,8 +1222,16 @@ document.addEventListener('DOMContentLoaded', function () {
       modalSubProT: "无限扫描与清理，加真实每周报告。",
       modalTitleUltraT: "升级到 Ultra",
       modalSubUltraT: "Pro 的一切 + 优先批量清理。",
-      demoUnlockBtn: "激活（演示）",
-      demoNote: "这是用于测试设计与存储的演示激活。真实支付（Stripe）将在后续步骤接入。",
+      activateBtn: "激活订阅",
+      activatePlaceholder: "输入激活码",
+      activateNote: "已付款但没收到激活码？联系我们，几分钟内发给你。",
+      activateChecking: "正在验证激活码...",
+      activateSuccess: "激活成功！✅",
+      activateInvalid: "激活码无效，请检查后重试",
+      activateInUse: "此激活码已在其他设备上使用，请联系我们重新绑定",
+      activateExpired: "此激活码已过期",
+      activateEmpty: "请先输入激活码",
+      activateError: "出错了，请检查网络连接后重试",
       reportLockedMsg: "每周报告仅限 Pro 与 Ultra 会员",
       cleanBtnText: "清理并下载安全副本",
       batchLockedForFree: "一次选择多张照片是 Pro/Ultra 功能",
@@ -1289,7 +1326,7 @@ document.addEventListener('DOMContentLoaded', function () {
       advScanPh: "在此粘贴文本、代码或配置文件以进行扫描...",
       advScanBtn: "立即扫描",
       advCardFound: "在此文本中发现 {n} 个有效卡号（已通过Luhn校验）——请勿分享",
-            advIbanFound: "在此文本中发现 {n} 个有效IBAN号码（已通过Mod-97校验）",
+      advIbanFound: "在此文本中发现 {n} 个有效IBAN号码（已通过Mod-97校验）",
       advKeyFound: "发现可能的密钥：{list} ——如果是真实密钥，请立即在服务商处将其吊销",
       advClean: "此文本中未发现卡号、IBAN或明显的API密钥",
       reportToolTitle: "可下载的隐私报告",
@@ -1359,8 +1396,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
+  // URL of your license-activation Cloudflare Worker (see worker.js).
+  // Leave empty until you've deployed it — the activate button will
+  // show a friendly "not configured" message instead of failing silently.
+  const WORKER_URL = 'https://throbbing-wood-e79fmassnew.javierescuelabs.workers.dev';
+
   let currentLang = 'ar';
-  let membership = { tier: 'free', billing: 'monthly' }; // free | pro | ultra
+  let membership = { tier: 'free', billing: 'monthly', code: null, expiresAt: null }; // free | pro | ultra
   let usage = { date: '', count: 0 };
   let stats = { loc: 0, device: 0, cleaned: 0, scores: [], chkDone: 0, pwSafe: null };
   let pendingUpgradeTier = 'pro';
@@ -1408,6 +1450,18 @@ document.addEventListener('DOMContentLoaded', function () {
       try { localStorage.setItem(LS_PREFIX + key, value); return { key, value }; } catch (e) { return null; }
     }
     return null;
+  }
+
+  // ---------- device id (used to bind an activation code to this browser) ----------
+  let _deviceId = null;
+  async function getDeviceId() {
+    if (_deviceId) return _deviceId;
+    const existing = await storageGet('deviceId');
+    if (existing && existing.value) { _deviceId = existing.value; return _deviceId; }
+    const id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 12);
+    await storageSet('deviceId', id);
+    _deviceId = id;
+    return id;
   }
 
   function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
@@ -1611,12 +1665,82 @@ document.addEventListener('DOMContentLoaded', function () {
     ).join('');
   }
 
-  document.getElementById('demoUnlockBtn').addEventListener('click', () => {
-    membership.tier = pendingUpgradeTier;
-    saveMembership();
-    closeUpgradeModal();
-    renderAll();
+  const activateBtn = document.getElementById('activateBtn');
+  const activationCodeInput = document.getElementById('activationCodeInput');
+  const activateStatus = document.getElementById('activateStatus');
+
+  function setActivateStatus(text, kind) {
+    activateStatus.textContent = text || '';
+    activateStatus.className = 'activate-status' + (kind ? ' ' + kind : '');
+  }
+
+  activateBtn.addEventListener('click', async () => {
+    const t = translations[currentLang];
+    const code = (activationCodeInput.value || '').trim().toUpperCase();
+    if (!code) { setActivateStatus(t.activateEmpty, 'err'); return; }
+    if (!WORKER_URL) { setActivateStatus(t.activateError, 'err'); return; }
+
+    activateBtn.disabled = true;
+    setActivateStatus(t.activateChecking, '');
+    try {
+      const deviceId = await getDeviceId();
+      const resp = await fetch(WORKER_URL + '/activate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, deviceId })
+      });
+      const data = await resp.json().catch(() => ({}));
+
+      if (resp.ok && data.ok) {
+        membership.tier = data.tier;
+        membership.billing = data.cycle;
+        membership.code = code;
+        membership.expiresAt = data.expiresAt;
+        saveMembership();
+        setActivateStatus(t.activateSuccess, 'ok');
+        vibrate(15);
+        renderAll();
+        setTimeout(() => { closeUpgradeModal(); setActivateStatus('', ''); activationCodeInput.value = ''; }, 900);
+      } else if (data.error === 'code_in_use') {
+        setActivateStatus(t.activateInUse, 'err');
+      } else if (data.error === 'expired') {
+        setActivateStatus(t.activateExpired, 'err');
+      } else {
+        setActivateStatus(t.activateInvalid, 'err');
+      }
+    } catch (err) {
+      setActivateStatus(t.activateError, 'err');
+    } finally {
+      activateBtn.disabled = false;
+    }
   });
+
+  // Re-check an already-activated code in the background so an expired
+  // subscription actually falls back to the free tier instead of staying
+  // "active" forever on the device.
+  async function verifyMembershipInBackground() {
+    if (!WORKER_URL || !membership.code || membership.tier === 'free') return;
+    try {
+      const deviceId = await getDeviceId();
+      const resp = await fetch(WORKER_URL + '/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: membership.code, deviceId })
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (resp.ok && data.ok) {
+        membership.expiresAt = data.expiresAt; // keep in sync
+        saveMembership();
+      } else {
+        // code no longer valid (expired / revoked / reset) -> downgrade
+        membership.tier = 'free';
+        membership.code = null;
+        membership.expiresAt = null;
+        saveMembership();
+        renderAll();
+      }
+    } catch (err) { /* offline or worker unreachable - keep current state */ }
+  }
 
   function renderAll() {
     const t = translations[currentLang];
@@ -1970,7 +2094,6 @@ document.addEventListener('DOMContentLoaded', function () {
       for (let i = 0; i < size - 1; i++) str += String.fromCharCode(view.getUint8(dataStart + i));
       return str;
     }
-
     const firstIFDOffset = g32(tiffStart + 4);
     const ifd0 = readIFD(firstIFDOffset);
     const result = {};
@@ -2742,6 +2865,7 @@ document.addEventListener('DOMContentLoaded', function () {
   loadState().then(() => {
     applyLang(currentLang);
     pickUpSharedFiles();
+    verifyMembershipInBackground();
     if (!hasStorage()) {
       const note = document.createElement('p');
       note.className = 'disclaimer';
