@@ -119,6 +119,9 @@
   .clean-btn:active, .batch-clean-btn:active { transform: scale(0.98); }
   .clean-btn svg, .batch-clean-btn svg { width:16px; height:16px; }
   .clean-note { font-family:'IBM Plex Mono',monospace; font-size: 10.5px; color: var(--ink-dim); text-align:center; margin-top:8px; line-height:1.6; }
+  .tool-quota-note { font-family:'IBM Plex Mono',monospace; font-size: 10.5px; color: var(--ink-dim); text-align:center; margin-top:8px; line-height:1.6; }
+  .tool-quota-note b { color: var(--accent-1); font-weight:600; }
+  .tool-quota-note.over { color: var(--accent-3); }
 
   .diff-box { margin-top: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--surface); animation: slideIn .35s ease; }
   .diff-title { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
@@ -216,6 +219,15 @@
   .tips-card .t { font-size:13.5px; font-weight:700; margin-bottom:5px; display:flex; align-items:center; gap:9px; }
   .tips-card .t svg { width:16px; height:16px; color: var(--accent-3); }
   .tips-card .s { font-size:12px; color: var(--ink-dim); line-height:1.7; }
+
+  #timelineWrap { background: var(--surface); border:1px solid var(--line); border-radius:12px; padding: 6px 15px; margin-bottom:10px; max-height: 260px; overflow-y:auto; }
+  .timeline-row { display:flex; align-items:flex-start; gap:10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .timeline-row:last-child { border-bottom:none; }
+  .timeline-dot { width:8px; height:8px; margin-top:5px; border-radius:50%; background: var(--accent-1); flex-shrink:0; box-shadow: 0 0 0 3px rgba(var(--accent-1-rgb),0.18); }
+  .timeline-body { flex:1; min-width:0; }
+  .timeline-label { font-size:12.5px; font-weight:600; }
+  .timeline-meta { font-size:11px; color: var(--ink-dim); font-weight:500; }
+  .timeline-time { font-size:11px; color: var(--ink-dim); margin-top:2px; }
 
   .modal-overlay { position: fixed; inset:0; background: rgba(3,4,12,0.72); backdrop-filter: blur(6px); display:none; align-items:flex-end; justify-content:center; z-index: 200; }
   .modal-overlay.open { display:flex; }
@@ -381,7 +393,7 @@
     </div>
     <div class="card-panel">
       <div class="report-locked-wrap locked" id="reportWrap">
-        <div class="report-card">
+        <div class="report-card" id="reportCard">
           <div class="report-row"><span class="lbl"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/></svg><span data-i18n="overallScore">نتيجتك الإجمالية</span></span><span class="val green" id="statOverall">--</span></div>
           <div class="report-row"><span class="lbl"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></svg><span data-i18n="r1">صور فيها موقعك</span></span><span class="val red" id="statLoc">0</span></div>
           <div class="report-row"><span class="lbl"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg><span data-i18n="r2b">صور كشفت جهازك</span></span><span class="val red" id="statDevice">0</span></div>
@@ -528,6 +540,10 @@
         </label>
       </div>
 
+      <div class="section-title" data-i18n="timelineTitle">السجل الأمني</div>
+      <p class="clean-note" data-i18n="timelineSub" style="margin-top:-6px;">سجل حقيقي بكل عملية فحص أو تنظيف سويتها فعليًا داخل هذا التطبيق</p>
+      <div id="timelineWrap"></div>
+
       <div class="section-title" data-i18n="cleanup">تنظيف دفعة كاملة</div>
       <input type="file" id="panicInput" accept="image/*" multiple style="display:none">
       <button class="batch-clean-btn" id="panicBtn">
@@ -576,8 +592,10 @@
     </div>
     <div class="card-panel">
 
+      <div class="section-title" data-i18n="secForensics">فحص الصور المتقدم</div>
+
       <div class="tool-card" id="fileTypeCard">
-        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg><span data-i18n="fileTypeTitle">كاشف الملفات المموّهة</span></div>
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg><span data-i18n="fileTypeTitle">كاشف الملفات المموّهة</span><span class="lock-badge" id="fileTypeLock"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
         <div class="s" data-i18n="fileTypeSub">المتصفح يحدد نوع الملف من الامتداد بس (.jpg، .exe...)، مو من محتواه الحقيقي — هذي الأداة تفتح أول بايتات الملف الفعلية (البصمة الحقيقية) وتقارنها بامتداده، فتكشف ملف تنفيذي أو سكربت متخفي باسم صورة.</div>
         <input type="file" id="fileTypeInput" style="display:none">
         <button class="tool-btn" id="fileTypeBtn" data-i18n="fileTypeBtn">افحص ملف</button>
@@ -589,6 +607,7 @@
         <div class="s" data-i18n="gpsToolSub">أداة «فحص» تقولك بس إذا كان فيه موقع GPS بالصورة. هذي تستخرج الإحداثيات الفعلية من آخر صورة فحصتها وتوريك بالضبط شنو ممكن يشوفه أي شخص يفتح بيانات الصورة الوصفية.</div>
         <button class="tool-btn" id="gpsBtn" data-i18n="gpsBtn">استخرج إحداثيات آخر صورة</button>
         <div class="tool-result" id="gpsResult"></div>
+        <div class="tool-quota-note" id="gpsQuotaNote"></div>
       </div>
 
       <div class="tool-card" id="thumbToolCard">
@@ -596,6 +615,7 @@
         <div class="s" data-i18n="thumbToolSub">كثير برامج التعديل تقص الصورة الظاهرة بس تنسى تحدّث الصورة المصغّرة (thumbnail) المخزّنة داخل بيانات EXIF — يعني ممكن تكون الصورة المصغّرة توري محتوى تم قصّه أو حذفه من الصورة الأساسية. هذي الأداة تستخرجها من آخر صورة فحصتها.</div>
         <button class="tool-btn" id="thumbBtn" data-i18n="thumbBtn">استخرج الصورة المصغّرة</button>
         <div class="tool-result" id="thumbResult"></div>
+        <div class="tool-quota-note" id="thumbQuotaNote"></div>
       </div>
 
       <div class="tool-card" id="shotToolCard">
@@ -603,30 +623,15 @@
         <div class="s" data-i18n="shotToolSub">لقطات الشاشة غالبًا تكشف إشعارات، محادثات، أو تطبيقات مفتوحة بالخلفية أكثر من صور الكاميرا العادية. هذي الأداة تفحص آخر صورة فحصتها وتقول لك احتمال كونها لقطة شاشة أو صورة كاميرا حقيقية، بناءً على غياب بيانات الكاميرا وصيغة/أبعاد الملف — مؤشر تقريبي وليس قطعي.</div>
         <button class="tool-btn" id="shotBtn" data-i18n="shotBtn">افحص آخر صورة</button>
         <div class="tool-result" id="shotResult"></div>
+        <div class="tool-quota-note" id="shotQuotaNote"></div>
       </div>
 
-      <div class="tool-card" id="advScanCard">
-        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg><span data-i18n="advScanTitle">الفاحص المتقدم للبيانات المصرفية والمفاتيح السرية</span></div>
-        <div class="s" data-i18n="advScanSub">فحص أدق من فحص النص العادي: يتحقق من أرقام البطاقات بخوارزمية Luhn الحقيقية (نفس اللي تستخدمها البنوك)، ومن أرقام IBAN بخوارزمية Mod-97 الرسمية، ويكشف مفاتيح API شائعة (AWS, Stripe, GitHub, Slack, Google) — كل هذا بجهازك، بدون إرسال أي شي لأي سيرفر.</div>
-        <textarea class="field-textarea" id="advScanInput" data-i18n-ph="advScanPh" placeholder="الصق النص، الكود، أو ملف الإعدادات هنا للفحص..."></textarea>
-        <button class="tool-btn" id="advScanBtn" data-i18n="advScanBtn">افحص الآن</button>
-        <div class="tool-result" id="advScanResult"></div>
-      </div>
-
-      <div class="tool-card" id="reportToolCard">
-        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 19h16"/></svg><span data-i18n="reportToolTitle">تقرير الخصوصية القابل للتنزيل</span></div>
-        <div class="s" data-i18n="reportToolSub">نزّل ملخص نصي بكل إحصائياتك بهذه الجلسة (عدد الفحوصات، التنظيفات، متوسط درجة الأمان...) لأرشفتك الشخصية أو لمشاركتها مع فريقك.</div>
-        <button class="tool-btn" id="reportBtn" data-i18n="reportBtn">نزّل التقرير</button>
-      </div>
-
-      <div class="tool-card" id="linkScanCard">
-        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg><span data-i18n="linkScanTitle">فاحص الروابط المشبوهة</span></div>
-        <div class="s" data-i18n="linkScanSub">يفحص شكل الرابط بحثًا عن أنماط شائعة بروابط التصيّد: رابط IP مباشر بدل دومين، اختصار روابط يخفي الوجهة، أو دومين يحاكي اسم موقع مشهور بحروف مشابهة. هذا مؤشر تقريبي بناءً على شكل الرابط فقط، مو فحص فيروسات حقيقي ولا بديل عن الحذر.</div>
-        <div class="field-row">
-          <input type="text" class="field-input" id="linkInput" data-i18n-ph="linkPlaceholder" placeholder="الصق الرابط هنا...">
-        </div>
-        <button class="tool-btn" id="linkScanBtn" data-i18n="linkScanBtn">افحص الرابط</button>
-        <div class="tool-result" id="linkScanResult"></div>
+      <div class="tool-card" id="qrCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 14h3v3M14 18h3v3M18 21h3v-3"/></svg><span data-i18n="qrTitle">كاشف رموز QR المخفية</span></div>
+        <div class="s" data-i18n="qrSub">بعض الصور فيها رمز QR صغير أو خفي بالخلفية (لافتة، شاشة، ورقة) يوصل لرابط أو شبكة واي فاي أو جهة اتصال بدون ما تنتبه — هذي الأداة تفحص آخر صورة فحصتها وتفك أي رمز QR موجود بيها وتوريك وين يودي قبل ما تنشرها.</div>
+        <button class="tool-btn" id="qrBtn" data-i18n="qrBtn">افحص آخر صورة</button>
+        <div class="tool-result" id="qrResult"></div>
+        <div class="tool-quota-note" id="qrQuotaNote"></div>
       </div>
 
       <div class="tool-card" id="aiDetectCard">
@@ -647,13 +652,37 @@
         <div class="tool-result" id="ocrResult"></div>
       </div>
 
-      <div class="tool-card" id="pdfAuditCard">
-        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/></svg><span data-i18n="pdfAuditTitle">مدقق بيانات المستندات (PDF)</span><span class="lock-badge" id="pdfAuditLock"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
-        <div class="s" data-i18n="pdfAuditSub">قبل ما ترسل عقد أو تقرير لجهة خارجية: ملفات PDF غالبًا تخبي اسم الموظف، اسم الشركة، البرنامج المستخدم، ومسار الملف الداخلي جوا بياناتها الوصفية — نفس النوع اللي سبب تسريبات مشهورة لشركات كبيرة. مخصص للشركات والفرق.</div>
-        <input type="file" id="pdfInput" accept="application/pdf" style="display:none">
-        <button class="tool-btn" id="pdfAuditBtn" data-i18n="pdfAuditBtn">افحص ملف PDF</button>
-        <div class="tool-result" id="pdfAuditResult"></div>
+      <div class="section-title" data-i18n="secTextLink">فحص النصوص والروابط</div>
+
+      <div class="tool-card" id="linkScanCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg><span data-i18n="linkScanTitle">فاحص الروابط المشبوهة</span></div>
+        <div class="s" data-i18n="linkScanSub">يفحص شكل الرابط بحثًا عن أنماط شائعة بروابط التصيّد: رابط IP مباشر بدل دومين، اختصار روابط يخفي الوجهة، أو دومين يحاكي اسم موقع مشهور بحروف مشابهة. هذا مؤشر تقريبي بناءً على شكل الرابط فقط، مو فحص فيروسات حقيقي ولا بديل عن الحذر.</div>
+        <div class="field-row">
+          <input type="text" class="field-input" id="linkInput" data-i18n-ph="linkPlaceholder" placeholder="الصق الرابط هنا...">
+        </div>
+        <button class="tool-btn" id="linkScanBtn" data-i18n="linkScanBtn">افحص الرابط</button>
+        <div class="tool-result" id="linkScanResult"></div>
+        <div class="tool-quota-note" id="linkScanQuotaNote"></div>
       </div>
+
+      <div class="tool-card">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16v12H8l-4 4V4z"/></svg><span data-i18n="textScanTitle">افحص منشورك قبل النشر</span></div>
+        <div class="s" data-i18n="textScanSub">الصق نص المنشور أو البايو — نكشف أرقام هاتف، إيميلات، وعناوين قد تكشف هويتك بالخطأ</div>
+        <textarea class="field-textarea" id="textScanInput" data-i18n-ph="textScanPlaceholder" placeholder="الصق النص هنا..."></textarea>
+        <button class="tool-btn" id="textScanBtn" data-i18n="textScanBtn">افحص النص</button>
+        <div class="tool-result" id="textScanResult"></div>
+        <div class="tool-quota-note" id="textScanQuotaNote"></div>
+      </div>
+
+      <div class="tool-card" id="advScanCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg><span data-i18n="advScanTitle">الفاحص المتقدم للبيانات المصرفية والمفاتيح السرية</span><span class="lock-badge" id="advScanLock"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+        <div class="s" data-i18n="advScanSub">فحص أدق من فحص النص العادي: يتحقق من أرقام البطاقات بخوارزمية Luhn الحقيقية (نفس اللي تستخدمها البنوك)، ومن أرقام IBAN بخوارزمية Mod-97 الرسمية، ويكشف مفاتيح API شائعة (AWS, Stripe, GitHub, Slack, Google) — كل هذا بجهازك، بدون إرسال أي شي لأي سيرفر.</div>
+        <textarea class="field-textarea" id="advScanInput" data-i18n-ph="advScanPh" placeholder="الصق النص، الكود، أو ملف الإعدادات هنا للفحص..."></textarea>
+        <button class="tool-btn" id="advScanBtn" data-i18n="advScanBtn">افحص الآن</button>
+        <div class="tool-result" id="advScanResult"></div>
+      </div>
+
+      <div class="section-title" data-i18n="secPasswords">أدوات كلمات السر</div>
 
       <div class="tool-card">
         <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span data-i18n="pwCheckTitle">هل كلمة سرك مسربة؟</span></div>
@@ -664,6 +693,7 @@
         </div>
         <button class="tool-btn" id="pwCheckBtn" data-i18n="pwCheckBtn">تحقق الآن</button>
         <div class="tool-result" id="pwResult"></div>
+        <div class="tool-quota-note" id="pwCheckQuotaNote"></div>
       </div>
 
       <div class="tool-card">
@@ -681,13 +711,23 @@
         <button class="tool-btn" id="pwGenBtn" data-i18n="pwGenBtn">توليد</button>
       </div>
 
-      <div class="tool-card">
-        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16v12H8l-4 4V4z"/></svg><span data-i18n="textScanTitle">افحص منشورك قبل النشر</span></div>
-        <div class="s" data-i18n="textScanSub">الصق نص المنشور أو البايو — نكشف أرقام هاتف، إيميلات، وعناوين قد تكشف هويتك بالخطأ</div>
-        <textarea class="field-textarea" id="textScanInput" data-i18n-ph="textScanPlaceholder" placeholder="الصق النص هنا..."></textarea>
-        <button class="tool-btn" id="textScanBtn" data-i18n="textScanBtn">افحص النص</button>
-        <div class="tool-result" id="textScanResult"></div>
+      <div class="section-title" data-i18n="secDocs">مستندات وتقارير</div>
+
+      <div class="tool-card" id="pdfAuditCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/></svg><span data-i18n="pdfAuditTitle">مدقق بيانات المستندات (PDF)</span><span class="lock-badge" id="pdfAuditLock"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+        <div class="s" data-i18n="pdfAuditSub">قبل ما ترسل عقد أو تقرير لجهة خارجية: ملفات PDF غالبًا تخبي اسم الموظف، اسم الشركة، البرنامج المستخدم، ومسار الملف الداخلي جوا بياناتها الوصفية — نفس النوع اللي سبب تسريبات مشهورة لشركات كبيرة. مخصص للشركات والفرق.</div>
+        <input type="file" id="pdfInput" accept="application/pdf" style="display:none">
+        <button class="tool-btn" id="pdfAuditBtn" data-i18n="pdfAuditBtn">افحص ملف PDF</button>
+        <div class="tool-result" id="pdfAuditResult"></div>
       </div>
+
+      <div class="tool-card" id="reportToolCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 19h16"/></svg><span data-i18n="reportToolTitle">تقرير الخصوصية القابل للتنزيل</span></div>
+        <div class="s" data-i18n="reportToolSub">نزّل ملخص نصي بكل إحصائياتك بهذه الجلسة (عدد الفحوصات، التنظيفات، متوسط درجة الأمان...) لأرشفتك الشخصية أو لمشاركتها مع فريقك.</div>
+        <button class="tool-btn" id="reportBtn" data-i18n="reportBtn">نزّل التقرير</button>
+      </div>
+
+      <div class="section-title" data-i18n="secChecklist">قائمة النشر الآمن</div>
 
       <div class="tool-card">
         <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="checklistTitle">تشيك قبل ما تنشر</span></div>
@@ -886,6 +926,11 @@ document.addEventListener('DOMContentLoaded', function () {
       foundAddress: "عنوان أو موقع تفصيلي ظاهر بالنص",
       checklistTitle: "تشيك قبل ما تنشر",
       checklistSub: "علّم على كل نقطة تأكدت منها",
+      chk1: "ما فيه لوحة سيارة أو مستند رسمي واضح بالصورة",
+      chk2: "ما فيه معلم مكان دقيق (مدرسة، بيت، شارع) يدل على موقعك",
+      chk3: "شيّكت بيانات الموقع GPS من الصورة",
+      chk4: "ما ذكرت جدول يومك أو مواعيدك بالتفصيل بالنص",
+      chk5: "متأكد من صلاحيات الحسابات الي بتنشر عليها (خاص/عام)",
       findCombo: "خطر مضاعف: هذي الصورة تكشف موقعك ونوع جهازك بنفس الوقت — مزيج يحدد هويتك بدقة",
       findDeepfake: "دقة هذي الصورة عالية جدًا — الصور عالية الدقة صارت مادة مفضلة لأدوات استنساخ الوجوه بالذكاء الاصطناعي (Deepfake)؛ فكر تنشر نسخة أقل دقة للعام",
       ocrTitle: "فاحص المحتوى الظاهر بالصورة",
@@ -1008,7 +1053,40 @@ document.addEventListener('DOMContentLoaded', function () {
       chatPlaceholder: "اكتب مشكلتك أو سؤالك هنا...",
       chatWelcome: "هلا! أنا مساعدك الذكي بتطبيق Privacy Guard. اسألني عن أي ميزة بالتطبيق أو أي مشكلة تواجهك وأحاول أساعدك.",
       chatNotConfigured: "المحادثة الذكية ما انربطت بسيرفر بعد — لازم صاحب التطبيق يضيف رابط الخادم (backend) الخاص فيه بالكود قبل ما تشتغل هذي الميزة.",
-      chatError: "صار خطأ بالاتصال بالمساعد — جرب مرة ثانية بعد شوي"
+      chatError: "صار خطأ بالاتصال بالمساعد — جرب مرة ثانية بعد شوي",
+      timelineTitle: "السجل الأمني",
+      timelineSub: "سجل حقيقي بكل عملية فحص أو تنظيف سويتها فعليًا داخل هذا التطبيق",
+      timelineEmpty: "ما عندك أي عملية مسجلة لحد الآن — سوّي فحص أو تنظيف وراح تظهر هنا",
+      timeJustNow: "الحين",
+      timeMinAgo: "دقيقة",
+      timeHourAgo: "ساعة",
+      timeDayAgo: "يوم",
+      persistNote: "* التخزين الدائم غير متاح في هذه البيئة — الحد اليومي والاشتراك يشتغلون بذاكرة هذه الجلسة فقط ويرجعون افتراضيين إذا أعدت فتح الصفحة من جديد.",
+      ev_scan: "فحص صورة",
+      ev_clean: "تنظيف وتنزيل نسخة آمنة",
+      ev_pwBreached: "كلمة سر مسربة تم اكتشافها",
+      ev_pwSafe: "تحقق من كلمة سر — ما فيها تسريب",
+      ev_linkScan: "فحص رابط مشبوه",
+      ev_checklistDone: "أكملت تشيك ليست ما قبل النشر",
+      secForensics: "فحص الصور المتقدم",
+      secTextLink: "فحص النصوص والروابط",
+      secPasswords: "أدوات كلمات السر",
+      secDocs: "مستندات وتقارير",
+      secChecklist: "قائمة النشر الآمن",
+      toolQuotaLeft: "باقي لك <b>{n}</b> من 3 استخدامات اليوم لهذي الأداة (مجاني)",
+      toolQuotaOver: "خلصت استخدامات هذي الأداة اليوم — رجع باچر أو رقّي لـ Pro لاستخدام غير محدود",
+      qrTitle: "كاشف رموز QR المخفية",
+      qrSub: "بعض الصور فيها رمز QR صغير أو خفي بالخلفية (لافتة، شاشة، ورقة) يوصل لرابط أو شبكة واي فاي أو جهة اتصال بدون ما تنتبه — هذي الأداة تفحص آخر صورة فحصتها وتفك أي رمز QR موجود بيها وتوريك وين يودي قبل ما تنشرها.",
+      qrBtn: "افحص آخر صورة",
+      qrNeedScan: "افحص صورة أول من تبويب «فحص» قبل استخدام هذي الأداة",
+      qrLoading: "جاري تحليل الصورة بحثًا عن رمز QR...",
+      qrNone: "ما فيه أي رمز QR بهذي الصورة",
+      qrFound: "لقينا رمز QR بالصورة — نوعه: {kind}",
+      qrKindUrl: "رابط ويب",
+      qrKindWifi: "بيانات شبكة واي فاي",
+      qrKindContact: "بيانات جهة اتصال",
+      qrKindText: "نص عادي",
+      qrError: "تعذر تحليل الصورة، جرب مرة ثانية"
     },
     en: {
       scanTitle: "Scan your photos before posting",
@@ -1124,6 +1202,11 @@ document.addEventListener('DOMContentLoaded', function () {
       foundAddress: "A detailed address/location is exposed",
       checklistTitle: "Before-You-Post Checklist",
       checklistSub: "Check off each item you've verified",
+      chk1: "No clear license plate or official document visible in the photo",
+      chk2: "No precise landmark (school, home, street) that reveals your location",
+      chk3: "You checked the photo's GPS data",
+      chk4: "You didn't mention your daily schedule or appointments in detail in the text",
+      chk5: "You're sure of the privacy settings of the accounts you're posting to (private/public)",
       findCombo: "Combined risk: this photo exposes both your location and your device at once — this combo can pinpoint your identity",
       findDeepfake: "This photo is very high resolution — high-res photos are prime material for AI face-cloning (deepfake) tools; consider posting a lower-res copy publicly",
       ocrTitle: "Visible Content Scanner",
@@ -1246,7 +1329,40 @@ document.addEventListener('DOMContentLoaded', function () {
       chatPlaceholder: "Type your question or issue here...",
       chatWelcome: "Hi! I'm your Privacy Guard assistant. Ask me about any feature in the app or a problem you're facing.",
       chatNotConfigured: "The AI chat isn't connected to a server yet — the app owner needs to add their backend URL in the code before this feature works.",
-      chatError: "There was a connection error — please try again in a moment"
+      chatError: "There was a connection error — please try again in a moment",
+      timelineTitle: "Security Timeline",
+      timelineSub: "A real log of every scan and clean-up you've actually run in this app",
+      timelineEmpty: "No activity logged yet — run a scan or clean-up and it'll show up here",
+      timeJustNow: "just now",
+      timeMinAgo: "min ago",
+      timeHourAgo: "hr ago",
+      timeDayAgo: "days ago",
+      persistNote: "* Persistent storage isn't available in this environment — daily limit and plan status only last for this page session.",
+      ev_scan: "Scanned a photo",
+      ev_clean: "Cleaned and downloaded a safe copy",
+      ev_pwBreached: "Detected a breached password",
+      ev_pwSafe: "Checked a password — no breach found",
+      ev_linkScan: "Scanned a suspicious link",
+      ev_checklistDone: "Completed the pre-post checklist",
+      secForensics: "Advanced Photo Forensics",
+      secTextLink: "Text & Link Scanning",
+      secPasswords: "Password Tools",
+      secDocs: "Documents & Reports",
+      secChecklist: "Safe-Posting Checklist",
+      toolQuotaLeft: "You have <b>{n}</b> of 3 free uses left today for this tool",
+      toolQuotaOver: "You've used up today's free uses for this tool — come back tomorrow or upgrade to Pro for unlimited use",
+      qrTitle: "Hidden QR Code Detector",
+      qrSub: "Some photos contain a small or hidden QR code in the background (a sign, a screen, a piece of paper) that links to a URL, Wi-Fi network, or contact card without you noticing. This tool scans the last photo you checked and decodes any QR code in it so you know where it leads before you post.",
+      qrBtn: "Scan last photo",
+      qrNeedScan: "Scan a photo first in the Scan tab before using this tool",
+      qrLoading: "Analyzing the photo for a QR code...",
+      qrNone: "No QR code found in this photo",
+      qrFound: "Found a QR code in the photo — type: {kind}",
+      qrKindUrl: "Web link",
+      qrKindWifi: "Wi-Fi network data",
+      qrKindContact: "Contact card data",
+      qrKindText: "Plain text",
+      qrError: "Couldn't analyze the photo, try again"
     },
     zh: {
       scanTitle: "发布前扫描您的照片",
@@ -1362,6 +1478,11 @@ document.addEventListener('DOMContentLoaded', function () {
       foundAddress: "文本中含有详细地址/位置",
       checklistTitle: "发布前检查清单",
       checklistSub: "逐项确认后打勾",
+      chk1: "照片中没有清晰可见的车牌或官方证件",
+      chk2: "没有能定位你的精确地标（学校、住宅、街道）",
+      chk3: "已检查照片的GPS数据",
+      chk4: "文字中没有详细提到你的日程或约会安排",
+      chk5: "已确认发布账号的隐私设置（私密/公开）",
       findCombo: "双重风险：这张照片同时暴露了位置和设备信息——这种组合足以精确定位你的身份",
       findDeepfake: "这张照片分辨率非常高——高分辨率照片是AI换脸（deepfake）工具的理想素材；建议公开发布时使用较低分辨率的版本",
       ocrTitle: "图片可见内容扫描",
@@ -1484,7 +1605,40 @@ document.addEventListener('DOMContentLoaded', function () {
       chatPlaceholder: "在此输入你的问题或遇到的问题...",
       chatWelcome: "你好！我是 Privacy Guard 的智能助手。可以问我应用里的任何功能或你遇到的问题。",
       chatNotConfigured: "智能对话尚未连接到服务器——应用所有者需要先在代码中添加自己的后端地址，此功能才能使用。",
-      chatError: "连接助手时出错——请稍后重试"
+      chatError: "连接助手时出错——请稍后重试",
+      timelineTitle: "安全时间线",
+      timelineSub: "记录你在本应用中实际执行过的每一次扫描和清理",
+      timelineEmpty: "还没有任何记录——进行一次扫描或清理后会显示在这里",
+      timeJustNow: "刚刚",
+      timeMinAgo: "分钟前",
+      timeHourAgo: "小时前",
+      timeDayAgo: "天前",
+      persistNote: "* 此环境不支持持久化存储——每日额度和订阅状态仅在本次页面会话中有效，重新打开页面后会恢复默认。",
+      ev_scan: "扫描了一张照片",
+      ev_clean: "清理并下载了安全副本",
+      ev_pwBreached: "检测到已泄露的密码",
+      ev_pwSafe: "检查了密码——未发现泄露",
+      ev_linkScan: "扫描了一个可疑链接",
+      ev_checklistDone: "完成了发布前检查清单",
+      secForensics: "高级照片鉴证",
+      secTextLink: "文本与链接扫描",
+      secPasswords: "密码工具",
+      secDocs: "文档与报告",
+      secChecklist: "安全发布清单",
+      toolQuotaLeft: "此工具今天还剩 <b>{n}</b> 次免费使用（共3次）",
+      toolQuotaOver: "此工具今天的免费次数已用完——明天再来，或升级到 Pro 无限使用",
+      qrTitle: "隐藏二维码检测器",
+      qrSub: "有些照片背景里藏着一个不起眼的二维码（标牌、屏幕、纸张），可能链接到网址、Wi-Fi 网络或联系人信息，而你没有注意到。这个工具会扫描你最近检查过的照片，解码其中的任何二维码，让你在发布前就知道它指向哪里。",
+      qrBtn: "扫描最近一张照片",
+      qrNeedScan: "请先在「扫描」标签页扫描一张照片，再使用此工具",
+      qrLoading: "正在分析照片中的二维码...",
+      qrNone: "此照片中没有发现二维码",
+      qrFound: "在照片中发现二维码——类型：{kind}",
+      qrKindUrl: "网页链接",
+      qrKindWifi: "Wi-Fi 网络信息",
+      qrKindContact: "联系人信息",
+      qrKindText: "普通文本",
+      qrError: "无法分析照片，请重试"
     }
   };
 
@@ -1502,10 +1656,16 @@ document.addEventListener('DOMContentLoaded', function () {
   let currentLang = 'ar';
   let membership = { tier: 'free', billing: 'monthly', code: null, expiresAt: null }; // free | pro | ultra
   let usage = { date: '', count: 0 };
-  let stats = { loc: 0, device: 0, cleaned: 0, scores: [], chkDone: 0, pwSafe: null };
+  let toolUsage = { date: '', counts: {} };
+  const TOOL_FREE_LIMIT = 3;
+  const CAPPED_TOOLS = ['gps', 'thumb', 'shot', 'linkScan', 'pwCheck', 'textScan', 'qr'];
+  let stats = { loc: 0, device: 0, cleaned: 0, scores: [], chkDone: 0, pwSafe: null, deviceChkDone: 0, browserScore: null };
   let pendingUpgradeTier = 'pro';
   let lastScanFile = null;
   let batchFiles = [];
+  let timeline = [];
+  const TIMELINE_MAX = 25;
+  const DEVICE_CHK_TOTAL = 6;
 
   const PRICES = {
     pro:   { weekly: 1.99, monthly: 4.99, yearly: 19.99 },
@@ -1564,6 +1724,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
 
+  // ---------- repaint fix ----------
+  // Some Android WebViews (custom Arabic web font + RTL + fast textContent
+  // swaps, e.g. switching tabs/language) leave stale glyph pixels behind
+  // instead of fully repainting the element ("ghost text"/overlapping
+  // digits or letters). Nudging opacity forces the compositor to redraw
+  // the element on the next frame without any visible flash or layout shift.
+  function forceRepaint(el) {
+    if (!el) return;
+    // Toggling opacity only nudges compositing and isn't reliable on all
+    // Android/Chrome builds — some leave stale glyph rasters behind when
+    // text content changes (visible as overlapping/ghosted text), especially
+    // right after a filter (blur) is removed from an ancestor. Forcing the
+    // element fully out of the render tree and back in guarantees a real
+    // reflow + repaint instead of just a compositing hint.
+    const prevDisplay = el.style.display;
+    el.style.display = 'none';
+    void el.offsetHeight; // force synchronous reflow
+    el.style.display = prevDisplay;
+    // Also repaint each row individually — the ghosting has been seen on a
+    // single row even when the parent card's own repaint didn't fix it.
+    el.querySelectorAll('.report-row').forEach((row) => {
+      const d = row.style.display;
+      row.style.display = 'none';
+      void row.offsetHeight;
+      row.style.display = d;
+    });
+  }
+
   let streak = { count: 0, lastDate: null };
 
   async function loadState() {
@@ -1575,6 +1763,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (s && s.value) { try { stats = JSON.parse(s.value); } catch(e){} }
     const st = await storageGet('streak');
     if (st && st.value) { try { streak = JSON.parse(st.value); } catch(e){} }
+    const tl = await storageGet('timeline');
+    if (tl && tl.value) { try { timeline = JSON.parse(tl.value); } catch(e){} }
+    const tu = await storageGet('toolUsage');
+    if (tu && tu.value) { try { toolUsage = JSON.parse(tu.value); } catch(e){} }
     const th = await storageGet('theme');
     if (th && th.value) {
       try {
@@ -1588,11 +1780,65 @@ document.addEventListener('DOMContentLoaded', function () {
     const lg = await storageGet('lang');
     if (lg && lg.value) { currentLang = lg.value; }
     if (usage.date !== todayStr()) { usage = { date: todayStr(), count: 0 }; saveUsage(); }
+    if (toolUsage.date !== todayStr()) { toolUsage = { date: todayStr(), counts: {} }; saveToolUsage(); }
   }
   async function saveMembership() { await storageSet('membership', JSON.stringify(membership)); }
   async function saveUsage() { await storageSet('usage', JSON.stringify(usage)); }
+  async function saveToolUsage() { await storageSet('toolUsage', JSON.stringify(toolUsage)); }
+  function toolRemaining(key) {
+    if (membership.tier !== 'free') return Infinity;
+    return Math.max(0, TOOL_FREE_LIMIT - (toolUsage.counts[key] || 0));
+  }
+  function canUseTool(key) { return membership.tier !== 'free' || toolRemaining(key) > 0; }
+  function consumeTool(key) {
+    if (membership.tier === 'free') {
+      toolUsage.counts[key] = (toolUsage.counts[key] || 0) + 1;
+      saveToolUsage();
+    }
+    renderToolQuotas();
+  }
+  function renderToolQuotas() {
+    const t = translations[currentLang];
+    CAPPED_TOOLS.forEach(key => {
+      const el = document.getElementById(key + 'QuotaNote');
+      if (!el) return;
+      if (membership.tier !== 'free') { el.textContent = ''; el.classList.remove('over'); return; }
+      const remaining = toolRemaining(key);
+      el.classList.toggle('over', remaining <= 0);
+      el.innerHTML = remaining > 0 ? t.toolQuotaLeft.replace('{n}', remaining) : t.toolQuotaOver;
+    });
+  }
   async function saveStats() { await storageSet('stats', JSON.stringify(stats)); }
   async function saveStreak() { await storageSet('streak', JSON.stringify(streak)); }
+  async function saveTimeline() { await storageSet('timeline', JSON.stringify(timeline)); }
+
+  // ---------- Security timeline: a real log of what actually happened in this app ----------
+  function logEvent(key, meta) {
+    timeline.unshift({ key: key, meta: meta || '', ts: Date.now() });
+    if (timeline.length > TIMELINE_MAX) timeline.length = TIMELINE_MAX;
+    saveTimeline();
+    renderTimeline();
+  }
+  function timeAgoLabel(ts) {
+    const t = translations[currentLang];
+    const diffMin = Math.max(0, Math.round((Date.now() - ts) / 60000));
+    if (diffMin < 1) return t.timeJustNow;
+    if (diffMin < 60) return diffMin + ' ' + t.timeMinAgo;
+    const diffH = Math.round(diffMin / 60);
+    if (diffH < 24) return diffH + ' ' + t.timeHourAgo;
+    const diffD = Math.round(diffH / 24);
+    return diffD + ' ' + t.timeDayAgo;
+  }
+  function renderTimeline() {
+    const t = translations[currentLang];
+    const wrap = document.getElementById('timelineWrap');
+    if (!wrap) return;
+    if (!timeline.length) { wrap.innerHTML = '<p class="disclaimer" style="margin:6px 0 0;padding:0;">' + t.timelineEmpty + '</p>'; return; }
+    wrap.innerHTML = timeline.map(ev => {
+      const label = t['ev_' + ev.key] || ev.key;
+      return '<div class="timeline-row"><span class="timeline-dot"></span><div class="timeline-body"><div class="timeline-label">' + label + (ev.meta ? ' <span class="timeline-meta">' + ev.meta + '</span>' : '') + '</div><div class="timeline-time">' + timeAgoLabel(ev.ts) + '</div></div></div>';
+    }).join('');
+  }
 
   function updateStreak() {
     const today = todayStr();
@@ -1644,6 +1890,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.lang-opt').forEach(o => o.classList.toggle('active', o.dataset.lang === lang));
     document.getElementById('uploadText').textContent = (membership.tier !== 'free') ? t.uploadTextBatch : t.uploadText;
     renderAll();
+    renderTimeline();
+    const persistNoteEl = document.getElementById('persistNoteEl');
+    if (persistNoteEl) persistNoteEl.textContent = t.persistNote;
+    forceRepaint(document.getElementById('bodyEl'));
   }
 
   document.querySelectorAll('.lang-opt').forEach(opt => {
@@ -1902,6 +2152,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     reportOverlay.style.display = hasPro ? 'none' : '';
     document.getElementById('reportWrap').classList.toggle('locked', !hasPro);
+    document.getElementById('fileTypeLock').style.display = hasPro ? 'none' : '';
+    document.getElementById('advScanLock').style.display = hasPro ? 'none' : '';
+    document.getElementById('fileTypeCard').classList.toggle('locked', !hasPro);
+    document.getElementById('advScanCard').classList.toggle('locked', !hasPro);
+    renderToolQuotas();
 
     document.getElementById('ocrLock').style.display = hasPro ? 'none' : '';
     document.getElementById('ocrCard').classList.toggle('locked', !hasPro);
@@ -1968,11 +2223,14 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('statCleaned').textContent = stats.cleaned;
     const avg = stats.scores.length ? Math.round(stats.scores.reduce((a,b)=>a+b,0)/stats.scores.length) : null;
     document.getElementById('statAvg').textContent = avg === null ? '--' : avg;
+    forceRepaint(document.getElementById('reportCard'));
 
     const photoPart = avg === null ? 100 : avg;
     const chkPart = (stats.chkDone / 5) * 100;
     const pwPart = stats.pwSafe === false ? 0 : 100;
-    const overall = Math.round(photoPart * 0.5 + chkPart * 0.25 + pwPart * 0.25);
+    const devicePart = (stats.deviceChkDone / DEVICE_CHK_TOTAL) * 100;
+    const browserPart = stats.browserScore === null ? 100 : stats.browserScore;
+    const overall = Math.round(photoPart * 0.3 + chkPart * 0.15 + pwPart * 0.2 + devicePart * 0.15 + browserPart * 0.2);
     document.getElementById('statOverall').textContent = overall;
 
     let nextStep = t.nextStepAllGood;
@@ -1980,6 +2238,8 @@ document.addEventListener('DOMContentLoaded', function () {
     else if (stats.chkDone < 5) nextStep = t.nextStepChecklist;
     else if (avg !== null && avg < 70) nextStep = t.nextStepPhoto;
     else if (stats.pwSafe === null) nextStep = t.nextStepPw;
+    else if (stats.deviceChkDone < DEVICE_CHK_TOTAL) nextStep = t.nextStepDevice;
+    else if (stats.browserScore === null) nextStep = t.nextStepBrowser;
     document.getElementById('nextStepText').textContent = nextStep;
 
     document.querySelectorAll('#checklistWrap input[type=checkbox]').forEach((cb, i) => {
@@ -1997,11 +2257,15 @@ document.addEventListener('DOMContentLoaded', function () {
       { key: 'pwChecked', earned: stats.pwSafe !== null, label: t.badgePwChecked },
       { key: 'checklist', earned: stats.chkDone >= 5, label: t.badgeChecklist },
       { key: 'subscriber', earned: membership.tier !== 'free', label: t.badgeSubscriber },
-      { key: 'streak7', earned: streak.count >= 7, label: t.badgeStreak7 }
+      { key: 'streak7', earned: streak.count >= 7, label: t.badgeStreak7 },
+      { key: 'deviceChecklist', earned: stats.deviceChkDone >= DEVICE_CHK_TOTAL, label: t.badgeDeviceSafe },
+      { key: 'browserChecked', earned: stats.browserScore !== null, label: t.badgeBrowserChecked }
     ];
     document.getElementById('badgeRow').innerHTML = badges.map(b =>
       '<span class="badge-chip' + (b.earned ? ' earned' : '') + '">' + b.label + '</span>'
     ).join('');
+
+    renderTimeline();
   }
 
   document.getElementById('ghostCard').addEventListener('click', () => {
@@ -2021,7 +2285,9 @@ document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.navbtn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tabpage').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      const page = document.getElementById('tab-' + btn.dataset.tab);
+      page.classList.add('active');
+      forceRepaint(page);
     });
   });
 
@@ -2337,7 +2603,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
     let html = '<div class="diff-box"><div class="diff-title">' + t.diffTitle + '</div>';
     rows.forEach(([label, before]) => {
-      html += '<div class="diff-row"><span class="diff-label">' + label + '</span><span class="diff-before">' + before + '</span><span class="diff-arrow">→</span><span class="diff-before">' + before + '</span><span class="diff-arrow">→</span><span class="diff-after">' + t.diffRemoved + '</span></div>';
+      html += '<div class="diff-row"><span class="diff-label">' + label + '</span><span class="diff-before">' + before + '</span><span class="diff-arrow">→</span><span class="diff-after">' + t.diffRemoved + '</span></div>';
     });
     html += '</div>';
     result.insertAdjacentHTML('beforeend', html);
@@ -2348,7 +2614,9 @@ document.addEventListener('DOMContentLoaded', function () {
     device: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>',
     clock: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
     img: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-4 4-3-3-5 5"/></svg>',
-    dl: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 19h16"/></svg>'
+    dl: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 19h16"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/></svg>',
+    globe: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 4 6 4 9s-1.5 6.3-4 9c-2.5-2.7-4-6-4-9s1.5-6.3 4-9z"/></svg>'
   };
 
   function canScanToday() {
@@ -2407,9 +2675,10 @@ document.addEventListener('DOMContentLoaded', function () {
         renderQuota();
         renderStats();
         vibrate(20);
+        logEvent('scan', score + '/100');
 
         document.getElementById('cleanNowBtn').addEventListener('click', () => {
-          cleanAndDownload(file).then(() => renderCleanDiff(tags));
+          cleanAndDownload(file).then(() => { renderCleanDiff(tags); logEvent('clean'); });
         });
 
         // Ghost Mode: auto clean immediately for pro/ultra users who enabled it
@@ -2438,6 +2707,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const t = translations[currentLang];
     const pw = pwInput.value;
     if (!pw) return;
+    if (!canUseTool('pwCheck')) { openUpgradeModal('pro'); return; }
     pwResult.innerHTML = '<div class="finding warn"><span class="ic">' + ICONS.clock + '</span>' + t.pwChecking + '</div>';
     try {
       const buf = new TextEncoder().encode(pw);
@@ -2451,12 +2721,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const count = hit.split(':')[1].trim();
         pwResult.innerHTML = findingHTML('warn', ICONS.pin, t.pwBreached.replace('{n}', count));
         stats.pwSafe = false;
+        logEvent('pwBreached');
       } else {
         pwResult.innerHTML = findingHTML('safe', ICONS.check, t.pwSafe);
         stats.pwSafe = true;
+        logEvent('pwSafe');
       }
       saveStats();
       renderStats();
+      consumeTool('pwCheck');
     } catch (err) {
       pwResult.innerHTML = findingHTML('warn', ICONS.pin, t.pwError);
     }
@@ -2519,7 +2792,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   document.getElementById('linkScanBtn').addEventListener('click', () => {
     const val = document.getElementById('linkInput').value;
-    document.getElementById('linkScanResult').innerHTML = val ? scanLink(val) : '';
+    if (!val) return;
+    if (!canUseTool('linkScan')) { openUpgradeModal('pro'); return; }
+    document.getElementById('linkScanResult').innerHTML = scanLink(val);
+    logEvent('linkScan');
+    consumeTool('linkScan');
   });
 
   // ---------- Tool: disguised file / magic-byte detector ----------
@@ -2553,7 +2830,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (/^<\?xml|^<svg/.test(text)) return { name: 'SVG/XML', kind: 'vector' };
     return { name: null, kind: 'unknown' };
   }
-  document.getElementById('fileTypeBtn').addEventListener('click', () => document.getElementById('fileTypeInput').click());
+  document.getElementById('fileTypeBtn').addEventListener('click', () => {
+    if (membership.tier === 'free') { openUpgradeModal('pro'); return; }
+    document.getElementById('fileTypeInput').click();
+  });
   document.getElementById('fileTypeInput').addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
@@ -2593,10 +2873,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const t = translations[currentLang];
     const res = document.getElementById('gpsResult');
     if (!lastScanFile) { res.innerHTML = findingHTML('warn', ICONS.img, t.gpsNeedScan); return; }
+    if (!canUseTool('gps')) { openUpgradeModal('pro'); return; }
     res.innerHTML = findingHTML('warn', ICONS.clock, t.gpsLoading);
     readExifData(lastScanFile, (tags) => {
       if (tags.gpsLat === undefined || tags.gpsLon === undefined) {
         res.innerHTML = findingHTML('safe', ICONS.check, t.gpsNone);
+        consumeTool('gps');
         return;
       }
       const lat = tags.gpsLat.toFixed(6), lon = tags.gpsLon.toFixed(6);
@@ -2605,6 +2887,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (tags.gpsAccuracy) html += findingHTML('warn', ICONS.pin, t.gpsAccuracy.replace('{m}', tags.gpsAccuracy.toFixed(1)));
       html += '<a class="tool-btn" style="display:block;text-decoration:none;margin-top:8px" href="' + mapUrl + '" target="_blank" rel="noopener noreferrer">' + t.gpsOpenMap + '</a>';
       res.innerHTML = html;
+      consumeTool('gps');
     });
   });
 
@@ -2613,13 +2896,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const t = translations[currentLang];
     const res = document.getElementById('thumbResult');
     if (!lastScanFile) { res.innerHTML = findingHTML('warn', ICONS.img, t.thumbNeedScan); return; }
+    if (!canUseTool('thumb')) { openUpgradeModal('pro'); return; }
     res.innerHTML = findingHTML('warn', ICONS.clock, t.thumbLoading);
     readExifData(lastScanFile, (tags) => {
-      if (!tags.thumbBlob) { res.innerHTML = findingHTML('safe', ICONS.check, t.thumbNone); return; }
+      if (!tags.thumbBlob) { res.innerHTML = findingHTML('safe', ICONS.check, t.thumbNone); consumeTool('thumb'); return; }
       const url = URL.createObjectURL(tags.thumbBlob);
       res.innerHTML = findingHTML('warn', ICONS.img, t.thumbFound) +
         '<img src="' + url + '" style="width:100%;border-radius:10px;margin-top:8px;border:1px solid var(--line);display:block">' +
         '<div class="clean-note" style="margin-top:8px;text-align:start">' + t.thumbCompareHint + '</div>';
+      consumeTool('thumb');
     });
   });
 
@@ -2628,6 +2913,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const t = translations[currentLang];
     const res = document.getElementById('shotResult');
     if (!lastScanFile) { res.innerHTML = findingHTML('warn', ICONS.img, t.shotNeedScan); return; }
+    if (!canUseTool('shot')) { openUpgradeModal('pro'); return; }
     res.innerHTML = findingHTML('warn', ICONS.clock, t.shotLoading);
     const file = lastScanFile;
     readExifData(file, (tags) => {
@@ -2642,10 +2928,68 @@ document.addEventListener('DOMContentLoaded', function () {
         if (screenLike) signals++;
         res.innerHTML = signals >= 2 ? findingHTML('warn', ICONS.pin, t.shotLikely) : findingHTML('safe', ICONS.check, t.shotUnlikely);
         URL.revokeObjectURL(url);
+        consumeTool('shot');
       };
-      img.onerror = () => { res.innerHTML = findingHTML('safe', ICONS.check, t.shotUnlikely); };
+      img.onerror = () => { res.innerHTML = findingHTML('safe', ICONS.check, t.shotUnlikely); consumeTool('shot'); };
       img.src = url;
     });
+  });
+
+  // ---------- Tool: hidden QR code decoder ----------
+  let jsQrLoadPromise = null;
+  function loadJsQr() {
+    if (window.jsQR) return Promise.resolve();
+    if (jsQrLoadPromise) return jsQrLoadPromise;
+    jsQrLoadPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js';
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return jsQrLoadPromise;
+  }
+  function classifyQrContent(text) {
+    if (/^https?:\/\//i.test(text)) return 'url';
+    if (/^WIFI:/i.test(text)) return 'wifi';
+    if (/^(BEGIN:VCARD|MECARD:)/i.test(text)) return 'contact';
+    return 'text';
+  }
+  document.getElementById('qrBtn').addEventListener('click', async () => {
+    const t = translations[currentLang];
+    const res = document.getElementById('qrResult');
+    if (!lastScanFile) { res.innerHTML = findingHTML('warn', ICONS.img, t.qrNeedScan); return; }
+    if (!canUseTool('qr')) { openUpgradeModal('pro'); return; }
+    res.innerHTML = findingHTML('warn', ICONS.clock, t.qrLoading);
+    try {
+      await loadJsQr();
+      const url = URL.createObjectURL(lastScanFile);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = window.jsQR(imageData.data, imageData.width, imageData.height);
+        URL.revokeObjectURL(url);
+        if (!code || !code.data) {
+          res.innerHTML = findingHTML('safe', ICONS.check, t.qrNone);
+        } else {
+          const kind = classifyQrContent(code.data);
+          const kindLabel = kind === 'url' ? t.qrKindUrl : kind === 'wifi' ? t.qrKindWifi : kind === 'contact' ? t.qrKindContact : t.qrKindText;
+          const safeText = code.data.length > 120 ? code.data.slice(0, 120) + '…' : code.data;
+          res.innerHTML = findingHTML('warn', ICONS.pin, t.qrFound.replace('{kind}', kindLabel)) +
+            '<div class="clean-note" style="margin-top:8px;text-align:start;word-break:break-all;">' + safeText.replace(/</g, '&lt;') + '</div>';
+        }
+        consumeTool('qr');
+      };
+      img.onerror = () => { res.innerHTML = findingHTML('warn', ICONS.pin, t.qrError); consumeTool('qr'); };
+      img.src = url;
+    } catch (err) {
+      res.innerHTML = findingHTML('warn', ICONS.pin, t.qrError);
+    }
   });
 
   // ---------- Tool: advanced financial data / secret-key scanner ----------
@@ -2695,6 +3039,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return html || findingHTML('safe', ICONS.check, t.advClean);
   }
   document.getElementById('advScanBtn').addEventListener('click', () => {
+    if (membership.tier === 'free') { openUpgradeModal('pro'); return; }
     const val = document.getElementById('advScanInput').value;
     document.getElementById('advScanResult').innerHTML = val ? scanAdvancedSecrets(val) : '';
   });
@@ -2791,7 +3136,13 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   document.getElementById('textScanBtn').addEventListener('click', () => {
     const val = document.getElementById('textScanInput').value;
+    if (!val) return;
+    if (!canUseTool('textScan')) { openUpgradeModal('pro'); return; }
+    document.getElementById('textScanInput').value;
+    if (!val) return;
+    if (!canUseTool('textScan')) { openUpgradeModal('pro'); return; }
     document.getElementById('textScanResult').innerHTML = scanTextForLeaks(val);
+    consumeTool('textScan');
   });
 
   // ---------- Tool: OCR visible-content scanner (Pro/Ultra) ----------
@@ -2865,6 +3216,7 @@ document.addEventListener('DOMContentLoaded', function () {
       saveStats();
       renderStats();
       vibrate(stats.chkDone === 5 ? [30,50,30] : 12);
+      if (stats.chkDone === 5) logEvent('checklistDone');
     });
   });
 
@@ -3030,10 +3382,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!hasStorage()) {
       const note = document.createElement('p');
       note.className = 'disclaimer';
+      note.id = 'persistNoteEl';
       note.style.marginTop = '10px';
-      note.textContent = currentLang === 'ar'
-        ? '* التخزين الدائم غير متاح في هذه البيئة — الحد اليومي والاشتراك يشتغلون بذاكرة هذه الجلسة فقط ويرجعون افتراضيين إذا أعدت فتح الصفحة من جديد.'
-        : '* Persistent storage isn\'t available in this environment — daily limit and plan status only last for this page session.';
+      note.textContent = translations[currentLang].persistNote;
       document.querySelector('#tab-scan .card-panel').appendChild(note);
     }
   });
