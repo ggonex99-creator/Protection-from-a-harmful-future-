@@ -120,6 +120,15 @@
   .clean-btn svg, .batch-clean-btn svg { width:16px; height:16px; }
   .clean-note { font-family:'IBM Plex Mono',monospace; font-size: 10.5px; color: var(--ink-dim); text-align:center; margin-top:8px; line-height:1.6; }
 
+  .diff-box { margin-top: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--surface); animation: slideIn .35s ease; }
+  .diff-title { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+  .diff-row { display: flex; align-items: center; gap: 8px; font-size: 11.5px; padding: 7px 0; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .diff-row:first-of-type { border-top: none; }
+  .diff-label { color: var(--ink-dim); flex: 1 1 auto; min-width: 90px; }
+  .diff-before { color: #ffcb87; font-family: 'IBM Plex Mono', monospace; }
+  .diff-arrow { color: var(--ink-dim); }
+  .diff-after { color: var(--accent-1); font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
+
   .section-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; margin: 30px 0 12px; padding: 0 4px; color: var(--ink-dim); letter-spacing: 1.5px; display:flex; align-items:center; gap:10px; }
   .section-title::after { content:''; flex:1; height:1px; background: var(--line); }
 
@@ -435,6 +444,10 @@
         <div class="swatch" data-c1="#60a5fa" data-c2="#94a3b8" data-c3="#e2e8f0" data-r1="96,165,250" data-r2="148,163,184" data-r3="226,232,240" style="background: linear-gradient(135deg,#60a5fa,#e2e8f0)"></div>
         <div class="swatch" data-c1="#fb923c" data-c2="#dc2626" data-c3="#facc15" data-r1="251,146,60" data-r2="220,38,38" data-r3="250,204,21" style="background: linear-gradient(135deg,#fb923c,#dc2626)"></div>
         <div class="swatch" data-c1="#4ade80" data-c2="#166534" data-c3="#d9f99d" data-r1="74,222,128" data-r2="22,101,52" data-r3="217,249,157" style="background: linear-gradient(135deg,#4ade80,#166534)"></div>
+        <div class="swatch" data-c1="#22d3ee" data-c2="#0891b2" data-c3="#a5f3fc" data-r1="34,211,238" data-r2="8,145,178" data-r3="165,243,252" style="background: linear-gradient(135deg,#22d3ee,#0891b2)"></div>
+        <div class="swatch" data-c1="#f472b6" data-c2="#be185d" data-c3="#fbcfe8" data-r1="244,114,182" data-r2="190,24,93" data-r3="251,207,232" style="background: linear-gradient(135deg,#f472b6,#be185d)"></div>
+        <div class="swatch" data-c1="#84cc16" data-c2="#365314" data-c3="#ecfccb" data-r1="132,204,22" data-r2="54,83,20" data-r3="236,252,203" style="background: linear-gradient(135deg,#84cc16,#365314)"></div>
+        <div class="swatch" data-c1="#818cf8" data-c2="#3730a3" data-c3="#c7d2fe" data-r1="129,140,248" data-r2="55,48,163" data-r3="199,210,254" style="background: linear-gradient(135deg,#818cf8,#3730a3)"></div>
       </div>
 
       <div class="mode-toggle" id="modeToggle">
@@ -510,6 +523,49 @@
       <p data-i18n="toolsSub">أدوات عملية تفحص وتحمي بياناتك — كلها تشتغل داخل جهازك فقط</p>
     </div>
     <div class="card-panel">
+
+      <div class="tool-card" id="fileTypeCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg><span data-i18n="fileTypeTitle">كاشف الملفات المموّهة</span></div>
+        <div class="s" data-i18n="fileTypeSub">المتصفح يحدد نوع الملف من الامتداد بس (.jpg، .exe...)، مو من محتواه الحقيقي — هذي الأداة تفتح أول بايتات الملف الفعلية (البصمة الحقيقية) وتقارنها بامتداده، فتكشف ملف تنفيذي أو سكربت متخفي باسم صورة.</div>
+        <input type="file" id="fileTypeInput" style="display:none">
+        <button class="tool-btn" id="fileTypeBtn" data-i18n="fileTypeBtn">افحص ملف</button>
+        <div class="tool-result" id="fileTypeResult"></div>
+      </div>
+
+      <div class="tool-card" id="gpsToolCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></svg><span data-i18n="gpsToolTitle">مستخرج إحداثيات GPS الدقيقة</span></div>
+        <div class="s" data-i18n="gpsToolSub">أداة «فحص» تقولك بس إذا كان فيه موقع GPS بالصورة. هذي تستخرج الإحداثيات الفعلية من آخر صورة فحصتها وتوريك بالضبط شنو ممكن يشوفه أي شخص يفتح بيانات الصورة الوصفية.</div>
+        <button class="tool-btn" id="gpsBtn" data-i18n="gpsBtn">استخرج إحداثيات آخر صورة</button>
+        <div class="tool-result" id="gpsResult"></div>
+      </div>
+
+      <div class="tool-card" id="thumbToolCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-4 4-3-3-5 5"/></svg><span data-i18n="thumbToolTitle">كاشف الصورة المصغّرة المخفية</span></div>
+        <div class="s" data-i18n="thumbToolSub">كثير برامج التعديل تقص الصورة الظاهرة بس تنسى تحدّث الصورة المصغّرة (thumbnail) المخزّنة داخل بيانات EXIF — يعني ممكن تكون الصورة المصغّرة توري محتوى تم قصّه أو حذفه من الصورة الأساسية. هذي الأداة تستخرجها من آخر صورة فحصتها.</div>
+        <button class="tool-btn" id="thumbBtn" data-i18n="thumbBtn">استخرج الصورة المصغّرة</button>
+        <div class="tool-result" id="thumbResult"></div>
+      </div>
+
+      <div class="tool-card" id="shotToolCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg><span data-i18n="shotToolTitle">كاشف لقطة الشاشة</span></div>
+        <div class="s" data-i18n="shotToolSub">لقطات الشاشة غالبًا تكشف إشعارات، محادثات، أو تطبيقات مفتوحة بالخلفية أكثر من صور الكاميرا العادية. هذي الأداة تفحص آخر صورة فحصتها وتقول لك احتمال كونها لقطة شاشة أو صورة كاميرا حقيقية، بناءً على غياب بيانات الكاميرا وصيغة/أبعاد الملف — مؤشر تقريبي وليس قطعي.</div>
+        <button class="tool-btn" id="shotBtn" data-i18n="shotBtn">افحص آخر صورة</button>
+        <div class="tool-result" id="shotResult"></div>
+      </div>
+
+      <div class="tool-card" id="advScanCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg><span data-i18n="advScanTitle">الفاحص المتقدم للبيانات المصرفية والمفاتيح السرية</span></div>
+        <div class="s" data-i18n="advScanSub">فحص أدق من فحص النص العادي: يتحقق من أرقام البطاقات بخوارزمية Luhn الحقيقية (نفس اللي تستخدمها البنوك)، ومن أرقام IBAN بخوارزمية Mod-97 الرسمية، ويكشف مفاتيح API شائعة (AWS, Stripe, GitHub, Slack, Google) — كل هذا بجهازك، بدون إرسال أي شي لأي سيرفر.</div>
+        <textarea class="field-textarea" id="advScanInput" data-i18n-ph="advScanPh" placeholder="الصق النص، الكود، أو ملف الإعدادات هنا للفحص..."></textarea>
+        <button class="tool-btn" id="advScanBtn" data-i18n="advScanBtn">افحص الآن</button>
+        <div class="tool-result" id="advScanResult"></div>
+      </div>
+
+      <div class="tool-card" id="reportToolCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 19h16"/></svg><span data-i18n="reportToolTitle">تقرير الخصوصية القابل للتنزيل</span></div>
+        <div class="s" data-i18n="reportToolSub">نزّل ملخص نصي بكل إحصائياتك بهذه الجلسة (عدد الفحوصات، التنظيفات، متوسط درجة الأمان...) لأرشفتك الشخصية أو لمشاركتها مع فريقك.</div>
+        <button class="tool-btn" id="reportBtn" data-i18n="reportBtn">نزّل التقرير</button>
+      </div>
 
       <div class="tool-card" id="linkScanCard">
         <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg><span data-i18n="linkScanTitle">فاحص الروابط المشبوهة</span></div>
@@ -760,6 +816,72 @@ document.addEventListener('DOMContentLoaded', function () {
       pdfFoundDates: "تاريخ الإنشاء والتعديل الحقيقي مكشوف",
       pdfClean: "ما لقينا بيانات وصفية حساسة واضحة بهذا الملف",
       lockedFeature: "هذي ميزة مدفوعة — اضغط للترقية",
+      fileTypeTitle: "كاشف الملفات المموّهة",
+      fileTypeSub: "المتصفح يحدد نوع الملف من الامتداد بس (.jpg، .exe...)، مو من محتواه الحقيقي — هذي الأداة تفتح أول بايتات الملف الفعلية (البصمة الحقيقية) وتقارنها بامتداده، فتكشف ملف تنفيذي أو سكربت متخفي باسم صورة.",
+      fileTypeBtn: "افحص ملف",
+      fileTypeDangerExec: "خطر: هذا الملف امتداده يوحي إنه ملف عادي، لكن محتواه الحقيقي {real} — نوع ملف تنفيذي. لا تفتحه",
+      fileTypeHtmlAsImage: "تحذير: محتوى الملف الفعلي صفحة HTML/سكربت وليس صورة، رغم إن امتداده .{ext}",
+      fileTypeSvgScript: "تنبيه: ملف SVG هذا يحتوي كود جافاسكربت أو معالج أحداث داخله — ممكن يشغّل كود لو فتحته متصفح ما يتعامل معه بحذر",
+      fileTypeSvgClean: "ملف SVG نظيف — ما فيه كود جافاسكربت أو معالجات أحداث مخفية",
+      fileTypeUnknown: "ما قدرنا نتعرف على نوع هذا الملف من بصمته الحقيقية — امتداده .{ext}، كن حذر قبل فتحه إذا كان مصدره غير موثوق",
+      fileTypeMismatch: "تنبيه: امتداد الملف .{ext} لا يطابق محتواه الحقيقي ({real}) — ممكن يكون معاد تسميته لإخفاء نوعه الحقيقي",
+      fileTypeMatch: "امتداد الملف يطابق محتواه الحقيقي ({real}) — لا يوجد تمويه",
+      gpsToolTitle: "مستخرج إحداثيات GPS الدقيقة",
+      gpsToolSub: "أداة «فحص» تقولك بس إذا كان فيه موقع GPS بالصورة. هذي تستخرج الإحداثيات الفعلية من آخر صورة فحصتها وتوريك بالضبط شنو ممكن يشوفه أي شخص يفتح بيانات الصورة الوصفية.",
+      gpsBtn: "استخرج إحداثيات آخر صورة",
+      gpsNeedScan: "افحص صورة أول من تبويب «فحص»، وبعدين ارجع هنا",
+      gpsLoading: "جاري قراءة بيانات GPS من الصورة...",
+      gpsNone: "ما فيه إحداثيات GPS بهذي الصورة",
+      gpsFound: "الإحداثيات الدقيقة: {lat}, {lon} — هذا يحدد الموقع تقريبًا بدقة عدة أمتار",
+      gpsAccuracy: "دقة الموقع المسجلة: حوالي {m} متر",
+      gpsOpenMap: "افتح الموقع على الخريطة",
+      thumbToolTitle: "كاشف الصورة المصغّرة المخفية",
+      thumbToolSub: "كثير برامج التعديل تقص الصورة الظاهرة بس تنسى تحدّث الصورة المصغّرة (thumbnail) المخزّنة داخل بيانات EXIF — يعني ممكن تكون الصورة المصغّرة توري محتوى تم قصّه أو حذفه من الصورة الأساسية. هذي الأداة تستخرجها من آخر صورة فحصتها.",
+      thumbBtn: "استخرج الصورة المصغّرة",
+      thumbNeedScan: "افحص صورة أول من تبويب «فحص»، وبعدين ارجع هنا",
+      thumbLoading: "جاري البحث عن صورة مصغّرة مخفية...",
+      thumbNone: "ما فيه صورة مصغّرة مخفية بهذا الملف",
+      thumbFound: "لكينا صورة مصغّرة مخفية داخل بيانات الملف — قارنها بالصورة الأصلية:",
+      thumbCompareHint: "إذا الصورة المصغّرة فيها محتوى مو موجود بالصورة الأساسية (مثلاً جزء تم قصّه)، فهذا تسريب حقيقي حتى لو الصورة الظاهرة تبدو نظيفة.",
+      shotToolTitle: "كاشف لقطة الشاشة",
+      shotToolSub: "لقطات الشاشة غالبًا تكشف إشعارات، محادثات، أو تطبيقات مفتوحة بالخلفية أكثر من صور الكاميرا العادية. هذي الأداة تفحص آخر صورة فحصتها وتقول لك احتمال كونها لقطة شاشة أو صورة كاميرا حقيقية، بناءً على غياب بيانات الكاميرا وصيغة/أبعاد الملف — مؤشر تقريبي وليس قطعي.",
+      shotBtn: "افحص آخر صورة",
+      shotNeedScan: "افحص صورة أول من تبويب «فحص»، وبعدين ارجع هنا",
+      shotLoading: "جاري تحليل الصورة...",
+      shotLikely: "هذي الصورة غالبًا لقطة شاشة (ما فيها بيانات كاميرا وصيغتها تطابق نمط لقطات الشاشة) — تأكد ما فيها إشعارات أو معلومات حساسة بالخلفية قبل نشرها",
+      shotUnlikely: "هذي الصورة غالبًا من كاميرا حقيقية، مو لقطة شاشة",
+      advScanTitle: "الفاحص المتقدم للبيانات المصرفية والمفاتيح السرية",
+      advScanSub: "فحص أدق من فحص النص العادي: يتحقق من أرقام البطاقات بخوارزمية Luhn الحقيقية (نفس اللي تستخدمها البنوك)، ومن أرقام IBAN بخوارزمية Mod-97 الرسمية، ويكشف مفاتيح API شائعة (AWS, Stripe, GitHub, Slack, Google) — كل هذا بجهازك، بدون إرسال أي شي لأي سيرفر.",
+      advScanPh: "الصق النص، الكود، أو ملف الإعدادات هنا للفحص...",
+      advScanBtn: "افحص الآن",
+      advCardFound: "لكينا {n} رقم بطاقة بنكية صالح (تحقق Luhn) داخل النص — لا تشارك هذا النص",
+      advIbanFound: "لكينا {n} رقم IBAN صالح (تحقق Mod-97) داخل النص",
+      advKeyFound: "لكينا مفاتيح سرية محتملة: {list} — إذا كانت حقيقية، ألغِها فورًا من مزوّد الخدمة",
+      advClean: "ما لكينا أرقام بطاقات، IBAN، أو مفاتيح API واضحة بهذا النص",
+      reportToolTitle: "تقرير الخصوصية القابل للتنزيل",
+      reportToolSub: "نزّل ملخص نصي بكل إحصائياتك بهذه الجلسة (عدد الفحوصات، التنظيفات، متوسط درجة الأمان...) لأرشفتك الشخصية أو لمشاركتها مع فريقك.",
+      reportBtn: "نزّل التقرير",
+      reportHeader: "تقرير Privacy Guard Pro",
+      reportDate: "التاريخ",
+      reportPlan: "الاشتراك",
+      reportScanned: "عدد الصور المفحوصة",
+      reportCleaned: "عدد الملفات المنظّفة",
+      reportGpsFound: "صور فيها GPS",
+      reportDeviceFound: "صور فيها بيانات جهاز",
+      reportAvgScore: "متوسط درجة الأمان",
+      reportStreak: "أيام الاستخدام المتتالية",
+      reportPwStatus: "حالة آخر فحص كلمة سر",
+      reportPwOk: "آمنة",
+      reportPwBad: "مسرّبة سابقًا",
+      reportFooter: "هذا التقرير تولّد محليًا بجهازك ولم يُرسل لأي سيرفر.",
+      diffTitle: "قبل وبعد التنظيف",
+      diffGps: "موقع GPS",
+      diffDevice: "بيانات الجهاز",
+      diffDate: "تاريخ الالتقاط",
+      diffThumb: "صورة مصغّرة مخفية",
+      diffYes: "موجود",
+      diffNo: "غير موجود",
+      diffRemoved: "أُزيل بالكامل ✓",
       aiDetectTitle: "كاشف محتوى الذكاء الاصطناعي",
       aiDetectSub: "يفحص بصمات حقيقية بالبيانات الوصفية للصور (أسماء برامج مثل Midjourney وDALL-E وStable Diffusion)، ويفحص النص بحثًا عن أنماط كتابة شائعة بالمحتوى المولّد آليًا. مؤشر تقريبي وليس دليل قطعي 100%.",
       aiImgBtn: "افحص صورة",
@@ -911,6 +1033,72 @@ document.addEventListener('DOMContentLoaded', function () {
       pdfFoundDates: "The real creation/modification dates are exposed",
       pdfClean: "No obvious sensitive metadata found in this file",
       lockedFeature: "This is a paid feature — tap to upgrade",
+      fileTypeTitle: "Disguised File Detector",
+      fileTypeSub: "Your browser guesses a file's type from its extension alone (.jpg, .exe...), not its real content. This tool reads the file's actual first bytes (its true signature) and compares them to the extension — catching an executable or script disguised as an image.",
+      fileTypeBtn: "Scan a file",
+      fileTypeDangerExec: "Danger: this file's extension looks ordinary, but its real content is {real} — an executable file type. Do not open it",
+      fileTypeHtmlAsImage: "Warning: this file's actual content is an HTML page/script, not an image, despite its .{ext} extension",
+      fileTypeSvgScript: "Alert: this SVG file contains JavaScript code or an event handler inside it — it could run code if opened by a browser that doesn't sandbox it carefully",
+      fileTypeSvgClean: "This SVG file is clean — no embedded JavaScript or event handlers found",
+      fileTypeUnknown: "We couldn't identify this file's real type from its signature — it claims to be .{ext}. Be cautious opening it if it's from an untrusted source",
+      fileTypeMismatch: "Alert: the .{ext} extension doesn't match the file's real content ({real}) — it may have been renamed to hide its true type",
+      fileTypeMatch: "The file's extension matches its real content ({real}) — no disguise detected",
+      gpsToolTitle: "Precise GPS Coordinate Extractor",
+      gpsToolSub: "The Scan tab only tells you whether GPS data exists. This extracts the actual coordinates from the last photo you scanned, showing exactly what anyone who opens the photo's metadata could see.",
+      gpsBtn: "Extract coordinates from last photo",
+      gpsNeedScan: "Scan a photo in the Scan tab first, then come back here",
+      gpsLoading: "Reading GPS data from the photo...",
+      gpsNone: "No GPS coordinates found in this photo",
+      gpsFound: "Precise coordinates: {lat}, {lon} — this pinpoints the location to within a few meters",
+      gpsAccuracy: "Recorded location accuracy: about {m} meters",
+      gpsOpenMap: "Open location on map",
+      thumbToolTitle: "Hidden Thumbnail Detector",
+      thumbToolSub: "Many editing apps crop the visible photo but forget to update the thumbnail stored inside its EXIF data — so the hidden thumbnail can still show content that was cropped or removed from the main photo. This tool extracts it from the last photo you scanned.",
+      thumbBtn: "Extract hidden thumbnail",
+      thumbNeedScan: "Scan a photo in the Scan tab first, then come back here",
+      thumbLoading: "Looking for a hidden thumbnail...",
+      thumbNone: "No hidden thumbnail found in this file",
+      thumbFound: "Found a hidden thumbnail inside the file's data — compare it to the original photo:",
+      thumbCompareHint: "If the thumbnail shows content that isn't in the main photo (like a cropped-out part), that's a real leak even if the visible photo looks clean.",
+      shotToolTitle: "Screenshot Detector",
+      shotToolSub: "Screenshots often reveal notifications, chats, or background apps more than regular camera photos do. This tool checks the last photo you scanned and estimates whether it's a screenshot or a real camera photo, based on the absence of camera data and the file's format/dimensions — an approximate signal, not definitive proof.",
+      shotBtn: "Check last photo",
+      shotNeedScan: "Scan a photo in the Scan tab first, then come back here",
+      shotLoading: "Analyzing the photo...",
+      shotLikely: "This photo is likely a screenshot (no camera data, and its format matches typical screenshot patterns) — check for notifications or sensitive info in the background before sharing it",
+      shotUnlikely: "This photo is likely from a real camera, not a screenshot",
+      advScanTitle: "Advanced Financial Data & Secret-Key Scanner",
+      advScanSub: "Sharper than the regular text scanner: validates card numbers with the real Luhn algorithm (the same one banks use), checks IBAN numbers with the official Mod-97 checksum, and flags common API key formats (AWS, Stripe, GitHub, Slack, Google) — all done on your device, nothing is sent anywhere.",
+      advScanPh: "Paste text, code, or a config file here to scan...",
+      advScanBtn: "Scan now",
+      advCardFound: "Found {n} valid card number(s) (Luhn-checked) in this text — don't share it",
+      advIbanFound: "Found {n} valid IBAN number(s) (Mod-97 checked) in this text",
+      advKeyFound: "Found possible secret keys: {list} — if these are real, revoke them immediately from the provider",
+      advClean: "No card numbers, IBANs, or clear API keys found in this text",
+      reportToolTitle: "Downloadable Privacy Report",
+      reportToolSub: "Download a text summary of everything from this session (scans, cleanups, average safety score...) to keep for your own records or share with your team.",
+      reportBtn: "Download report",
+      reportHeader: "Privacy Guard Pro Report",
+      reportDate: "Date",
+      reportPlan: "Plan",
+      reportScanned: "Photos scanned",
+      reportCleaned: "Files cleaned",
+      reportGpsFound: "Photos with GPS",
+      reportDeviceFound: "Photos with device data",
+      reportAvgScore: "Average safety score",
+      reportStreak: "Day streak",
+      reportPwStatus: "Last password check",
+      reportPwOk: "Safe",
+      reportPwBad: "Previously breached",
+      reportFooter: "This report was generated locally on your device and was never sent to a server.",
+      diffTitle: "Before vs. after cleaning",
+      diffGps: "GPS location",
+      diffDevice: "Device data",
+      diffDate: "Capture date",
+      diffThumb: "Hidden thumbnail",
+      diffYes: "Present",
+      diffNo: "Not present",
+      diffRemoved: "Fully removed ✓",
       aiDetectTitle: "AI Content Detector",
       aiDetectSub: "Checks images for real generator fingerprints in metadata (names like Midjourney, DALL-E, Stable Diffusion), and scans text for writing patterns common in AI-generated content. An approximate signal, not definitive proof.",
       aiImgBtn: "Scan an image",
@@ -1062,6 +1250,72 @@ document.addEventListener('DOMContentLoaded', function () {
       pdfFoundDates: "元数据中暴露了真实的创建/修改日期",
       pdfClean: "未在此文件中发现明显的敏感元数据",
       lockedFeature: "这是付费功能——点击升级",
+      fileTypeTitle: "伪装文件检测器",
+      fileTypeSub: "浏览器仅凭扩展名（.jpg、.exe等）猜测文件类型，并非依据其真实内容。此工具读取文件真正的起始字节（真实签名）并与扩展名比对，从而发现伪装成图片的可执行文件或脚本。",
+      fileTypeBtn: "扫描文件",
+      fileTypeDangerExec: "危险：该文件扩展名看似普通，但真实内容是 {real}——一种可执行文件类型。请勿打开",
+      fileTypeHtmlAsImage: "警告：该文件的真实内容是HTML页面/脚本而非图片，尽管扩展名为 .{ext}",
+      fileTypeSvgScript: "提示：此SVG文件内含JavaScript代码或事件处理器——如果浏览器未妥善隔离，可能会执行代码",
+      fileTypeSvgClean: "此SVG文件干净——未发现嵌入的JavaScript或事件处理器",
+      fileTypeUnknown: "无法从真实签名识别此文件类型——其扩展名为 .{ext}，如果来源不可信请谨慎打开",
+      fileTypeMismatch: "提示：.{ext} 扩展名与文件真实内容（{real}）不符——可能被重命名以隐藏真实类型",
+      fileTypeMatch: "文件扩展名与真实内容（{real}）相符——未发现伪装",
+      gpsToolTitle: "精确GPS坐标提取器",
+      gpsToolSub: "「扫描」标签页只会告诉你照片里是否存在GPS数据。此工具从你上次扫描的照片中提取真实坐标，准确显示任何打开该照片元数据的人能看到的内容。",
+      gpsBtn: "提取上次照片的坐标",
+      gpsNeedScan: "请先在「扫描」标签页扫描一张照片，再回到这里",
+      gpsLoading: "正在读取照片中的GPS数据...",
+      gpsNone: "此照片未找到GPS坐标",
+      gpsFound: "精确坐标：{lat}, {lon} ——该数据可将位置定位到几米范围内",
+      gpsAccuracy: "记录的定位精度：约 {m} 米",
+      gpsOpenMap: "在地图上查看位置",
+      thumbToolTitle: "隐藏缩略图检测器",
+      thumbToolSub: "许多编辑软件会裁剪可见照片，却忘记更新存储在EXIF数据中的缩略图——因此隐藏的缩略图可能仍显示主照片中已被裁剪或删除的内容。此工具从你上次扫描的照片中提取它。",
+      thumbBtn: "提取隐藏缩略图",
+      thumbNeedScan: "请先在「扫描」标签页扫描一张照片，再回到这里",
+      thumbLoading: "正在查找隐藏缩略图...",
+      thumbNone: "此文件中未找到隐藏缩略图",
+      thumbFound: "在文件数据中找到隐藏缩略图——将其与原图对比：",
+      thumbCompareHint: "如果缩略图显示的内容不在主照片中（例如被裁掉的部分），即使可见照片看起来干净，这也是真实的信息泄露。",
+      shotToolTitle: "截图检测器",
+      shotToolSub: "截图往往比普通相机照片更容易暴露通知、聊天记录或后台运行的应用。此工具根据缺少相机数据、文件格式与尺寸等特征，检查你上次扫描的照片并估算它是截图还是真实相机照片——这只是近似信号，并非确凿证据。",
+      shotBtn: "检查上次照片",
+      shotNeedScan: "请先在「扫描」标签页扫描一张照片，再回到这里",
+      shotLoading: "正在分析照片...",
+      shotLikely: "这张照片很可能是截图（没有相机数据，格式也符合典型截图特征）——分享前请检查背景中是否有通知或敏感信息",
+      shotUnlikely: "这张照片很可能来自真实相机，而非截图",
+      advScanTitle: "高级财务数据与密钥扫描器",
+      advScanSub: "比普通文本扫描更精确：使用银行采用的真实Luhn算法验证卡号，使用官方Mod-97校验和验证IBAN号码，并标记常见的API密钥格式（AWS、Stripe、GitHub、Slack、Google）——全部在你的设备本地完成，不会发送到任何地方。",
+      advScanPh: "在此粘贴文本、代码或配置文件以进行扫描...",
+      advScanBtn: "立即扫描",
+      advCardFound: "在此文本中发现 {n} 个有效卡号（已通过Luhn校验）——请勿分享",
+            advIbanFound: "在此文本中发现 {n} 个有效IBAN号码（已通过Mod-97校验）",
+      advKeyFound: "发现可能的密钥：{list} ——如果是真实密钥，请立即在服务商处将其吊销",
+      advClean: "此文本中未发现卡号、IBAN或明显的API密钥",
+      reportToolTitle: "可下载的隐私报告",
+      reportToolSub: "下载本次会话所有统计数据的文本摘要（扫描次数、清理次数、平均安全评分等），供个人存档或与团队分享。",
+      reportBtn: "下载报告",
+      reportHeader: "Privacy Guard Pro 报告",
+      reportDate: "日期",
+      reportPlan: "订阅计划",
+      reportScanned: "已扫描照片数",
+      reportCleaned: "已清理文件数",
+      reportGpsFound: "含GPS的照片数",
+      reportDeviceFound: "含设备数据的照片数",
+      reportAvgScore: "平均安全评分",
+      reportStreak: "连续使用天数",
+      reportPwStatus: "上次密码检测状态",
+      reportPwOk: "安全",
+      reportPwBad: "曾经泄露",
+      reportFooter: "此报告在你的设备本地生成，从未发送到任何服务器。",
+      diffTitle: "清理前后对比",
+      diffGps: "GPS位置",
+      diffDevice: "设备数据",
+      diffDate: "拍摄日期",
+      diffThumb: "隐藏缩略图",
+      diffYes: "存在",
+      diffNo: "不存在",
+      diffRemoved: "已完全移除 ✓",
       aiDetectTitle: "AI内容检测器",
       aiDetectSub: "检测图片元数据中真实的生成工具指纹（如 Midjourney、DALL-E、Stable Diffusion），并扫描文本中常见于AI生成内容的写作模式。这只是近似信号，并非确凿证据。",
       aiImgBtn: "扫描图片",
@@ -1179,6 +1433,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     const md = await storageGet('mode');
     if (md && md.value) { applyMode(md.value); }
+    const lg = await storageGet('lang');
+    if (lg && lg.value) { currentLang = lg.value; }
     if (usage.date !== todayStr()) { usage = { date: todayStr(), count: 0 }; saveUsage(); }
   }
   async function saveMembership() { await storageSet('membership', JSON.stringify(membership)); }
@@ -1239,7 +1495,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   document.querySelectorAll('.lang-opt').forEach(opt => {
-    opt.addEventListener('click', () => applyLang(opt.dataset.lang));
+    opt.addEventListener('click', () => {
+      applyLang(opt.dataset.lang);
+      storageSet('lang', opt.dataset.lang);
+      vibrate(10);
+    });
   });
 
   // ---------- Theme colors ----------
@@ -1722,13 +1982,52 @@ document.addEventListener('DOMContentLoaded', function () {
       const exifIFD = readIFD(g32(ifd0.entries[0x8769].valOff));
       if (exifIFD.entries[0x9003]) result.dateTimeOriginal = getString(exifIFD.entries[0x9003]);
     }
+    function getRationalArr(entry, n) {
+      const dataStart = tiffStart + g32(entry.valOff);
+      const arr = [];
+      for (let i = 0; i < n; i++) {
+        const num = g32(dataStart + i * 8), den = g32(dataStart + i * 8 + 4);
+        arr.push(den ? num / den : 0);
+      }
+      return arr;
+    }
+
     if (ifd0.entries[0x8825]) { // GPS IFD pointer
       const gpsIFD = readIFD(g32(ifd0.entries[0x8825].valOff));
-      if (gpsIFD.entries[0x0002]) result.hasGPS = true; // GPSLatitude tag present
+      if (gpsIFD.entries[0x0002]) {
+        result.hasGPS = true; // GPSLatitude tag present
+        try {
+          const latVals = getRationalArr(gpsIFD.entries[0x0002], 3);
+          if (gpsIFD.entries[0x0004]) {
+            const lonVals = getRationalArr(gpsIFD.entries[0x0004], 3);
+            const latRef = gpsIFD.entries[0x0001] ? getString(gpsIFD.entries[0x0001]) : 'N';
+            const lonRef = gpsIFD.entries[0x0003] ? getString(gpsIFD.entries[0x0003]) : 'E';
+            let lat = latVals[0] + latVals[1] / 60 + latVals[2] / 3600;
+            let lon = lonVals[0] + lonVals[1] / 60 + lonVals[2] / 3600;
+            if (latRef.trim().toUpperCase() === 'S') lat = -lat;
+            if (lonRef.trim().toUpperCase() === 'W') lon = -lon;
+            if (isFinite(lat) && isFinite(lon)) { result.gpsLat = lat; result.gpsLon = lon; }
+          }
+          if (gpsIFD.entries[0x001F]) { // GPSHPositioningError, if present
+            const acc = getRationalArr(gpsIFD.entries[0x001F], 1)[0];
+            if (isFinite(acc) && acc > 0) result.gpsAccuracy = acc;
+          }
+        } catch (e) {}
+      }
     }
     if (ifd0.next) { // IFD1 = thumbnail directory
       const ifd1 = readIFD(ifd0.next);
       if (ifd1.entries[0x0201]) result.hasThumbnail = true; // JPEGInterchangeFormat present
+      if (ifd1.entries[0x0201] && ifd1.entries[0x0202]) {
+        try {
+          const tOff = g32(ifd1.entries[0x0201].valOff);
+          const tLen = g32(ifd1.entries[0x0202].valOff);
+          const tStart = tiffStart + tOff;
+          if (tLen > 0 && tLen < 5000000 && tStart >= 0 && tStart + tLen <= view.byteLength) {
+            result.thumbBlob = new Blob([view.buffer.slice(tStart, tStart + tLen)], { type: 'image/jpeg' });
+          }
+        } catch (e) {}
+      }
     }
     return result;
   }
@@ -1743,6 +2042,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function findingHTML(cls, iconSvg, text) {
     return '<div class="finding ' + cls + '"><span class="ic">' + iconSvg + '</span>' + text + '</div>';
+  }
+  function renderCleanDiff(tags) {
+    const t = translations[currentLang];
+    const rows = [
+      [t.diffGps, tags.hasGPS ? t.diffYes : t.diffNo],
+      [t.diffDevice, (tags.make || tags.model) ? ((tags.make || '') + ' ' + (tags.model || '')).trim() : t.diffNo],
+      [t.diffDate, tags.dateTimeOriginal || t.diffNo],
+      [t.diffThumb, tags.hasThumbnail ? t.diffYes : t.diffNo]
+    ];
+    let html = '<div class="diff-box"><div class="diff-title">' + t.diffTitle + '</div>';
+    rows.forEach(([label, before]) => {
+      html += '<div class="diff-row"><span class="diff-label">' + label + '</span><span class="diff-before">' + before + '</span><span class="diff-arrow">→</span><span class="diff-after">' + t.diffRemoved + '</span></div>';
+    });
+    html += '</div>';
+    result.insertAdjacentHTML('beforeend', html);
   }
   const ICONS = {
     pin: '<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></svg>',
@@ -1810,7 +2124,9 @@ document.addEventListener('DOMContentLoaded', function () {
         renderStats();
         vibrate(20);
 
-        document.getElementById('cleanNowBtn').addEventListener('click', () => cleanAndDownload(file));
+        document.getElementById('cleanNowBtn').addEventListener('click', () => {
+          cleanAndDownload(file).then(() => renderCleanDiff(tags));
+        });
 
         // Ghost Mode: auto clean immediately for pro/ultra users who enabled it
         const ghostOn = document.getElementById('ghostToggle').checked;
@@ -1920,6 +2236,211 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('linkScanBtn').addEventListener('click', () => {
     const val = document.getElementById('linkInput').value;
     document.getElementById('linkScanResult').innerHTML = val ? scanLink(val) : '';
+  });
+
+  // ---------- Tool: disguised file / magic-byte detector ----------
+  const EXT_CATEGORY = {
+    jpg: 'image', jpeg: 'image', png: 'image', gif: 'image', bmp: 'image', webp: 'image',
+    svg: 'vector', pdf: 'document', zip: 'archive', apk: 'archive', docx: 'archive',
+    xlsx: 'archive', pptx: 'archive', exe: 'executable', dll: 'executable', msi: 'executable',
+    html: 'script', htm: 'script'
+  };
+  function bytesToAscii(bytes, max) {
+    let s = '';
+    const len = Math.min(bytes.length, max || bytes.length);
+    for (let i = 0; i < len; i++) s += String.fromCharCode(bytes[i]);
+    return s;
+  }
+  function detectRealFileType(bytes) {
+    const b = bytes;
+    const eq = (arr) => arr.every((v, i) => b[i] === v);
+    if (eq([0xFF, 0xD8, 0xFF])) return { name: 'JPEG', kind: 'image' };
+    if (eq([0x89, 0x50, 0x4E, 0x47])) return { name: 'PNG', kind: 'image' };
+    if (eq([0x47, 0x49, 0x46, 0x38])) return { name: 'GIF', kind: 'image' };
+    if (eq([0x42, 0x4D])) return { name: 'BMP', kind: 'image' };
+    if (eq([0x52, 0x49, 0x46, 0x46]) && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return { name: 'WEBP', kind: 'image' };
+    if (eq([0x25, 0x50, 0x44, 0x46])) return { name: 'PDF', kind: 'document' };
+    if (eq([0x50, 0x4B, 0x03, 0x04])) return { name: 'ZIP/Office/APK', kind: 'archive' };
+    if (eq([0x4D, 0x5A])) return { name: 'Windows EXE/DLL', kind: 'executable' };
+    if (eq([0x7F, 0x45, 0x4C, 0x46])) return { name: 'Linux ELF', kind: 'executable' };
+    if (eq([0xCF, 0xFA, 0xED, 0xFE]) || eq([0xFE, 0xED, 0xFA, 0xCF]) || eq([0xCA, 0xFE, 0xBA, 0xBE])) return { name: 'Mach-O/Java executable', kind: 'executable' };
+    const text = bytesToAscii(b, 200).trim().toLowerCase();
+    if (/^<!doctype html|^<html/.test(text)) return { name: 'HTML', kind: 'script' };
+    if (/^<\?xml|^<svg/.test(text)) return { name: 'SVG/XML', kind: 'vector' };
+    return { name: null, kind: 'unknown' };
+  }
+  document.getElementById('fileTypeBtn').addEventListener('click', () => document.getElementById('fileTypeInput').click());
+  document.getElementById('fileTypeInput').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const t = translations[currentLang];
+    const res = document.getElementById('fileTypeResult');
+    const reader = new FileReader();
+    reader.onload = () => {
+      const bytes = new Uint8Array(reader.result).slice(0, 64);
+      const real = detectRealFileType(bytes);
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      const claimedCat = EXT_CATEGORY[ext] || 'unknown';
+      let html;
+      if (real.kind === 'executable') {
+        html = findingHTML('warn', ICONS.pin, t.fileTypeDangerExec.replace('{real}', real.name).replace('{ext}', ext || '?'));
+      } else if (real.kind === 'script' && claimedCat !== 'script') {
+        html = findingHTML('warn', ICONS.pin, t.fileTypeHtmlAsImage.replace('{ext}', ext || '?'));
+      } else if (real.name === 'SVG/XML') {
+        const fullBytes = new Uint8Array(reader.result).slice(0, 30000);
+        const svgText = bytesToAscii(fullBytes);
+        const risky = /<script[\s>]/i.test(svgText) || /\son\w+\s*=/i.test(svgText) || /javascript:/i.test(svgText);
+        html = risky ? findingHTML('warn', ICONS.pin, t.fileTypeSvgScript) : findingHTML('safe', ICONS.check, t.fileTypeSvgClean);
+      } else if (real.kind === 'unknown') {
+        html = findingHTML('warn', ICONS.img, t.fileTypeUnknown.replace('{ext}', ext || '?'));
+      } else if (claimedCat !== 'unknown' && real.kind !== claimedCat) {
+        html = findingHTML('warn', ICONS.pin, t.fileTypeMismatch.replace('{real}', real.name).replace('{ext}', ext || '?'));
+      } else {
+        html = findingHTML('safe', ICONS.check, t.fileTypeMatch.replace('{real}', real.name));
+      }
+      res.innerHTML = html;
+      e.target.value = '';
+    };
+    reader.readAsArrayBuffer(file.slice(0, 30000));
+  });
+
+  // ---------- Tool: precise GPS coordinate extractor ----------
+  document.getElementById('gpsBtn').addEventListener('click', () => {
+    const t = translations[currentLang];
+    const res = document.getElementById('gpsResult');
+    if (!lastScanFile) { res.innerHTML = findingHTML('warn', ICONS.img, t.gpsNeedScan); return; }
+    res.innerHTML = findingHTML('warn', ICONS.clock, t.gpsLoading);
+    readExifData(lastScanFile, (tags) => {
+      if (tags.gpsLat === undefined || tags.gpsLon === undefined) {
+        res.innerHTML = findingHTML('safe', ICONS.check, t.gpsNone);
+        return;
+      }
+      const lat = tags.gpsLat.toFixed(6), lon = tags.gpsLon.toFixed(6);
+      const mapUrl = 'https://www.google.com/maps?q=' + lat + ',' + lon;
+      let html = findingHTML('warn', ICONS.pin, t.gpsFound.replace('{lat}', lat).replace('{lon}', lon));
+      if (tags.gpsAccuracy) html += findingHTML('warn', ICONS.pin, t.gpsAccuracy.replace('{m}', tags.gpsAccuracy.toFixed(1)));
+      html += '<a class="tool-btn" style="display:block;text-decoration:none;margin-top:8px" href="' + mapUrl + '" target="_blank" rel="noopener noreferrer">' + t.gpsOpenMap + '</a>';
+      res.innerHTML = html;
+    });
+  });
+
+  // ---------- Tool: hidden EXIF thumbnail / crop-leak detector ----------
+  document.getElementById('thumbBtn').addEventListener('click', () => {
+    const t = translations[currentLang];
+    const res = document.getElementById('thumbResult');
+    if (!lastScanFile) { res.innerHTML = findingHTML('warn', ICONS.img, t.thumbNeedScan); return; }
+    res.innerHTML = findingHTML('warn', ICONS.clock, t.thumbLoading);
+    readExifData(lastScanFile, (tags) => {
+      if (!tags.thumbBlob) { res.innerHTML = findingHTML('safe', ICONS.check, t.thumbNone); return; }
+      const url = URL.createObjectURL(tags.thumbBlob);
+      res.innerHTML = findingHTML('warn', ICONS.img, t.thumbFound) +
+        '<img src="' + url + '" style="width:100%;border-radius:10px;margin-top:8px;border:1px solid var(--line);display:block">' +
+        '<div class="clean-note" style="margin-top:8px;text-align:start">' + t.thumbCompareHint + '</div>';
+    });
+  });
+
+  // ---------- Tool: screenshot vs. camera-photo heuristic ----------
+  document.getElementById('shotBtn').addEventListener('click', () => {
+    const t = translations[currentLang];
+    const res = document.getElementById('shotResult');
+    if (!lastScanFile) { res.innerHTML = findingHTML('warn', ICONS.img, t.shotNeedScan); return; }
+    res.innerHTML = findingHTML('warn', ICONS.clock, t.shotLoading);
+    const file = lastScanFile;
+    readExifData(file, (tags) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        let signals = 0;
+        if (!tags.make && !tags.model && !tags.dateTimeOriginal) signals++;
+        if (file.type === 'image/png') signals++;
+        const ratio = img.naturalWidth / img.naturalHeight;
+        const screenLike = [16 / 9, 9 / 16, 9 / 19.5, 19.5 / 9].some(r => Math.abs(ratio - r) < 0.03);
+        if (screenLike) signals++;
+        res.innerHTML = signals >= 2 ? findingHTML('warn', ICONS.pin, t.shotLikely) : findingHTML('safe', ICONS.check, t.shotUnlikely);
+        URL.revokeObjectURL(url);
+      };
+      img.onerror = () => { res.innerHTML = findingHTML('safe', ICONS.check, t.shotUnlikely); };
+      img.src = url;
+    });
+  });
+
+  // ---------- Tool: advanced financial data / secret-key scanner ----------
+  function luhnValid(numStr) {
+    let sum = 0, alt = false;
+    for (let i = numStr.length - 1; i >= 0; i--) {
+      let n = parseInt(numStr[i], 10);
+      if (alt) { n *= 2; if (n > 9) n -= 9; }
+      sum += n; alt = !alt;
+    }
+    return sum % 10 === 0;
+  }
+  function ibanValid(raw) {
+    const clean = raw.replace(/\s+/g, '').toUpperCase();
+    if (!/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(clean)) return false;
+    const rearranged = clean.slice(4) + clean.slice(0, 4);
+    const numeric = rearranged.replace(/[A-Z]/g, (ch) => (ch.charCodeAt(0) - 55).toString());
+    let remainder = numeric;
+    while (remainder.length > 9) {
+      const chunk = remainder.slice(0, 9);
+      remainder = (parseInt(chunk, 10) % 97).toString() + remainder.slice(9);
+    }
+    return parseInt(remainder, 10) % 97 === 1;
+  }
+  const API_KEY_PATTERNS = [
+    { re: /AKIA[0-9A-Z]{16}/, label: 'AWS Access Key' },
+    { re: /sk_live_[0-9a-zA-Z]{24,}/, label: 'Stripe Live Key' },
+    { re: /ghp_[0-9a-zA-Z]{36}/, label: 'GitHub Token' },
+    { re: /xox[baprs]-[0-9a-zA-Z-]{10,}/, label: 'Slack Token' },
+    { re: /AIza[0-9A-Za-z_-]{35}/, label: 'Google API Key' }
+  ];
+  function scanAdvancedSecrets(text) {
+    const t = translations[currentLang];
+    let html = '';
+    const cardCandidates = text.match(/\b(?:\d[ -]?){13,19}\b/g) || [];
+    const foundCards = new Set();
+    cardCandidates.forEach((m) => {
+      const digits = m.replace(/[ -]/g, '');
+      if (digits.length >= 13 && digits.length <= 19 && luhnValid(digits)) foundCards.add(digits);
+    });
+    if (foundCards.size) html += findingHTML('warn', ICONS.pin, t.advCardFound.replace('{n}', foundCards.size));
+    const ibanCandidates = text.match(/\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b/g) || [];
+    const foundIbans = ibanCandidates.filter(ibanValid);
+    if (foundIbans.length) html += findingHTML('warn', ICONS.pin, t.advIbanFound.replace('{n}', foundIbans.length));
+    const keyLabels = API_KEY_PATTERNS.filter((p) => p.re.test(text)).map((p) => p.label);
+    if (keyLabels.length) html += findingHTML('warn', ICONS.pin, t.advKeyFound.replace('{list}', keyLabels.join(', ')));
+    return html || findingHTML('safe', ICONS.check, t.advClean);
+  }
+  document.getElementById('advScanBtn').addEventListener('click', () => {
+    const val = document.getElementById('advScanInput').value;
+    document.getElementById('advScanResult').innerHTML = val ? scanAdvancedSecrets(val) : '';
+  });
+
+  // ---------- Tool: downloadable privacy report ----------
+  document.getElementById('reportBtn').addEventListener('click', () => {
+    const t = translations[currentLang];
+    const avgScore = stats.scores.length ? Math.round(stats.scores.reduce((a, b) => a + b, 0) / stats.scores.length) : null;
+    const lines = [
+      t.reportHeader,
+      '------------------------------',
+      t.reportDate + ': ' + new Date().toLocaleString(),
+      t.reportPlan + ': ' + membership.tier.toUpperCase(),
+      t.reportScanned + ': ' + stats.scores.length,
+      t.reportCleaned + ': ' + stats.cleaned,
+      t.reportGpsFound + ': ' + stats.loc,
+      t.reportDeviceFound + ': ' + stats.device,
+      t.reportAvgScore + ': ' + (avgScore !== null ? avgScore : '-'),
+      t.reportStreak + ': ' + streak.count
+    ];
+    if (stats.pwSafe !== null) lines.push(t.reportPwStatus + ': ' + (stats.pwSafe ? t.reportPwOk : t.reportPwBad));
+    lines.push('------------------------------', t.reportFooter);
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'privacy_report_' + todayStr() + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    vibrate(15);
   });
 
   // ---------- Tool: AI-generated content detector (Pro/Ultra) ----------
@@ -2219,7 +2740,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // ---------- init ----------
   loadState().then(() => {
-    applyLang('ar');
+    applyLang(currentLang);
     pickUpSharedFiles();
     if (!hasStorage()) {
       const note = document.createElement('p');
@@ -2236,4 +2757,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
-
