@@ -208,6 +208,32 @@
   .modal-close { position:absolute; top: 20px; inset-inline-end: 20px; width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; }
   .modal-close svg { width: 15px; height: 15px; color: var(--ink-dim); }
   .demo-note { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #5b6660; text-align:center; margin-top: 14px; line-height: 1.7; }
+
+  .tool-card { background: var(--surface); border:1px solid var(--line); border-radius:12px; padding: 16px 18px; margin-bottom: 14px; }
+  .tool-card .t { font-size:14.5px; font-weight:700; margin-bottom:5px; display:flex; align-items:center; gap:9px; }
+  .tool-card .t svg { width:16px; height:16px; color: var(--accent-1); }
+  .tool-card .s { font-size:12px; color: var(--ink-dim); line-height:1.7; margin-bottom:12px; }
+  .field-row { display:flex; gap:8px; }
+  .field-input, .field-textarea { flex:1; background: rgba(255,255,255,0.04); border:1px solid var(--line); border-radius:9px; padding: 11px 13px; color: var(--ink); font-family: inherit; font-size: 13px; }
+  .field-textarea { min-height: 84px; resize: vertical; }
+  .field-input:focus, .field-textarea:focus { outline:1px solid rgba(var(--accent-1-rgb),0.5); }
+  .icon-btn { flex-shrink:0; width:42px; border-radius:9px; background: rgba(255,255,255,0.05); border:1px solid var(--line); color: var(--ink-dim); display:flex; align-items:center; justify-content:center; }
+  .icon-btn svg { width:16px; height:16px; }
+  .tool-btn { margin-top:10px; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(var(--accent-1-rgb),0.5); background: rgba(var(--accent-1-rgb),0.12); color: var(--accent-1); font-weight:700; font-size:13px; font-family:inherit; }
+  .tool-btn:active { transform: scale(0.98); }
+  .tool-btn:disabled { opacity:0.5; }
+  .tool-result { margin-top:10px; }
+  .gen-output { display:flex; gap:8px; margin-top:10px; }
+  .gen-output .field-input { font-family:'IBM Plex Mono',monospace; letter-spacing: 0.5px; }
+  .len-row { display:flex; align-items:center; gap:10px; margin-top:12px; }
+  .len-row input[type=range] { flex:1; accent-color: var(--accent-1); }
+  .len-row .val { font-family:'IBM Plex Mono',monospace; font-size:12.5px; width:26px; text-align:center; }
+  .chk-row { display:flex; align-items:flex-start; gap:11px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .chk-row:last-child { border-bottom:none; }
+  .chk-row input { margin-top:2px; width:17px; height:17px; accent-color: var(--accent-1); flex-shrink:0; }
+  .chk-row label { font-size:12.5px; line-height:1.6; color:#d1d5db; }
+  .chk-row.done label { color: var(--ink-dim); text-decoration: line-through; }
+  .tool-card .t .lock-badge { margin-inline-start: auto; }
 </style>
 </head>
 <body id="bodyEl">
@@ -415,6 +441,77 @@
     </div>
   </div>
 
+  <div class="tabpage" id="tab-tools">
+    <div class="hero">
+      <h1 data-i18n="toolsTitle">أدوات حماية إضافية</h1>
+      <p data-i18n="toolsSub">أدوات عملية تفحص وتحمي بياناتك — كلها تشتغل داخل جهازك فقط</p>
+    </div>
+    <div class="card-panel">
+
+      <div class="tool-card" id="ocrCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg><span data-i18n="ocrTitle">فاحص المحتوى الظاهر بالصورة</span><span class="lock-badge" id="ocrLock"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+        <div class="s" data-i18n="ocrSub">أغلب التسريبات مو من بيانات EXIF المخفية، أغلبها من نص مكتوب داخل الصورة نفسها: سكرين شوت فيه إيميل، لوحة فيها رقم، ورقة عليها بيانات. هذي الأداة تقرأ النص داخل آخر صورة فحصتها وتفحصه بحثًا عن معلومات حساسة — القراءة تصير محليًا بجهازك.</div>
+        <button class="tool-btn" id="ocrBtn" data-i18n="ocrBtn">اقرأ وافحص آخر صورة</button>
+        <div class="tool-result" id="ocrResult"></div>
+      </div>
+
+      <div class="tool-card" id="pdfAuditCard">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/></svg><span data-i18n="pdfAuditTitle">مدقق بيانات المستندات (PDF)</span><span class="lock-badge" id="pdfAuditLock"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span></div>
+        <div class="s" data-i18n="pdfAuditSub">قبل ما ترسل عقد أو تقرير لجهة خارجية: ملفات PDF غالبًا تخبي اسم الموظف، اسم الشركة، البرنامج المستخدم، ومسار الملف الداخلي جوا بياناتها الوصفية — نفس النوع اللي سبب تسريبات مشهورة لشركات كبيرة. مخصص للشركات والفرق.</div>
+        <input type="file" id="pdfInput" accept="application/pdf" style="display:none">
+        <button class="tool-btn" id="pdfAuditBtn" data-i18n="pdfAuditBtn">افحص ملف PDF</button>
+        <div class="tool-result" id="pdfAuditResult"></div>
+      </div>
+
+      <div class="tool-card">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span data-i18n="pwCheckTitle">هل كلمة سرك مسربة؟</span></div>
+        <div class="s" data-i18n="pwCheckSub">نتحقق عبر قاعدة بيانات Have I Been Pwned — كلمة سرك الكاملة ما تطلع من جهازك أبدًا (طريقة k-Anonymity)</div>
+        <div class="field-row">
+          <input type="password" class="field-input" id="pwInput" data-i18n-ph="pwPlaceholder" placeholder="اكتب كلمة السر هنا" autocomplete="off">
+          <button class="icon-btn" id="pwEyeBtn" type="button"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+        <button class="tool-btn" id="pwCheckBtn" data-i18n="pwCheckBtn">تحقق الآن</button>
+        <div class="tool-result" id="pwResult"></div>
+      </div>
+
+      <div class="tool-card">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg><span data-i18n="pwGenTitle">مولّد كلمات سر قوية</span></div>
+        <div class="s" data-i18n="pwGenSub">يتولد محليًا بجهازك ولا يُخزَّن أو يُرسل لأي مكان</div>
+        <div class="len-row">
+          <span class="mono" data-i18n="pwLenLabel">الطول</span>
+          <input type="range" id="pwLenRange" min="8" max="32" value="16">
+          <span class="val mono" id="pwLenVal">16</span>
+        </div>
+        <div class="gen-output">
+          <input type="text" class="field-input" id="pwGenOutput" readonly>
+          <button class="icon-btn" id="pwCopyBtn" type="button"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
+        </div>
+        <button class="tool-btn" id="pwGenBtn" data-i18n="pwGenBtn">توليد</button>
+      </div>
+
+      <div class="tool-card">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16v12H8l-4 4V4z"/></svg><span data-i18n="textScanTitle">افحص منشورك قبل النشر</span></div>
+        <div class="s" data-i18n="textScanSub">الصق نص المنشور أو البايو — نكشف أرقام هاتف، إيميلات، وعناوين قد تكشف هويتك بالخطأ</div>
+        <textarea class="field-textarea" id="textScanInput" data-i18n-ph="textScanPlaceholder" placeholder="الصق النص هنا..."></textarea>
+        <button class="tool-btn" id="textScanBtn" data-i18n="textScanBtn">افحص النص</button>
+        <div class="tool-result" id="textScanResult"></div>
+      </div>
+
+      <div class="tool-card">
+        <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="checklistTitle">تشيك قبل ما تنشر</span></div>
+        <div class="s" data-i18n="checklistSub">علّم على كل نقطة تأكدت منها</div>
+        <div id="checklistWrap">
+          <div class="chk-row"><input type="checkbox" id="chk1"><label for="chk1" data-i18n="chk1">ما فيه لوحة سيارة أو مستند رسمي واضح بالصورة</label></div>
+          <div class="chk-row"><input type="checkbox" id="chk2"><label for="chk2" data-i18n="chk2">ما فيه معلم مكان دقيق (مدرسة، بيت، شارع) يدل على موقعك</label></div>
+          <div class="chk-row"><input type="checkbox" id="chk3"><label for="chk3" data-i18n="chk3">شيّكت بيانات الموقع GPS من الصورة</label></div>
+          <div class="chk-row"><input type="checkbox" id="chk4"><label for="chk4" data-i18n="chk4">ما ذكرت جدول يومك أو مواعيدك بالتفصيل بالنص</label></div>
+          <div class="chk-row"><input type="checkbox" id="chk5"><label for="chk5" data-i18n="chk5">متأكد من صلاحيات الحسابات الي بتنشر عليها (خاص/عام)</label></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <div class="bottomnav">
     <div class="navbtn active" data-tab="scan">
       <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
@@ -423,6 +520,10 @@
     <div class="navbtn" data-tab="report">
       <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
       <span data-i18n="navReport">تقرير</span>
+    </div>
+    <div class="navbtn" data-tab="tools">
+      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.3-3.3a5 5 0 0 1-6.7 6.7l-6.9 6.9a2 2 0 0 1-2.8-2.8l6.9-6.9a5 5 0 0 1 6.7-6.7l-3.3 3.3z"/></svg>
+      <span data-i18n="navTools">أدوات</span>
     </div>
     <div class="navbtn" data-tab="settings">
       <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
@@ -512,7 +613,51 @@ document.addEventListener('DOMContentLoaded', function () {
       tip3t: "تنبيه صادق",
       tip3s: "هذا التطبيق يشتغل داخل المتصفح فقط، وما يقدر يحذف فايروسات من جهازك أو ألعابك، ولا يغيّر إعدادات DNS، ولا يوفر حماية اختراق حقيقية على مدار الساعة — إذا شفت تطبيق ثاني يوعد بهذا الشي كخدمة اشتراك، تأكد من مصدره ومراجعاته قبل الدفع.",
       weekly: "أسبوعي", monthly: "شهري", yearly: "سنوي",
-      proActive: "PRO", ultraActive: "ULTRA"
+      proActive: "PRO", ultraActive: "ULTRA",
+      navTools: "أدوات",
+      toolsTitle: "أدوات حماية إضافية",
+      toolsSub: "أدوات عملية تفحص وتحمي بياناتك — كلها تشتغل داخل جهازك فقط",
+      pwCheckTitle: "هل كلمة سرك مسربة؟",
+      pwCheckSub: "نتحقق عبر قاعدة بيانات Have I Been Pwned — كلمة سرك الكاملة ما تطلع من جهازك أبدًا (طريقة k-Anonymity)",
+      pwPlaceholder: "اكتب كلمة السر هنا",
+      pwCheckBtn: "تحقق الآن",
+      pwChecking: "جاري التحقق...",
+      pwSafe: "ما لقيناها بأي تسريب معروف",
+      pwBreached: "ظهرت كلمة السر هذي بتسريبات سابقة {n} مرة — غيّرها فورًا",
+      pwError: "تعذر الاتصال بخدمة التحقق حاليًا",
+      pwGenTitle: "مولّد كلمات سر قوية",
+      pwGenSub: "يتولد محليًا بجهازك ولا يُخزَّن أو يُرسل لأي مكان",
+      pwGenBtn: "توليد",
+      pwCopied: "تم النسخ",
+      pwLenLabel: "الطول",
+      textScanTitle: "افحص منشورك قبل النشر",
+      textScanSub: "الصق نص المنشور أو البايو — نكشف أرقام هاتف، إيميلات، وعناوين قد تكشف هويتك بالخطأ",
+      textScanPlaceholder: "الصق النص هنا...",
+      textScanBtn: "افحص النص",
+      textScanClean: "ما فيه معلومات حساسة ظاهرة بهذا النص",
+      foundEmail: "إيميل ظاهر بالنص",
+      foundPhone: "رقم هاتف ظاهر بالنص",
+      foundCard: "رقم يشبه بطاقة بنكية ظاهر بالنص",
+      foundAddress: "عنوان أو موقع تفصيلي ظاهر بالنص",
+      checklistTitle: "تشيك قبل ما تنشر",
+      checklistSub: "علّم على كل نقطة تأكدت منها",
+      findCombo: "خطر مضاعف: هذي الصورة تكشف موقعك ونوع جهازك بنفس الوقت — مزيج يحدد هويتك بدقة",
+      findDeepfake: "دقة هذي الصورة عالية جدًا — الصور عالية الدقة صارت مادة مفضلة لأدوات استنساخ الوجوه بالذكاء الاصطناعي (Deepfake)؛ فكر تنشر نسخة أقل دقة للعام",
+      ocrTitle: "فاحص المحتوى الظاهر بالصورة",
+      ocrSub: "أغلب التسريبات مو من بيانات EXIF المخفية، أغلبها من نص مكتوب داخل الصورة نفسها: سكرين شوت فيه إيميل، لوحة فيها رقم، ورقة عليها بيانات. هذي الأداة تقرأ النص داخل آخر صورة فحصتها وتفحصه بحثًا عن معلومات حساسة — القراءة تصير محليًا بجهازك.",
+      ocrBtn: "اقرأ وافحص آخر صورة",
+      ocrLoading: "جاري قراءة النص من الصورة (أول مرة تاخذ وقت أطول)...",
+      ocrNoText: "ما انقرا أي نص واضح من الصورة",
+      ocrNeedScan: "افحص صورة أول من تبويب «فحص»، وبعدين ارجع هنا",
+      pdfAuditTitle: "مدقق بيانات المستندات (PDF)",
+      pdfAuditSub: "قبل ما ترسل عقد أو تقرير لجهة خارجية: ملفات PDF غالبًا تخبي اسم الموظف، اسم الشركة، البرنامج المستخدم، ومسار الملف الداخلي جوا بياناتها الوصفية — نفس النوع اللي سبب تسريبات مشهورة لشركات كبيرة. مخصص للشركات والفرق.",
+      pdfAuditBtn: "افحص ملف PDF",
+      pdfFoundAuthor: "اسم المؤلف/الموظف مكشوف بالبيانات الوصفية",
+      pdfFoundSoftware: "اسم البرنامج والنسخة المستخدمة بإنشاء الملف مكشوف",
+      pdfFoundPath: "مسار ملف داخلي من جهاز أو سيرفر الشركة مكشوف بالبيانات",
+      pdfFoundDates: "تاريخ الإنشاء والتعديل الحقيقي مكشوف",
+      pdfClean: "ما لقينا بيانات وصفية حساسة واضحة بهذا الملف",
+      lockedFeature: "هذي ميزة مدفوعة — اضغط للترقية"
     },
     en: {
       scanTitle: "Scan your photos before posting",
@@ -579,7 +724,51 @@ document.addEventListener('DOMContentLoaded', function () {
       tip3t: "An honest note",
       tip3s: "This app only runs in your browser — it can't remove viruses from your device or games, change your DNS, or provide real 24/7 hack protection. If another app promises that as a paid subscription, verify its source and reviews before you pay.",
       weekly: "Weekly", monthly: "Monthly", yearly: "Yearly",
-      proActive: "PRO", ultraActive: "ULTRA"
+      proActive: "PRO", ultraActive: "ULTRA",
+      navTools: "Tools",
+      toolsTitle: "Extra Privacy Tools",
+      toolsSub: "Practical tools that check and protect your data — all running on your device only",
+      pwCheckTitle: "Was your password leaked?",
+      pwCheckSub: "Checked against Have I Been Pwned — your full password never leaves your device (k-Anonymity method)",
+      pwPlaceholder: "Type your password",
+      pwCheckBtn: "Check now",
+      pwChecking: "Checking...",
+      pwSafe: "Not found in any known breach",
+      pwBreached: "This password appeared in known breaches {n} times — change it now",
+      pwError: "Couldn't reach the check service right now",
+      pwGenTitle: "Strong Password Generator",
+      pwGenSub: "Generated locally on your device — never stored or sent anywhere",
+      pwGenBtn: "Generate",
+      pwCopied: "Copied",
+      pwLenLabel: "Length",
+      textScanTitle: "Scan your post before publishing",
+      textScanSub: "Paste your caption or bio — we flag phone numbers, emails, and addresses that might accidentally expose you",
+      textScanPlaceholder: "Paste text here...",
+      textScanBtn: "Scan text",
+      textScanClean: "No obvious sensitive info found in this text",
+      foundEmail: "Email address exposed",
+      foundPhone: "Phone number exposed",
+      foundCard: "A number resembling a card number is exposed",
+      foundAddress: "A detailed address/location is exposed",
+      checklistTitle: "Before-You-Post Checklist",
+      checklistSub: "Check off each item you've verified",
+      findCombo: "Combined risk: this photo exposes both your location and your device at once — this combo can pinpoint your identity",
+      findDeepfake: "This photo is very high resolution — high-res photos are prime material for AI face-cloning (deepfake) tools; consider posting a lower-res copy publicly",
+      ocrTitle: "Visible Content Scanner",
+      ocrSub: "Most leaks aren't from hidden EXIF data — they're from text written right inside the photo: a screenshot with an email, a sign with a number, a page with data. This tool reads the text in the last photo you scanned and checks it for sensitive info — reading happens locally on your device.",
+      ocrBtn: "Read & scan last photo",
+      ocrLoading: "Reading text from the photo (first run takes a bit longer)...",
+      ocrNoText: "No clear text could be read from the photo",
+      ocrNeedScan: "Scan a photo in the Scan tab first, then come back here",
+      pdfAuditTitle: "Document Metadata Auditor (PDF)",
+      pdfAuditSub: "Before sending a contract or report externally: PDFs often hide the employee's name, company name, the software used, and an internal file path in their metadata — the same kind of leak that has hit large companies before. Built for teams and businesses.",
+      pdfAuditBtn: "Scan a PDF file",
+      pdfFoundAuthor: "Author/employee name exposed in metadata",
+      pdfFoundSoftware: "The exact software and version used to create the file is exposed",
+      pdfFoundPath: "An internal device/server file path is exposed in the metadata",
+      pdfFoundDates: "The real creation/modification dates are exposed",
+      pdfClean: "No obvious sensitive metadata found in this file",
+      lockedFeature: "This is a paid feature — tap to upgrade"
     },
     zh: {
       scanTitle: "发布前扫描您的照片",
@@ -646,7 +835,51 @@ document.addEventListener('DOMContentLoaded', function () {
       tip3t: "诚实提示",
       tip3s: "此应用仅在浏览器中运行——它无法清除设备或游戏中的病毒，无法更改 DNS，也无法提供真正的全天候防黑客保护。如果其他应用把这些当作付费订阅承诺给你，请先核实其来源和评价再付款。",
       weekly: "每周", monthly: "每月", yearly: "每年",
-      proActive: "PRO", ultraActive: "ULTRA"
+      proActive: "PRO", ultraActive: "ULTRA",
+      navTools: "工具",
+      toolsTitle: "更多隐私工具",
+      toolsSub: "实用工具，检测并保护你的数据——全部仅在你的设备上运行",
+      pwCheckTitle: "你的密码泄露了吗？",
+      pwCheckSub: "通过 Have I Been Pwned 数据库检查——完整密码绝不会离开你的设备（k-匿名方法）",
+      pwPlaceholder: "输入密码",
+      pwCheckBtn: "立即检查",
+      pwChecking: "检查中...",
+      pwSafe: "未在已知泄露中找到",
+      pwBreached: "此密码在已知泄露中出现过 {n} 次——请立即更换",
+      pwError: "暂时无法连接检查服务",
+      pwGenTitle: "强密码生成器",
+      pwGenSub: "在本地生成，绝不存储或发送",
+      pwGenBtn: "生成",
+      pwCopied: "已复制",
+      pwLenLabel: "长度",
+      textScanTitle: "发布前扫描你的文字",
+      textScanSub: "粘贴你的文案或简介——我们会标出可能意外暴露你身份的电话、邮箱和地址",
+      textScanPlaceholder: "在此粘贴文字...",
+      textScanBtn: "扫描文字",
+      textScanClean: "此文本中未发现明显敏感信息",
+      foundEmail: "文本中含有电子邮件",
+      foundPhone: "文本中含有电话号码",
+      foundCard: "文本中含有类似银行卡号的数字",
+      foundAddress: "文本中含有详细地址/位置",
+      checklistTitle: "发布前检查清单",
+      checklistSub: "逐项确认后打勾",
+      findCombo: "双重风险：这张照片同时暴露了位置和设备信息——这种组合足以精确定位你的身份",
+      findDeepfake: "这张照片分辨率非常高——高分辨率照片是AI换脸（deepfake）工具的理想素材；建议公开发布时使用较低分辨率的版本",
+      ocrTitle: "图片可见内容扫描",
+      ocrSub: "大多数信息泄露并非来自隐藏的EXIF数据，而是来自照片本身写着的文字：截图中的邮箱、招牌上的号码、纸张上的数据。此工具读取你上次扫描照片中的文字并检测敏感信息——识别过程在本地完成。",
+      ocrBtn: "读取并扫描最近一张照片",
+      ocrLoading: "正在从照片中读取文字（首次使用耗时较长）...",
+      ocrNoText: "未能从照片中读取到清晰文字",
+      ocrNeedScan: "请先在“扫描”标签页扫描一张照片，再回到这里",
+      pdfAuditTitle: "文档元数据审查器（PDF）",
+      pdfAuditSub: "在向外部发送合同或报告之前：PDF文件常常在元数据中隐藏员工姓名、公司名称、使用的软件及内部文件路径——这正是曾导致大公司信息泄露的类型。专为团队和企业设计。",
+      pdfAuditBtn: "扫描PDF文件",
+      pdfFoundAuthor: "元数据中暴露了作者/员工姓名",
+      pdfFoundSoftware: "元数据中暴露了创建文件所用的具体软件及版本",
+      pdfFoundPath: "元数据中暴露了内部设备/服务器文件路径",
+      pdfFoundDates: "元数据中暴露了真实的创建/修改日期",
+      pdfClean: "未在此文件中发现明显的敏感元数据",
+      lockedFeature: "这是付费功能——点击升级"
     }
   };
 
@@ -705,6 +938,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (t[key]) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+      const key = el.getAttribute('data-i18n-ph');
+      if (t[key]) el.setAttribute('placeholder', t[key]);
     });
     const html = document.getElementById('htmlRoot');
     const body = document.getElementById('bodyEl');
@@ -867,6 +1104,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     reportOverlay.style.display = hasPro ? 'none' : '';
     document.getElementById('reportWrap').classList.toggle('locked', !hasPro);
+
+    document.getElementById('ocrLock').style.display = hasPro ? 'none' : '';
+    document.getElementById('ocrCard').classList.toggle('locked', !hasPro);
+    document.getElementById('pdfAuditLock').style.display = hasUltra ? 'none' : '';
+    document.getElementById('pdfAuditCard').classList.toggle('locked', !hasUltra);
 
     document.getElementById('uploadText').textContent = hasPro ? t.uploadTextBatch : t.uploadText;
 
@@ -1212,12 +1454,15 @@ document.addEventListener('DOMContentLoaded', function () {
         let score = 100;
         let html = '';
 
+        if (lat && (make || model)) { score -= 10; html += findingHTML('warn', ICONS.pin, t.findCombo); }
+
         if (lat) { score -= 40; stats.loc += 1; html += findingHTML('warn', ICONS.pin, t.findGps); }
         else { html += findingHTML('safe', ICONS.check, t.findClean); }
 
         if (make || model) { score -= 20; stats.device += 1; html += findingHTML('warn', ICONS.device, t.findDevice + ': ' + (make||'') + ' ' + (model||'')); }
         if (date) { score -= 10; html += findingHTML('warn', ICONS.clock, t.findDate); }
         if (thumb) { score -= 10; html += findingHTML('warn', ICONS.img, t.findThumb); }
+        if (preview.naturalWidth * preview.naturalHeight > 2000000) { html += findingHTML('warn', ICONS.img, t.findDeepfake); }
         if (score === 100) { html += findingHTML('safe', ICONS.check, t.findAllClean); }
 
         score = Math.max(score, 10);
@@ -1251,6 +1496,147 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 900);
   }
 
+  // ---------- Tool: password breach check (k-Anonymity, HIBP) ----------
+  const pwInput = document.getElementById('pwInput');
+  const pwResult = document.getElementById('pwResult');
+  document.getElementById('pwEyeBtn').addEventListener('click', () => {
+    pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
+  });
+  document.getElementById('pwCheckBtn').addEventListener('click', async () => {
+    const t = translations[currentLang];
+    const pw = pwInput.value;
+    if (!pw) return;
+    pwResult.innerHTML = '<div class="finding warn"><span class="ic">' + ICONS.clock + '</span>' + t.pwChecking + '</div>';
+    try {
+      const buf = new TextEncoder().encode(pw);
+      const hashBuf = await crypto.subtle.digest('SHA-1', buf);
+      const hex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase();
+      const prefix = hex.slice(0,5), suffix = hex.slice(5);
+      const resp = await fetch('https://api.pwnedpasswords.com/range/' + prefix);
+      const text = await resp.text();
+      const hit = text.split('\n').find(line => line.split(':')[0].trim() === suffix);
+      if (hit) {
+        const count = hit.split(':')[1].trim();
+        pwResult.innerHTML = findingHTML('warn', ICONS.pin, t.pwBreached.replace('{n}', count));
+      } else {
+        pwResult.innerHTML = findingHTML('safe', ICONS.check, t.pwSafe);
+      }
+    } catch (err) {
+      pwResult.innerHTML = findingHTML('warn', ICONS.pin, t.pwError);
+    }
+  });
+
+  // ---------- Tool: password generator ----------
+  const pwLenRange = document.getElementById('pwLenRange');
+  const pwLenVal = document.getElementById('pwLenVal');
+  const pwGenOutput = document.getElementById('pwGenOutput');
+  pwLenRange.addEventListener('input', () => { pwLenVal.textContent = pwLenRange.value; });
+  function generatePassword(len) {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()-_=+';
+    const bytes = new Uint32Array(len);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, b => chars[b % chars.length]).join('');
+  }
+  document.getElementById('pwGenBtn').addEventListener('click', () => {
+    pwGenOutput.value = generatePassword(parseInt(pwLenRange.value, 10));
+  });
+  document.getElementById('pwCopyBtn').addEventListener('click', () => {
+    if (!pwGenOutput.value) return;
+    navigator.clipboard && navigator.clipboard.writeText(pwGenOutput.value);
+    const t = translations[currentLang];
+    const btn = document.getElementById('pwCopyBtn');
+    const original = btn.innerHTML;
+    btn.textContent = t.pwCopied;
+    setTimeout(() => { btn.innerHTML = original; }, 1200);
+  });
+  // generate one on load so the field isn't empty
+  pwGenOutput.value = generatePassword(16);
+
+  // ---------- Tool: text/caption leak scanner ----------
+  function scanTextForLeaks(val) {
+    const t = translations[currentLang];
+    let html = '';
+    if (/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(val)) html += findingHTML('warn', ICONS.pin, t.foundEmail);
+    if (/(\+?\d[\s.-]?){7,14}\d/.test(val)) html += findingHTML('warn', ICONS.pin, t.foundPhone);
+    if (/\b(?:\d[ -]?){13,16}\b/.test(val)) html += findingHTML('warn', ICONS.pin, t.foundCard);
+    if (/\b\d{1,5}\s+[A-Za-z\u0600-\u06FF]+\s+(street|st\.|avenue|ave\.|road|rd\.|شارع|حي|زقاق)\b/i.test(val)) html += findingHTML('warn', ICONS.pin, t.foundAddress);
+    return html || findingHTML('safe', ICONS.check, t.textScanClean);
+  }
+  document.getElementById('textScanBtn').addEventListener('click', () => {
+    const val = document.getElementById('textScanInput').value;
+    document.getElementById('textScanResult').innerHTML = scanTextForLeaks(val);
+  });
+
+  // ---------- Tool: OCR visible-content scanner (Pro/Ultra) ----------
+  let tesseractLoadPromise = null;
+  function loadTesseract() {
+    if (window.Tesseract) return Promise.resolve();
+    if (tesseractLoadPromise) return tesseractLoadPromise;
+    tesseractLoadPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js';
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return tesseractLoadPromise;
+  }
+  document.getElementById('ocrBtn').addEventListener('click', async () => {
+    const t = translations[currentLang];
+    const hasPro = membership.tier === 'pro' || membership.tier === 'ultra';
+    if (!hasPro) { openUpgradeModal('pro'); return; }
+    const res = document.getElementById('ocrResult');
+    if (!lastScanFile) { res.innerHTML = findingHTML('warn', ICONS.img, t.ocrNeedScan); return; }
+    res.innerHTML = findingHTML('warn', ICONS.clock, t.ocrLoading);
+    try {
+      await loadTesseract();
+      const { data } = await Tesseract.recognize(lastScanFile, 'eng');
+      const text = (data && data.text || '').trim();
+      res.innerHTML = text ? scanTextForLeaks(text) : findingHTML('safe', ICONS.check, t.ocrNoText);
+    } catch (err) {
+      res.innerHTML = findingHTML('warn', ICONS.img, t.ocrNoText);
+    }
+  });
+
+  // ---------- Tool: PDF metadata auditor (Ultra) ----------
+  const pdfInput = document.getElementById('pdfInput');
+  document.getElementById('pdfAuditBtn').addEventListener('click', () => {
+    if (membership.tier !== 'ultra') { openUpgradeModal('ultra'); return; }
+    pdfInput.click();
+  });
+  pdfInput.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const t = translations[currentLang];
+    const res = document.getElementById('pdfAuditResult');
+    const reader = new FileReader();
+    reader.onload = () => {
+      let raw = '';
+      const bytes = new Uint8Array(reader.result);
+      for (let i = 0; i < bytes.length; i++) raw += String.fromCharCode(bytes[i]);
+      let html = '';
+      const author = raw.match(/\/Author\s*\(([^)]*)\)/);
+      const producer = raw.match(/\/Producer\s*\(([^)]*)\)/);
+      const creator = raw.match(/\/Creator\s*\(([^)]*)\)/);
+      const modDate = raw.match(/\/ModDate\s*\(([^)]*)\)/);
+      const cDate = raw.match(/\/CreationDate\s*\(([^)]*)\)/);
+      const pathMatch = raw.match(/[A-Za-z]:\\\\?(?:Users|home)\\\\?[^)\\\/]{2,40}|\/(?:home|Users)\/[^)\s]{2,40}/i);
+      if (author && author[1].trim()) html += findingHTML('warn', ICONS.pin, t.pdfFoundAuthor + ': ' + author[1].trim());
+      if (producer || creator) html += findingHTML('warn', ICONS.device, t.pdfFoundSoftware + ': ' + ((creator&&creator[1])||(producer&&producer[1])||'').trim());
+      if (pathMatch) html += findingHTML('warn', ICONS.pin, t.pdfFoundPath);
+      if (modDate || cDate) html += findingHTML('warn', ICONS.clock, t.pdfFoundDates);
+      res.innerHTML = html || findingHTML('safe', ICONS.check, t.pdfClean);
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  // ---------- Tool: pre-post checklist ----------
+  document.querySelectorAll('#checklistWrap input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('.chk-row').classList.toggle('done', cb.checked);
+    });
+  });
+
   input.addEventListener('change', function(e) {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
@@ -1268,7 +1654,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!files.length) return;
     const panicBtnEl = document.getElementById('panicBtn');
     const originalHTML = panicBtnEl.innerHTML;
-    const t = translations[currentLang];
+  const t = translations[currentLang];
     panicBtnEl.innerHTML = '<span>' + (t.zippingLabel || '...') + '</span>';
     panicBtnEl.style.pointerEvents = 'none';
     try {
@@ -1297,3 +1683,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
+
