@@ -230,6 +230,21 @@
   .code-row { display:flex; gap:8px; margin-top: 14px; }
   .code-row input { flex:1; background: rgba(255,255,255,0.04); border:1px solid var(--line); border-radius:10px; padding:12px 13px; color:var(--ink); font-family:'IBM Plex Mono',monospace; font-size:13.5px; letter-spacing:1px; text-transform:uppercase; }
   .code-row input:focus { outline:none; border-color: rgba(var(--accent-1-rgb),0.6); }
+  .ultra-divider { margin-top:6px; padding-top:10px; border-top:1px dashed rgba(var(--accent-3-rgb),0.3); }
+  .ultra-divider span { color: var(--accent-3); font-weight:700; font-size:11.5px; letter-spacing:.3px; }
+  .ultra-divider svg { display:none; }
+  .support-row { display:flex; gap:8px; margin-top:12px; }
+  .support-btn { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; padding:11px; border-radius:10px; text-decoration:none; font-weight:700; font-size:12.5px; font-family:inherit; border:1px solid var(--line); }
+  .support-btn svg { width:16px; height:16px; }
+  .support-btn.wa { color:#25D366; border-color: rgba(37,211,102,0.4); background: rgba(37,211,102,0.08); }
+  .support-btn.em { color: var(--accent-1); border-color: rgba(var(--accent-1-rgb),0.4); background: rgba(var(--accent-1-rgb),0.08); }
+  .have-code-btn { width:100%; margin-top:14px; padding:13px; border-radius:10px; border:1px dashed var(--line); background:transparent; color: var(--ink-dim); font-weight:600; font-size:12.5px; font-family:inherit; }
+  .have-code-btn:active { transform: scale(0.98); }
+  .sub-status-box { margin-top:14px; padding:14px 16px; border-radius:12px; border:1px solid rgba(var(--accent-1-rgb),0.35); background: rgba(var(--accent-1-rgb),0.08); }
+  .sub-status-box.expiring { border-color: rgba(255,154,138,0.5); background: rgba(255,154,138,0.08); }
+  .sub-status-title { font-weight:700; font-size:13.5px; color: var(--accent-1); }
+  .sub-status-box.expiring .sub-status-title { color: #ff9a8a; }
+  .sub-status-sub { font-size:11.5px; color: var(--ink-dim); margin-top:4px; font-family:'IBM Plex Mono',monospace; }
   .activate-btn { width:100%; margin-top:10px; padding: 13px; border-radius: 10px; border: 1px solid rgba(var(--accent-1-rgb),0.5); background: rgba(var(--accent-1-rgb), 0.12); color: var(--accent-1); font-weight: 700; font-size: 13.5px; font-family: inherit; }
   .activate-btn:active { transform: scale(0.98); }
   .activate-btn:disabled { opacity: 0.6; }
@@ -433,13 +448,25 @@
           <span class="plan-price" id="ultraPriceTag" style="color:var(--accent-3)">$7.99<span data-i18n="perMonth">/شهر</span></span>
         </div>
         <ul class="plan-feats">
-          <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="ultraF0">كل مزايا Pro، بالإضافة إلى:</span></li>
+          <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="proF1">فحص وتنظيف غير محدود للصور</span></li>
+          <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="proF2">تنزيل نسخة نظيفة من الصورة فعليًا بدون بيانات موقع أو جهاز</span></li>
+          <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="proF3">جودة تصدير أعلى للصورة المنظفة</span></li>
+          <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="proF4">Ghost Mode: تنظيف تلقائي لكل صورة ترفعها</span></li>
+          <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="proF5">تقريرك الأسبوعي الحقيقي</span></li>
+          <li class="ultra-divider"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="ultraF0">بالإضافة إلى، حصريًا لـ Ultra:</span></li>
           <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="ultraF1">Panic Clean: تنظيف دفعة كاملة من الصور بضغطة واحدة</span></li>
           <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="ultraF2">أولوية معالجة للدفعات الكبيرة</span></li>
           <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="ultraF3">مكتبة موسّعة من نصائح الحماية من التطبيقات والمواقع المشبوهة</span></li>
         </ul>
         <button class="upgrade-btn ultra" id="upgradeBtnUltra" data-i18n="upgradeBtn">الترقية</button>
       </div>
+
+      <div class="sub-status-box" id="subStatusBox" style="display:none;">
+        <div class="sub-status-title" id="subStatusTitle"></div>
+        <div class="sub-status-sub" id="subStatusSub"></div>
+      </div>
+
+      <button class="have-code-btn" id="haveCodeBtn" data-i18n="haveCodeBtn">عندك كود تفعيل؟ فعّله من هنا</button>
 
       <div class="section-title" data-i18n="appearance">المظهر</div>
       <div class="colorpicker" id="colorPicker">
@@ -522,6 +549,22 @@
       <div class="tips-card">
         <div class="t"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg><span data-i18n="tip3t">تنبيه صادق</span></div>
         <div class="s" data-i18n="tip3s">هذا التطبيق يشتغل داخل المتصفح فقط، وما يقدر يحذف فايروسات من جهازك أو ألعابك، ولا يغيّر إعدادات DNS، ولا يوفر حماية اختراق حقيقية على مدار الساعة — إذا شفت تطبيق ثاني يوعد بهذا الشي كخدمة اشتراك، تأكد من مصدره ومراجعاته قبل الدفع.</div>
+      </div>
+
+      <div class="section-title" data-i18n="supportSection">الدعم والتواصل</div>
+      <div class="tips-card" id="supportCard" style="text-align:center;">
+        <div class="t" style="justify-content:center;" data-i18n="supportTitle">تحتاج مساعدة؟</div>
+        <div class="s" data-i18n="supportSub">تواصل معنا مباشرة لأي استفسار عن الاشتراك أو مشكلة تقنية</div>
+        <div class="support-row">
+          <a class="support-btn wa" id="supportWhatsappBtn" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.4-.5c.1-.1.2-.3.2-.4.1-.2 0-.3 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.3-.1-.1-.3-.2-.6-.3z"/><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+            <span data-i18n="supportWhatsapp">واتساب</span>
+          </a>
+          <a class="support-btn em" id="supportEmailBtn" href="#">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+            <span data-i18n="supportEmail">إيميل</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -706,6 +749,16 @@
       <div class="modal-sub" id="modalSub">فحص وتنظيف غير محدود، وتقرير أسبوعي حقيقي.</div>
       <div class="billing-row" id="billingRow"></div>
       <ul class="plan-feats" id="modalFeats" style="margin-bottom:8px;"></ul>
+      <p class="demo-note" data-i18n="haveCodeHintInUpgrade">دفعت وحصلت على كود التفعيل؟ سكر هذي الصفحة واضغط "عندك كود تفعيل؟" بالأسفل.</p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="activateModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-close" id="closeActivateModal"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+      <div class="modal-title" data-i18n="haveCodeTitle">تفعيل الاشتراك بكود</div>
+      <div class="modal-sub" data-i18n="haveCodeSub">اكتب كود التفعيل اللي وصلك — نوع اشتراكك (Pro أو Ultra) ومدته يتحددون تلقائيًا من الكود نفسه.</div>
       <div class="code-row">
         <input type="text" id="activationCodeInput" data-i18n-ph="activatePlaceholder" placeholder="PG-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters">
       </div>
@@ -763,7 +816,7 @@ document.addEventListener('DOMContentLoaded', function () {
       proF3: "جودة تصدير أعلى للصورة المنظفة",
       proF4: "Ghost Mode: تنظيف تلقائي لكل صورة ترفعها",
       proF5: "تقريرك الأسبوعي الحقيقي",
-      ultraF0: "كل مزايا Pro، بالإضافة إلى:",
+      ultraF0: "بالإضافة إلى، حصريًا لـ Ultra:",
       ultraF1: "Panic Clean: تنظيف دفعة كاملة من الصور بضغطة واحدة",
       ultraF2: "أولوية معالجة للدفعات الكبيرة",
       ultraF3: "مكتبة موسّعة من نصائح الحماية من التطبيقات والمواقع المشبوهة",
@@ -782,6 +835,19 @@ document.addEventListener('DOMContentLoaded', function () {
       activateExpired: "هذا الكود منتهي الصلاحية",
       activateEmpty: "اكتب الكود أول",
       activateError: "صار خطأ، تأكد من الاتصال بالنت وحاول مرة ثانية",
+      haveCodeBtn: "عندك كود تفعيل؟ فعّله من هنا",
+      haveCodeTitle: "تفعيل الاشتراك بكود",
+      haveCodeSub: "اكتب كود التفعيل اللي وصلك — نوع اشتراكك (Pro أو Ultra) ومدته يتحددون تلقائيًا من الكود نفسه.",
+      haveCodeHintInUpgrade: "دفعت وحصلت على كود التفعيل؟ سكر هذي الصفحة واضغط \"عندك كود تفعيل؟\" بالأسفل.",
+      subActiveTitle: "الاشتراك مفعّل — {tier}",
+      subDaysLeft: "باقي {n} يوم",
+      subExpiresOn: "ينتهي بتاريخ {date}",
+      subExpiredTitle: "انتهت مدة اشتراكك — جدد أو فعّل كود جديد",
+      supportSection: "الدعم والتواصل",
+      supportTitle: "تحتاج مساعدة؟",
+      supportSub: "تواصل معنا مباشرة لأي استفسار عن الاشتراك أو مشكلة تقنية",
+      supportWhatsapp: "واتساب",
+      supportEmail: "إيميل",
       reportLockedMsg: "التقرير الأسبوعي متاح لمشتركي Pro و Ultra",
       cleanBtnText: "تنظيف وتنزيل نسخة آمنة",
       batchLockedForFree: "اختيار عدة صور دفعة وحدة ميزة Pro و Ultra",
@@ -988,7 +1054,7 @@ document.addEventListener('DOMContentLoaded', function () {
       proF3: "Higher export quality for cleaned photos",
       proF4: "Ghost Mode: auto-clean every upload",
       proF5: "Your real weekly report",
-      ultraF0: "Everything in Pro, plus:",
+      ultraF0: "Plus, exclusive to Ultra:",
       ultraF1: "Panic Clean: clean a whole batch of photos in one tap",
       ultraF2: "Priority processing for large batches",
       ultraF3: "Expanded library of tips against shady apps and sites",
@@ -1007,6 +1073,19 @@ document.addEventListener('DOMContentLoaded', function () {
       activateExpired: "This code has expired",
       activateEmpty: "Enter a code first",
       activateError: "Something went wrong — check your connection and try again",
+      haveCodeBtn: "Have an activation code? Tap here",
+      haveCodeTitle: "Activate with a code",
+      haveCodeSub: "Enter your activation code — your plan (Pro or Ultra) and its duration are set automatically from the code.",
+      haveCodeHintInUpgrade: "Already paid and got a code? Close this and tap \"Have an activation code?\" below.",
+      subActiveTitle: "Subscription active — {tier}",
+      subDaysLeft: "{n} days left",
+      subExpiresOn: "expires {date}",
+      subExpiredTitle: "Your subscription has expired — renew or enter a new code",
+      supportSection: "Support & contact",
+      supportTitle: "Need help?",
+      supportSub: "Reach out directly for anything about your subscription or a technical issue",
+      supportWhatsapp: "WhatsApp",
+      supportEmail: "Email",
       reportLockedMsg: "Weekly reports are for Pro & Ultra members",
       cleanBtnText: "Clean & download safe copy",
       batchLockedForFree: "Picking several photos at once is a Pro/Ultra feature",
@@ -1213,7 +1292,7 @@ document.addEventListener('DOMContentLoaded', function () {
       proF3: "更高的清理导出质量",
       proF4: "幽灵模式：自动清理每次上传",
       proF5: "您的真实每周报告",
-      ultraF0: "包含 Pro 全部功能，此外还有：",
+      ultraF0: "此外，Ultra 专属：",
       ultraF1: "紧急清理：一键清理整批照片",
       ultraF2: "大批量优先处理",
       ultraF3: "更丰富的可疑应用/网站防范提示库",
@@ -1232,6 +1311,19 @@ document.addEventListener('DOMContentLoaded', function () {
       activateExpired: "此激活码已过期",
       activateEmpty: "请先输入激活码",
       activateError: "出错了，请检查网络连接后重试",
+      haveCodeBtn: "有激活码？点这里激活",
+      haveCodeTitle: "使用激活码激活",
+      haveCodeSub: "输入你的激活码——套餐类型（Pro 或 Ultra）和有效期会根据激活码自动设置。",
+      haveCodeHintInUpgrade: "已付款并收到激活码？关闭此页面，点击下方的\"有激活码？点这里激活\"。",
+      subActiveTitle: "订阅已激活 — {tier}",
+      subDaysLeft: "剩余 {n} 天",
+      subExpiresOn: "到期日 {date}",
+      subExpiredTitle: "订阅已到期 — 请续订或输入新的激活码",
+      supportSection: "支持与联系",
+      supportTitle: "需要帮助？",
+      supportSub: "有任何订阅或技术问题，直接联系我们",
+      supportWhatsapp: "WhatsApp",
+      supportEmail: "邮箱",
       reportLockedMsg: "每周报告仅限 Pro 与 Ultra 会员",
       cleanBtnText: "清理并下载安全副本",
       batchLockedForFree: "一次选择多张照片是 Pro/Ultra 功能",
@@ -1400,6 +1492,12 @@ document.addEventListener('DOMContentLoaded', function () {
   // Leave empty until you've deployed it — the activate button will
   // show a friendly "not configured" message instead of failing silently.
   const WORKER_URL = 'https://throbbing-wood-e79fmassnew.javierescuelabs.workers.dev';
+
+  // Support contact info — fill these in with your real WhatsApp number
+  // (digits only, country code, no + or 00) and support email.
+  // Leave a value empty ('') to hide that button.
+  const SUPPORT_WHATSAPP = '9647760502057'; // e.g. '9647701234567'
+  const SUPPORT_EMAIL = 'javierescuelabs@gmail.com';    // e.g. 'support@yourapp.com'
 
   let currentLang = 'ar';
   let membership = { tier: 'free', billing: 'monthly', code: null, expiresAt: null }; // free | pro | ultra
@@ -1638,6 +1736,37 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('upgradeBtnUltra').addEventListener('click', () => openUpgradeModal('ultra'));
   document.getElementById('unlockFromReport').addEventListener('click', () => openUpgradeModal('pro'));
 
+  // ---------- Activation-code modal (separate from the plans/upgrade modal) ----------
+  const activateModal = document.getElementById('activateModal');
+  function openActivateModal() {
+    setActivateStatus('', '');
+    activationCodeInput.value = '';
+    activateModal.classList.add('open');
+  }
+  function closeActivateModal() { activateModal.classList.remove('open'); }
+  document.getElementById('haveCodeBtn').addEventListener('click', openActivateModal);
+
+  // ---------- Support / contact buttons ----------
+  (function setupSupportButtons() {
+    const waBtn = document.getElementById('supportWhatsappBtn');
+    const emailBtn = document.getElementById('supportEmailBtn');
+    if (SUPPORT_WHATSAPP) {
+      waBtn.href = 'https://wa.me/' + SUPPORT_WHATSAPP;
+    } else {
+      waBtn.style.display = 'none';
+    }
+    if (SUPPORT_EMAIL) {
+      emailBtn.href = 'mailto:' + SUPPORT_EMAIL;
+    } else {
+      emailBtn.style.display = 'none';
+    }
+    if (!SUPPORT_WHATSAPP && !SUPPORT_EMAIL) {
+      document.getElementById('supportCard').style.display = 'none';
+    }
+  })();
+  document.getElementById('closeActivateModal').addEventListener('click', closeActivateModal);
+  activateModal.addEventListener('click', (e) => { if (e.target === activateModal) closeActivateModal(); });
+
   function renderModal() {
     const t = translations[currentLang];
     const tier = pendingUpgradeTier;
@@ -1658,7 +1787,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
     const featsList = tier === 'ultra'
-      ? ['ultraF0','proF1','proF2','proF3','proF4','proF5','ultraF1','ultraF2','ultraF3']
+      ? ['proF1','proF2','proF3','proF4','proF5','ultraF0','ultraF1','ultraF2','ultraF3']
       : ['proF1','proF2','proF3','proF4','proF5'];
     document.getElementById('modalFeats').innerHTML = featsList.map(k =>
       '<li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span>' + t[k] + '</span></li>'
@@ -1700,7 +1829,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setActivateStatus(t.activateSuccess, 'ok');
         vibrate(15);
         renderAll();
-        setTimeout(() => { closeUpgradeModal(); setActivateStatus('', ''); activationCodeInput.value = ''; }, 900);
+        setTimeout(() => { closeActivateModal(); setActivateStatus('', ''); activationCodeInput.value = ''; }, 900);
       } else if (data.error === 'code_in_use') {
         setActivateStatus(t.activateInUse, 'err');
       } else if (data.error === 'expired') {
@@ -1759,6 +1888,7 @@ document.addEventListener('DOMContentLoaded', function () {
     proPriceTag.innerHTML = '$' + PRICES.pro.monthly.toFixed(2) + '<span>' + t.perMonth + '</span>';
     ultraPriceTag.innerHTML = '$' + PRICES.ultra.monthly.toFixed(2) + '<span>' + t.perMonth + '</span>';
     freeBadge.textContent = membership.tier === 'free' ? t.currentPlan : '';
+    renderSubStatus();
 
     const hasPro = membership.tier === 'pro' || membership.tier === 'ultra';
     const hasUltra = membership.tier === 'ultra';
@@ -1787,6 +1917,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     renderQuota();
     renderStats();
+  }
+
+  function renderSubStatus() {
+    const t = translations[currentLang];
+    const box = document.getElementById('subStatusBox');
+    const titleEl = document.getElementById('subStatusTitle');
+    const subEl = document.getElementById('subStatusSub');
+
+    if (membership.tier === 'free' || !membership.expiresAt) {
+      box.style.display = 'none';
+      return;
+    }
+
+    const expiry = new Date(membership.expiresAt);
+    const now = new Date();
+    const msLeft = expiry - now;
+    const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+    const tierLabel = membership.tier === 'ultra' ? t.ultraActive : t.proActive;
+    const dateStr = isNaN(expiry.getTime()) ? '' : expiry.toLocaleDateString(currentLang === 'ar' ? 'ar' : (currentLang === 'zh' ? 'zh-CN' : 'en-US'));
+
+    box.style.display = '';
+    box.classList.toggle('expiring', daysLeft <= 3);
+
+    if (daysLeft <= 0) {
+      titleEl.textContent = t.subExpiredTitle;
+      subEl.textContent = '';
+    } else {
+      titleEl.textContent = t.subActiveTitle.replace('{tier}', tierLabel);
+      subEl.textContent = t.subDaysLeft.replace('{n}', daysLeft) + (dateStr ? ' — ' + t.subExpiresOn.replace('{date}', dateStr) : '');
+    }
   }
 
   function renderQuota() {
@@ -2094,6 +2254,7 @@ document.addEventListener('DOMContentLoaded', function () {
       for (let i = 0; i < size - 1; i++) str += String.fromCharCode(view.getUint8(dataStart + i));
       return str;
     }
+
     const firstIFDOffset = g32(tiffStart + 4);
     const ifd0 = readIFD(firstIFDOffset);
     const result = {};
@@ -2176,7 +2337,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
     let html = '<div class="diff-box"><div class="diff-title">' + t.diffTitle + '</div>';
     rows.forEach(([label, before]) => {
-      html += '<div class="diff-row"><span class="diff-label">' + label + '</span><span class="diff-before">' + before + '</span><span class="diff-arrow">→</span><span class="diff-after">' + t.diffRemoved + '</span></div>';
+      html += '<div class="diff-row"><span class="diff-label">' + label + '</span><span class="diff-before">' + before + '</span><span class="diff-arrow">→</span><span class="diff-before">' + before + '</span><span class="diff-arrow">→</span><span class="diff-after">' + t.diffRemoved + '</span></div>';
     });
     html += '</div>';
     result.insertAdjacentHTML('beforeend', html);
