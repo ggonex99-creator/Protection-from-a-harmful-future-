@@ -201,6 +201,7 @@
   .upgrade-btn { width:100%; margin-top: 14px; padding: 13px; border-radius: 10px; border: 1px solid rgba(var(--accent-1-rgb),0.5); background: rgba(var(--accent-1-rgb), 0.12); color: var(--accent-1); font-weight: 700; font-size: 13.5px; font-family: inherit; }
   .upgrade-btn.ultra { border-color: rgba(var(--accent-3-rgb),0.55); background: rgba(var(--accent-3-rgb), 0.14); color: var(--accent-3); }
   .upgrade-btn:active { transform: scale(0.98); }
+  .upgrade-btn:disabled { opacity: 0.55; }
 
   .lock-badge { display:inline-flex; align-items:center; justify-content:center; width: 22px; height: 22px; border-radius: 6px; background: rgba(255,180,84,0.12); flex-shrink:0; }
   .lock-badge svg { width: 12px; height: 12px; color: var(--accent-3); }
@@ -305,10 +306,20 @@
   .chat-msg.user { align-self:flex-end; background: rgba(var(--accent-1-rgb),0.18); border:1px solid rgba(var(--accent-1-rgb),0.35); }
   .chat-msg.bot { align-self:flex-start; background: var(--surface); border:1px solid var(--line); }
   .chat-msg.bot.err { border-color: rgba(255,120,120,0.4); color:#ffb3b3; }
+  .chat-quota { font-family:'IBM Plex Mono',monospace; font-size: 10.5px; color: var(--ink-dim); padding: 0 16px 10px; }
+  .chat-quota.unlimited { color: var(--accent-3); }
+  .chat-img-preview { display:none; align-items:center; gap:8px; margin:0 14px 10px; padding:6px 10px; background: var(--surface); border:1px solid var(--line); border-radius:10px; font-size:12px; color: var(--ink-dim); }
+  .chat-img-preview.show { display:flex; }
+  .chat-img-preview img { width:34px; height:34px; object-fit:cover; border-radius:6px; }
+  .chat-img-preview button { margin-inline-start:auto; background:none; border:none; color: var(--accent-3); font-size:12px; font-family:inherit; }
+  .chat-msg img.chat-attach { max-width:100%; border-radius:8px; margin-top:6px; display:block; }
   .chat-input-row { display:flex; gap:8px; padding: 12px 14px; border-top:1px solid var(--line); }
   .chat-input-row textarea { flex:1; max-height:80px; background: rgba(255,255,255,0.04); border:1px solid var(--line); border-radius:10px; padding:10px 12px; color:var(--ink); font-family:inherit; font-size:13px; resize:none; }
+  .chat-attach-btn { width:42px; border-radius:10px; background: rgba(255,255,255,0.05); border:1px solid var(--line); color: var(--ink-dim); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .chat-attach-btn svg { width:17px; height:17px; }
   .chat-send { width:42px; border-radius:10px; background: var(--accent-1); color:#06110c; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .chat-send svg { width:18px; height:18px; }
+  .chat-send:disabled, .chat-attach-btn:disabled { opacity:0.5; }
 
   .mode-toggle { display:flex; gap:8px; margin-top:12px; }
   .mode-opt { flex:1; padding:10px; border-radius:10px; border:1px solid var(--line); background: var(--surface); text-align:center; font-size:12.5px; color: var(--ink-dim); display:flex; align-items:center; justify-content:center; gap:6px; }
@@ -437,6 +448,7 @@
           <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="freeF2">درجة خصوصية لكل صورة</span></li>
           <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="freeF3">كشف الموقع والجهاز والتاريخ</span></li>
         </ul>
+        <button class="upgrade-btn" id="downgradeBtn" data-i18n="downgradeBtn" style="display:none;">الرجوع للخطة المجانية</button>
       </div>
 
       <div class="plan-card plan-pro">
@@ -444,6 +456,7 @@
           <span class="plan-name">Pro</span>
           <span class="plan-price" id="proPriceTag">$4.99<span data-i18n="perMonth">/شهر</span></span>
         </div>
+        <span class="plan-current" id="proBadge" data-i18n="currentPlan" style="display:none;">خطتك الحالية</span>
         <ul class="plan-feats">
           <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="proF1">فحص وتنظيف غير محدود للصور</span></li>
           <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="proF2">تنزيل نسخة نظيفة من الصورة فعليًا بدون بيانات موقع أو جهاز</span></li>
@@ -459,6 +472,7 @@
           <span class="plan-name">Ultra <span class="ultra-tag">MAX</span></span>
           <span class="plan-price" id="ultraPriceTag" style="color:var(--accent-3)">$7.99<span data-i18n="perMonth">/شهر</span></span>
         </div>
+        <span class="plan-current" id="ultraBadge" data-i18n="currentPlan" style="display:none;">خطتك الحالية</span>
         <ul class="plan-feats">
           <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="proF1">فحص وتنظيف غير محدود للصور</span></li>
           <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="proF2">تنزيل نسخة نظيفة من الصورة فعليًا بدون بيانات موقع أو جهاز</span></li>
@@ -755,7 +769,15 @@
         <div class="chat-close" id="chatCloseBtn">✕</div>
       </div>
       <div class="chat-body" id="chatBody"></div>
+      <div class="chat-quota" id="chatQuota"></div>
+      <div class="chat-img-preview" id="chatImgPreview">
+        <img id="chatImgPreviewThumb" src="" alt="">
+        <span data-i18n="chatImgAttached">صورة مرفقة</span>
+        <button id="chatImgRemove" data-i18n="chatImgRemove">إزالة</button>
+      </div>
       <div class="chat-input-row">
+        <button class="chat-attach-btn" id="chatAttachBtn" type="button"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M21.4 11.1 12.6 20a4.7 4.7 0 0 1-6.7-6.7l8.7-8.7a3.2 3.2 0 0 1 4.5 4.5L10.4 17a1.7 1.7 0 0 1-2.4-2.4l7.2-7.2"/></svg></button>
+        <input type="file" id="chatImgInput" accept="image/*" style="display:none;">
         <textarea id="chatInput" rows="1" data-i18n-ph="chatPlaceholder" placeholder="اكتب مشكلتك أو سؤالك هنا..."></textarea>
         <button class="chat-send" id="chatSendBtn"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
       </div>
@@ -861,6 +883,10 @@ document.addEventListener('DOMContentLoaded', function () {
       ultraF2: "أولوية معالجة للدفعات الكبيرة",
       ultraF3: "مكتبة موسّعة من نصائح الحماية من التطبيقات والمواقع المشبوهة",
       upgradeBtn: "الترقية",
+      currentPlanBtn: "✅ تمت الترقية",
+      includedInUltra: "ضمن باقة Ultra",
+      downgradeBtn: "الرجوع للخطة المجانية",
+      downgradeConfirm: "متأكد إنك تريد الرجوع للخطة المجانية؟ راح تفقد كل مزايا Pro/Ultra فورًا.",
       modalTitleProT: "الترقية إلى Pro",
       modalSubProT: "فحص وتنظيف غير محدود، وتقرير أسبوعي حقيقي.",
       modalTitleUltraT: "الترقية إلى Ultra",
@@ -1049,11 +1075,17 @@ document.addEventListener('DOMContentLoaded', function () {
       streakDay: "يوم", streakDays: "أيام",
       badgeFirstScan: "🔍 أول فحص", badgeCleaned10: "🧹 10 صور نظيفة", badgePwChecked: "🔑 فحصت كلمة السر",
       badgeChecklist: "✅ قائمة كاملة", badgeSubscriber: "⭐ مشترك", badgeStreak7: "🔥 أسبوع كامل",
+      badgeDeviceSafe: "📱 جهازك محمي", badgeBrowserChecked: "🌐 تصفحك مفحوص",
       chatTitle: "المساعد الذكي",
       chatPlaceholder: "اكتب مشكلتك أو سؤالك هنا...",
       chatWelcome: "هلا! أنا مساعدك الذكي بتطبيق Privacy Guard. اسألني عن أي ميزة بالتطبيق أو أي مشكلة تواجهك وأحاول أساعدك.",
       chatNotConfigured: "المحادثة الذكية ما انربطت بسيرفر بعد — لازم صاحب التطبيق يضيف رابط الخادم (backend) الخاص فيه بالكود قبل ما تشتغل هذي الميزة.",
       chatError: "صار خطأ بالاتصال بالمساعد — جرب مرة ثانية بعد شوي",
+      chatQuotaUnlimited: "أسئلة غير محدودة",
+      chatQuotaLeft: "باقي لك <b>{n}</b> من 6 أسئلة اليوم (مجاني)",
+      chatQuotaOver: "خلصت أسئلة اليوم المجانية — رجع باچر أو رقّي لاستخدام غير محدود",
+      chatImgAttached: "صورة مرفقة",
+      chatImgRemove: "إزالة",
       timelineTitle: "السجل الأمني",
       timelineSub: "سجل حقيقي بكل عملية فحص أو تنظيف سويتها فعليًا داخل هذا التطبيق",
       timelineEmpty: "ما عندك أي عملية مسجلة لحد الآن — سوّي فحص أو تنظيف وراح تظهر هنا",
@@ -1137,6 +1169,10 @@ document.addEventListener('DOMContentLoaded', function () {
       ultraF2: "Priority processing for large batches",
       ultraF3: "Expanded library of tips against shady apps and sites",
       upgradeBtn: "Upgrade",
+      currentPlanBtn: "✅ Upgraded",
+      includedInUltra: "Included in Ultra",
+      downgradeBtn: "Switch back to Free",
+      downgradeConfirm: "Are you sure you want to switch back to the Free plan? You'll lose all Pro/Ultra features immediately.",
       modalTitleProT: "Upgrade to Pro",
       modalSubProT: "Unlimited scan & clean, plus a real weekly report.",
       modalTitleUltraT: "Upgrade to Ultra",
@@ -1325,11 +1361,17 @@ document.addEventListener('DOMContentLoaded', function () {
       streakDay: "day", streakDays: "days",
       badgeFirstScan: "🔍 First scan", badgeCleaned10: "🧹 10 photos cleaned", badgePwChecked: "🔑 Password checked",
       badgeChecklist: "✅ Full checklist", badgeSubscriber: "⭐ Subscriber", badgeStreak7: "🔥 Full week",
+      badgeDeviceSafe: "📱 Device secured", badgeBrowserChecked: "🌐 Browser checked",
       chatTitle: "AI Assistant",
       chatPlaceholder: "Type your question or issue here...",
       chatWelcome: "Hi! I'm your Privacy Guard assistant. Ask me about any feature in the app or a problem you're facing.",
       chatNotConfigured: "The AI chat isn't connected to a server yet — the app owner needs to add their backend URL in the code before this feature works.",
       chatError: "There was a connection error — please try again in a moment",
+      chatQuotaUnlimited: "Unlimited questions",
+      chatQuotaLeft: "You have <b>{n}</b> of 6 free questions left today",
+      chatQuotaOver: "You've used today's free questions — come back tomorrow or upgrade for unlimited use",
+      chatImgAttached: "Image attached",
+      chatImgRemove: "Remove",
       timelineTitle: "Security Timeline",
       timelineSub: "A real log of every scan and clean-up you've actually run in this app",
       timelineEmpty: "No activity logged yet — run a scan or clean-up and it'll show up here",
@@ -1413,6 +1455,10 @@ document.addEventListener('DOMContentLoaded', function () {
       ultraF2: "大批量优先处理",
       ultraF3: "更丰富的可疑应用/网站防范提示库",
       upgradeBtn: "升级",
+      currentPlanBtn: "✅ 已升级",
+      includedInUltra: "已包含在 Ultra 中",
+      downgradeBtn: "切换回免费版",
+      downgradeConfirm: "确定要切换回免费版吗？你将立即失去所有 Pro/Ultra 功能。",
       modalTitleProT: "升级到 Pro",
       modalSubProT: "无限扫描与清理，加真实每周报告。",
       modalTitleUltraT: "升级到 Ultra",
@@ -1601,6 +1647,7 @@ document.addEventListener('DOMContentLoaded', function () {
       streakDay: "天", streakDays: "天",
       badgeFirstScan: "🔍 首次扫描", badgeCleaned10: "🧹 已清理10张照片", badgePwChecked: "🔑 已检查密码",
       badgeChecklist: "✅ 清单已完成", badgeSubscriber: "⭐ 订阅用户", badgeStreak7: "🔥 连续一周",
+      badgeDeviceSafe: "📱 设备已保护", badgeBrowserChecked: "🌐 浏览器已检查",
       chatTitle: "智能助手",
       chatPlaceholder: "在此输入你的问题或遇到的问题...",
       chatWelcome: "你好！我是 Privacy Guard 的智能助手。可以问我应用里的任何功能或你遇到的问题。",
@@ -1755,18 +1802,22 @@ document.addEventListener('DOMContentLoaded', function () {
   let streak = { count: 0, lastDate: null };
 
   async function loadState() {
+    // Merge saved data onto the current defaults instead of replacing the
+    // object outright — if a save was made by an older app version that
+    // didn't have a field yet (e.g. deviceChkDone, browserScore), a plain
+    // overwrite leaves that field undefined and breaks math on it (NaN).
     const m = await storageGet('membership');
-    if (m && m.value) { try { membership = JSON.parse(m.value); } catch(e){} }
+    if (m && m.value) { try { membership = Object.assign({}, membership, JSON.parse(m.value)); } catch(e){} }
     const u = await storageGet('usage');
-    if (u && u.value) { try { usage = JSON.parse(u.value); } catch(e){} }
+    if (u && u.value) { try { usage = Object.assign({}, usage, JSON.parse(u.value)); } catch(e){} }
     const s = await storageGet('stats');
-    if (s && s.value) { try { stats = JSON.parse(s.value); } catch(e){} }
+    if (s && s.value) { try { stats = Object.assign({}, stats, JSON.parse(s.value)); } catch(e){} }
     const st = await storageGet('streak');
-    if (st && st.value) { try { streak = JSON.parse(st.value); } catch(e){} }
+    if (st && st.value) { try { streak = Object.assign({}, streak, JSON.parse(st.value)); } catch(e){} }
     const tl = await storageGet('timeline');
     if (tl && tl.value) { try { timeline = JSON.parse(tl.value); } catch(e){} }
     const tu = await storageGet('toolUsage');
-    if (tu && tu.value) { try { toolUsage = JSON.parse(tu.value); } catch(e){} }
+    if (tu && tu.value) { try { toolUsage = Object.assign({}, toolUsage, JSON.parse(tu.value)); } catch(e){} }
     const th = await storageGet('theme');
     if (th && th.value) {
       try {
@@ -1982,9 +2033,22 @@ document.addEventListener('DOMContentLoaded', function () {
   function closeUpgradeModal() { upgradeModal.classList.remove('open'); }
   document.getElementById('closeModal').addEventListener('click', closeUpgradeModal);
   upgradeModal.addEventListener('click', (e) => { if (e.target === upgradeModal) closeUpgradeModal(); });
-  document.getElementById('upgradeBtnPro').addEventListener('click', () => openUpgradeModal('pro'));
-  document.getElementById('upgradeBtnUltra').addEventListener('click', () => openUpgradeModal('ultra'));
+  document.getElementById('upgradeBtnPro').addEventListener('click', () => {
+    if (membership.tier === 'free') openUpgradeModal('pro');
+  });
+  document.getElementById('upgradeBtnUltra').addEventListener('click', () => {
+    if (membership.tier !== 'ultra') openUpgradeModal('ultra');
+  });
   document.getElementById('unlockFromReport').addEventListener('click', () => openUpgradeModal('pro'));
+  document.getElementById('downgradeBtn').addEventListener('click', () => {
+    const t = translations[currentLang];
+    if (!confirm(t.downgradeConfirm)) return;
+    membership.tier = 'free';
+    membership.code = null;
+    membership.expiresAt = null;
+    saveMembership();
+    renderAll();
+  });
 
   // ---------- Activation-code modal (separate from the plans/upgrade modal) ----------
   const activateModal = document.getElementById('activateModal');
@@ -2138,6 +2202,37 @@ document.addEventListener('DOMContentLoaded', function () {
     proPriceTag.innerHTML = '$' + PRICES.pro.monthly.toFixed(2) + '<span>' + t.perMonth + '</span>';
     ultraPriceTag.innerHTML = '$' + PRICES.ultra.monthly.toFixed(2) + '<span>' + t.perMonth + '</span>';
     freeBadge.textContent = membership.tier === 'free' ? t.currentPlan : '';
+
+    // Reflect the real subscription state on the Pro/Ultra cards instead of
+    // always showing "Upgrade" even when that plan is already active.
+    const proBadgeEl = document.getElementById('proBadge');
+    const ultraBadgeEl = document.getElementById('ultraBadge');
+    const upgradeBtnProEl = document.getElementById('upgradeBtnPro');
+    const upgradeBtnUltraEl = document.getElementById('upgradeBtnUltra');
+    const downgradeBtnEl = document.getElementById('downgradeBtn');
+
+    proBadgeEl.style.display = membership.tier === 'pro' ? '' : 'none';
+    ultraBadgeEl.style.display = membership.tier === 'ultra' ? '' : 'none';
+
+    if (membership.tier === 'pro') {
+      upgradeBtnProEl.textContent = t.currentPlanBtn;
+      upgradeBtnProEl.disabled = true;
+      upgradeBtnUltraEl.textContent = t.upgradeBtn;
+      upgradeBtnUltraEl.disabled = false;
+    } else if (membership.tier === 'ultra') {
+      upgradeBtnProEl.textContent = t.includedInUltra;
+      upgradeBtnProEl.disabled = true;
+      upgradeBtnUltraEl.textContent = t.currentPlanBtn;
+      upgradeBtnUltraEl.disabled = true;
+    } else {
+      upgradeBtnProEl.textContent = t.upgradeBtn;
+      upgradeBtnProEl.disabled = false;
+      upgradeBtnUltraEl.textContent = t.upgradeBtn;
+      upgradeBtnUltraEl.disabled = false;
+    }
+
+    downgradeBtnEl.style.display = membership.tier === 'free' ? 'none' : '';
+
     renderSubStatus();
 
     const hasPro = membership.tier === 'pro' || membership.tier === 'ultra';
@@ -2231,7 +2326,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const devicePart = (stats.deviceChkDone / DEVICE_CHK_TOTAL) * 100;
     const browserPart = stats.browserScore === null ? 100 : stats.browserScore;
     const overall = Math.round(photoPart * 0.3 + chkPart * 0.15 + pwPart * 0.2 + devicePart * 0.15 + browserPart * 0.2);
-    document.getElementById('statOverall').textContent = overall;
+    document.getElementById('statOverall').textContent = Number.isFinite(overall) ? overall : '--';
 
     let nextStep = t.nextStepAllGood;
     if (stats.pwSafe === false) nextStep = t.nextStepPw;
@@ -2564,6 +2659,20 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         } catch (e) {}
       }
+    }
+    if (ifd0.next) { // IFD1 = thumbnail directory
+      const ifd1 = readIFD(ifd0.next);
+      if (ifd1.entries[0x0201]) result.hasThumbnail = true; // JPEGInterchangeFormat present
+      if (ifd1.entries[0x0201] && ifd1.entries[0x0202]) {
+        try {
+          const tOff = g32(ifd1.entries[0x0201].valOff);
+          const tLen = g32(ifd1.entries[0x0202].valOff);
+          const tStart = tiffStart + tOff;
+          if (tLen > 0 && tLen < 5000000 && tStart >= 0 && tStart + tLen <= view.byteLength) {
+            result.thumbBlob = new Blob([view.buffer.slice(tStart, tStart + tLen)], { type: 'image/jpeg' });
+          }
+        } catch (e) {}
+  }}
     }
     if (ifd0.next) { // IFD1 = thumbnail directory
       const ifd1 = readIFD(ifd0.next);
@@ -3138,9 +3247,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const val = document.getElementById('textScanInput').value;
     if (!val) return;
     if (!canUseTool('textScan')) { openUpgradeModal('pro'); return; }
-    document.getElementById('textScanInput').value;
-    if (!val) return;
-    if (!canUseTool('textScan')) { openUpgradeModal('pro'); return; }
     document.getElementById('textScanResult').innerHTML = scanTextForLeaks(val);
     consumeTool('textScan');
   });
@@ -3304,47 +3410,113 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (err) { /* no shared files waiting - normal case */ }
   }
 
-  // ---------- AI Assistant chat ----------
-  // IMPORTANT: leave this empty until you set up your own backend.
-  // Never put an Anthropic API key directly in this file - anyone viewing
-  // the page source (or your public GitHub repo) could steal and use it.
-  // This should be the URL of a small server you control that receives
-  // {message, history}, calls the Claude API using a key stored safely on
-  // YOUR server, and returns {reply: "..."}.
-  const AI_CHAT_ENDPOINT = 'https://plain-credit-aichat.javierescuelabs.workers.dev'; // مثال: 'https://your-backend.example.com/chat'
+  // ---------- AI Assistant chat ("الحارس") ----------
+  // This calls YOUR Cloudflare Worker, never OpenRouter directly from the
+  // browser — the OpenRouter key lives only on the Worker as a secret.
+  // See ai-worker.js (shipped alongside this file) for the server code to
+  // deploy at this URL with `wrangler secret put OPENROUTER_API_KEY`.
+  const AI_CHAT_ENDPOINT = 'https://plain-credit-aichat.javierescuelabs.workers.dev';
+
+  const ASSISTANT_FREE_LIMIT = 6;
+  function assistantUsedToday() { return toolUsage.counts['assistant'] || 0; }
+  function assistantRemaining() {
+    if (membership.tier !== 'free') return Infinity;
+    return Math.max(0, ASSISTANT_FREE_LIMIT - assistantUsedToday());
+  }
+  function consumeAssistantUse() {
+    if (membership.tier === 'free') {
+      toolUsage.counts['assistant'] = assistantUsedToday() + 1;
+      saveToolUsage();
+    }
+    renderChatQuota();
+  }
+  function renderChatQuota() {
+    const t = translations[currentLang];
+    const el = document.getElementById('chatQuota');
+    if (membership.tier !== 'free') {
+      el.textContent = '⚡ ' + t.chatQuotaUnlimited;
+      el.classList.add('unlimited');
+    } else {
+      const remaining = assistantRemaining();
+      el.textContent = remaining > 0 ? t.chatQuotaLeft.replace('{n}', remaining) : t.chatQuotaOver;
+      el.classList.remove('unlimited');
+    }
+  }
 
   const chatFab = document.getElementById('chatFab');
   const chatPanel = document.getElementById('chatPanel');
   const chatBody = document.getElementById('chatBody');
   const chatInput = document.getElementById('chatInput');
+  const chatAttachBtn = document.getElementById('chatAttachBtn');
+  const chatImgInput = document.getElementById('chatImgInput');
+  const chatImgPreview = document.getElementById('chatImgPreview');
+  const chatImgPreviewThumb = document.getElementById('chatImgPreviewThumb');
   let chatHistory = [];
   let chatWelcomed = false;
+  let pendingChatImage = null; // data URL
 
-  function addChatMsg(role, text) {
+  function addChatMsg(role, text, imageUrl) {
     const div = document.createElement('div');
     div.className = 'chat-msg ' + (role === 'user' ? 'user' : 'bot');
-    div.textContent = text;
+    if (text) div.appendChild(document.createTextNode(text));
+    if (imageUrl) {
+      const img = document.createElement('img');
+      img.className = 'chat-attach';
+      img.src = imageUrl;
+      div.appendChild(img);
+    }
     chatBody.appendChild(div);
     chatBody.scrollTop = chatBody.scrollHeight;
+    return div;
   }
 
   chatFab.addEventListener('click', () => {
     document.getElementById('upgradeModal').classList.remove('open');
     chatPanel.classList.add('open');
     if (!chatWelcomed) { addChatMsg('bot', translations[currentLang].chatWelcome); chatWelcomed = true; }
+    renderChatQuota();
   });
   document.getElementById('chatCloseBtn').addEventListener('click', () => chatPanel.classList.remove('open'));
   chatPanel.addEventListener('click', (e) => { if (e.target === chatPanel) chatPanel.classList.remove('open'); });
 
+  chatAttachBtn.addEventListener('click', () => chatImgInput.click());
+  chatImgInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      pendingChatImage = ev.target.result;
+      chatImgPreviewThumb.src = pendingChatImage;
+      chatImgPreview.classList.add('show');
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('chatImgRemove').addEventListener('click', () => {
+    pendingChatImage = null;
+    chatImgPreview.classList.remove('show');
+    chatImgInput.value = '';
+  });
+
   async function sendChatMessage() {
     const t = translations[currentLang];
     const msg = chatInput.value.trim();
-    if (!msg) return;
-    addChatMsg('user', msg);
-    chatInput.value = '';
-    vibrate(10);
+    if (!msg && !pendingChatImage) return;
+
+    if (assistantRemaining() <= 0) {
+      chatPanel.classList.remove('open');
+      openUpgradeModal('pro');
+      return;
+    }
 
     if (!AI_CHAT_ENDPOINT) { addChatMsg('bot', t.chatNotConfigured); return; }
+
+    const imageToSend = pendingChatImage;
+    addChatMsg('user', msg, imageToSend);
+    chatInput.value = '';
+    pendingChatImage = null;
+    chatImgPreview.classList.remove('show');
+    chatImgInput.value = '';
+    vibrate(10);
 
     const typingEl = document.createElement('div');
     typingEl.className = 'chat-msg bot';
@@ -3352,18 +3524,19 @@ document.addEventListener('DOMContentLoaded', function () {
     chatBody.appendChild(typingEl);
     chatBody.scrollTop = chatBody.scrollHeight;
 
-    chatHistory.push({ role: 'user', content: msg });
+    chatHistory.push({ role: 'user', content: msg, image: imageToSend || undefined });
     try {
       const resp = await fetch(AI_CHAT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg, history: chatHistory })
+        body: JSON.stringify({ message: msg, image: imageToSend, history: chatHistory.slice(-10), lang: currentLang })
       });
       const data = await resp.json();
       const reply = data && data.reply ? data.reply : t.chatError;
       typingEl.remove();
       addChatMsg('bot', reply);
       chatHistory.push({ role: 'assistant', content: reply });
+      consumeAssistantUse();
     } catch (err) {
       typingEl.remove();
       addChatMsg('bot', t.chatError);
