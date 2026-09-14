@@ -1770,7 +1770,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
-
   // ---------- repaint fix ----------
   // Some Android WebViews (custom Arabic web font + RTL + fast textContent
   // swaps, e.g. switching tabs/language) leave stale glyph pixels behind
@@ -2659,20 +2658,6 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         } catch (e) {}
       }
-    }
-    if (ifd0.next) { // IFD1 = thumbnail directory
-      const ifd1 = readIFD(ifd0.next);
-      if (ifd1.entries[0x0201]) result.hasThumbnail = true; // JPEGInterchangeFormat present
-      if (ifd1.entries[0x0201] && ifd1.entries[0x0202]) {
-        try {
-          const tOff = g32(ifd1.entries[0x0201].valOff);
-          const tLen = g32(ifd1.entries[0x0202].valOff);
-          const tStart = tiffStart + tOff;
-          if (tLen > 0 && tLen < 5000000 && tStart >= 0 && tStart + tLen <= view.byteLength) {
-            result.thumbBlob = new Blob([view.buffer.slice(tStart, tStart + tLen)], { type: 'image/jpeg' });
-          }
-        } catch (e) {}
-  }}
     }
     if (ifd0.next) { // IFD1 = thumbnail directory
       const ifd1 = readIFD(ifd0.next);
